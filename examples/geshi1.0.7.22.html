@@ -1,0 +1,3318 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3c.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+
+<title>TESTING CHILI 2.2 - GeSHi 1.0.7.22</title>
+
+<script type="text/javascript">
+/*
+===============================================================================
+Chili is the jQuery code highlighter plugin
+...............................................................................
+LICENSE: http://www.opensource.org/licenses/mit-license.php
+WEBSITE: http://noteslog.com/chili/
+
+											   Copyright 2008 / Andrea Ercolino
+===============================================================================
+*/
+</script>
+
+<script type="text/javascript" src="../chili/jquery-1.3.2.js"></script>
+<script type="text/javascript" src="../chili/jquery.chili-2.2.js"></script>
+
+
+<script type="text/javascript" src="../chili/recipes.js"></script> <!-- Chili settings for a static setup -->
+
+
+<script id="setup" type="text/javascript">
+ChiliBook.automatic = false;
+$( function() {
+	$( '#highlight' )
+	.one( 'click', function() {
+		var time1 = new Date();
+		var $chili = $( '#jq' ).chili();
+		var time2 = new Date();
+		var delta = time2 - time1;
+		var spans = $chili.find( 'span' ).length;
+		var rate = Math.round( spans / delta * 100 ) / 100;
+		$( '#highlight' ).html( 
+			'highlight done in ' + delta + ' milliseconds'
+			+ ' with ' + spans + ' spans'
+			+ ' at a rate of ' + rate * 1000 + ' span/sec'
+		);
+	} )
+	.show()
+	;
+} );
+</script>
+
+<script type="text/javascript" src="examples.js"></script>
+<link type="text/css" rel="stylesheet" href="examples.css" />
+
+</head>
+<body>
+
+<h2 id="title"></h2>
+
+<h3 id="highlight" style="color:red; display:none;">
+<a href="#">highlight</a> now
+</h3>
+
+<p>
+This page has the following setup.
+</p>
+<div id="show_setup"></div>
+
+
+<hr/>
+
+
+<div class="section">
+<h3>PHP</h3>
+<p><a href="http://noteslog.com/chili/" target="_blank">Chili</a> highlights <a href="http://qbnz.com/highlighter/" target="_blank">GeSHi</a>'s engine</p>
+<pre><code id='jq' class="php">
+&lt;?php
+/**
+ * GeSHi - Generic Syntax Highlighter
+ *
+ * The GeSHi class for Generic Syntax Highlighting. Please refer to the
+ * documentation at http://qbnz.com/highlighter/documentation.php for more
+ * information about how to use this class.
+ *
+ * For changes, release notes, TODOs etc, see the relevant files in the docs/
+ * directory.
+ *
+ *   This file is part of GeSHi.
+ *
+ *  GeSHi is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  GeSHi is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with GeSHi; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * @package    geshi
+ * @subpackage core
+ * @author     Nigel McNie &lt;nigel@geshi.org&gt;, Benny Baumann &lt;BenBE@omorphia.de&gt;
+ * @copyright  (C) 2004 - 2007 Nigel McNie, (C) 2007 - 2008 Benny Baumann
+ * @license    http://gnu.org/copyleft/gpl.html GNU GPL
+ *
+ */
+
+//
+// GeSHi Constants
+// You should use these constant names in your programs instead of
+// their values - you never know when a value may change in a future
+// version
+//
+
+/** The version of this GeSHi file */
+define(&#39;GESHI_VERSION&#39;, &#39;1.0.7.22&#39;);
+
+// Define the root directory for the GeSHi code tree
+if (!defined(&#39;GESHI_ROOT&#39;)) {
+    /** The root directory for GeSHi */
+    define(&#39;GESHI_ROOT&#39;, dirname(__FILE__) . DIRECTORY_SEPARATOR);
+}
+/** The language file directory for GeSHi
+    @access private */
+define(&#39;GESHI_LANG_ROOT&#39;, GESHI_ROOT . &#39;geshi&#39; . DIRECTORY_SEPARATOR);
+
+
+// Line numbers - use with enable_line_numbers()
+/** Use no line numbers when building the result */
+define(&#39;GESHI_NO_LINE_NUMBERS&#39;, 0);
+/** Use normal line numbers when building the result */
+define(&#39;GESHI_NORMAL_LINE_NUMBERS&#39;, 1);
+/** Use fancy line numbers when building the result */
+define(&#39;GESHI_FANCY_LINE_NUMBERS&#39;, 2);
+
+// Container HTML type
+/** Use nothing to surround the source */
+define(&#39;GESHI_HEADER_NONE&#39;, 0);
+/** Use a &quot;div&quot; to surround the source */
+define(&#39;GESHI_HEADER_DIV&#39;, 1);
+/** Use a &quot;pre&quot; to surround the source */
+define(&#39;GESHI_HEADER_PRE&#39;, 2);
+
+// Capatalisation constants
+/** Lowercase keywords found */
+define(&#39;GESHI_CAPS_NO_CHANGE&#39;, 0);
+/** Uppercase keywords found */
+define(&#39;GESHI_CAPS_UPPER&#39;, 1);
+/** Leave keywords found as the case that they are */
+define(&#39;GESHI_CAPS_LOWER&#39;, 2);
+
+// Link style constants
+/** Links in the source in the :link state */
+define(&#39;GESHI_LINK&#39;, 0);
+/** Links in the source in the :hover state */
+define(&#39;GESHI_HOVER&#39;, 1);
+/** Links in the source in the :active state */
+define(&#39;GESHI_ACTIVE&#39;, 2);
+/** Links in the source in the :visited state */
+define(&#39;GESHI_VISITED&#39;, 3);
+
+// Important string starter/finisher
+// Note that if you change these, they should be as-is: i.e., don&#39;t
+// write them as if they had been run through htmlentities()
+/** The starter for important parts of the source */
+define(&#39;GESHI_START_IMPORTANT&#39;, &#39;&lt;BEGIN GeSHi&gt;&#39;);
+/** The ender for important parts of the source */
+define(&#39;GESHI_END_IMPORTANT&#39;, &#39;&lt;END GeSHi&gt;&#39;);
+
+/**#@+
+ *  @access private
+ */
+// When strict mode applies for a language
+/** Strict mode never applies (this is the most common) */
+define(&#39;GESHI_NEVER&#39;, 0);
+/** Strict mode *might* apply, and can be enabled or
+    disabled by {@link GeSHi::enable_strict_mode()} */
+define(&#39;GESHI_MAYBE&#39;, 1);
+/** Strict mode always applies */
+define(&#39;GESHI_ALWAYS&#39;, 2);
+
+// Advanced regexp handling constants, used in language files
+/** The key of the regex array defining what to search for */
+define(&#39;GESHI_SEARCH&#39;, 0);
+/** The key of the regex array defining what bracket group in a
+    matched search to use as a replacement */
+define(&#39;GESHI_REPLACE&#39;, 1);
+/** The key of the regex array defining any modifiers to the regular expression */
+define(&#39;GESHI_MODIFIERS&#39;, 2);
+/** The key of the regex array defining what bracket group in a
+    matched search to put before the replacement */
+define(&#39;GESHI_BEFORE&#39;, 3);
+/** The key of the regex array defining what bracket group in a
+    matched search to put after the replacement */
+define(&#39;GESHI_AFTER&#39;, 4);
+/** The key of the regex array defining a custom keyword to use
+    for this regexp&#39;s html tag class */
+define(&#39;GESHI_CLASS&#39;, 5);
+
+/** Used in language files to mark comments */
+define(&#39;GESHI_COMMENTS&#39;, 0);
+
+// Error detection - use these to analyse faults
+/** No sourcecode to highlight was specified
+ * @deprecated
+ */
+define(&#39;GESHI_ERROR_NO_INPUT&#39;, 1);
+/** The language specified does not exist */
+define(&#39;GESHI_ERROR_NO_SUCH_LANG&#39;, 2);
+/** GeSHi could not open a file for reading (generally a language file) */
+define(&#39;GESHI_ERROR_FILE_NOT_READABLE&#39;, 3);
+/** The header type passed to {@link GeSHi::set_header_type()} was invalid */
+define(&#39;GESHI_ERROR_INVALID_HEADER_TYPE&#39;, 4);
+/** The line number type passed to {@link GeSHi::enable_line_numbers()} was invalid */
+define(&#39;GESHI_ERROR_INVALID_LINE_NUMBER_TYPE&#39;, 5);
+/**#@-*/
+
+
+/**
+ * The GeSHi Class.
+ *
+ * Please refer to the documentation for GeSHi 1.0.X that is available
+ * at http://qbnz.com/highlighter/documentation.php for more information
+ * about how to use this class.
+ *
+ * @package   geshi
+ * @author    Nigel McNie &lt;nigel@geshi.org&gt;, Benny Baumann &lt;BenBE@omorphia.de&gt;
+ * @copyright (C) 2004 - 2007 Nigel McNie, (C) 2007 - 2008 Benny Baumann
+ */
+class GeSHi {
+    /**#@+
+     * @access private
+     */
+    /**
+     * The source code to highlight
+     * @var string
+     */
+    var $source = &#39;&#39;;
+
+    /**
+     * The language to use when highlighting
+     * @var string
+     */
+    var $language = &#39;&#39;;
+
+    /**
+     * The data for the language used
+     * @var array
+     */
+    var $language_data = array();
+
+    /**
+     * The path to the language files
+     * @var string
+     */
+    var $language_path = GESHI_LANG_ROOT;
+
+    /**
+     * The error message associated with an error
+     * @var string
+     * @todo check err reporting works
+     */
+    var $error = false;
+
+    /**
+     * Possible error messages
+     * @var array
+     */
+    var $error_messages = array(
+        GESHI_ERROR_NO_SUCH_LANG =&gt; &#39;GeSHi could not find the language {LANGUAGE} (using path {PATH})&#39;,
+        GESHI_ERROR_FILE_NOT_READABLE =&gt; &#39;The file specified for load_from_file was not readable&#39;,
+        GESHI_ERROR_INVALID_HEADER_TYPE =&gt; &#39;The header type specified is invalid&#39;,
+        GESHI_ERROR_INVALID_LINE_NUMBER_TYPE =&gt; &#39;The line number type specified is invalid&#39;
+    );
+
+    /**
+     * Whether highlighting is strict or not
+     * @var boolean
+     */
+    var $strict_mode = false;
+
+    /**
+     * Whether to use CSS classes in output
+     * @var boolean
+     */
+    var $use_classes = false;
+
+    /**
+     * The type of header to use. Can be one of the following
+     * values:
+     *
+     * - GESHI_HEADER_PRE: Source is outputted in a &quot;pre&quot; HTML element.
+     * - GESHI_HEADER_DIV: Source is outputted in a &quot;div&quot; HTML element.
+     * - GESHI_HEADER_NONE: No header is outputted.
+     *
+     * @var int
+     */
+    var $header_type = GESHI_HEADER_PRE;
+
+    /**
+     * Array of permissions for which lexics should be highlighted
+     * @var array
+     */
+    var $lexic_permissions = array(
+        &#39;KEYWORDS&#39; =&gt;    array(),
+        &#39;COMMENTS&#39; =&gt;    array(&#39;MULTI&#39; =&gt; true),
+        &#39;REGEXPS&#39; =&gt;     array(),
+        &#39;ESCAPE_CHAR&#39; =&gt; true,
+        &#39;BRACKETS&#39; =&gt;    true,
+        &#39;SYMBOLS&#39; =&gt;     false,
+        &#39;STRINGS&#39; =&gt;     true,
+        &#39;NUMBERS&#39; =&gt;     true,
+        &#39;METHODS&#39; =&gt;     true,
+        &#39;SCRIPT&#39; =&gt;      true
+    );
+
+    /**
+     * The time it took to parse the code
+     * @var double
+     */
+    var $time = 0;
+
+    /**
+     * The content of the header block
+     * @var string
+     */
+    var $header_content = &#39;&#39;;
+
+    /**
+     * The content of the footer block
+     * @var string
+     */
+    var $footer_content = &#39;&#39;;
+
+    /**
+     * The style of the header block
+     * @var string
+     */
+    var $header_content_style = &#39;&#39;;
+
+    /**
+     * The style of the footer block
+     * @var string
+     */
+    var $footer_content_style = &#39;&#39;;
+
+    /**
+     * Tells if a block around the highlighted source should be forced
+     * if not using line numbering
+     * @var boolean
+     */
+    var $force_code_block = false;
+
+    /**
+     * The styles for hyperlinks in the code
+     * @var array
+     */
+    var $link_styles = array();
+
+    /**
+     * Whether important blocks should be recognised or not
+     * @var boolean
+     * @deprecated
+     * @todo REMOVE THIS FUNCTIONALITY!
+     */
+    var $enable_important_blocks = false;
+
+    /**
+     * Styles for important parts of the code
+     * @var string
+     * @deprecated
+     * @todo As above - rethink the whole idea of important blocks as it is buggy and
+     * will be hard to implement in 1.2
+     */
+    var $important_styles = &#39;font-weight: bold; color: red;&#39;; // Styles for important parts of the code
+
+    /**
+     * Whether CSS IDs should be added to the code
+     * @var boolean
+     */
+    var $add_ids = false;
+
+    /**
+     * Lines that should be highlighted extra
+     * @var array
+     */
+    var $highlight_extra_lines = array();
+
+    /**
+     * Styles of lines that should be highlighted extra
+     * @var array
+     */
+    var $highlight_extra_lines_styles = array();
+
+    /**
+     * Styles of extra-highlighted lines
+     * @var string
+     */
+    var $highlight_extra_lines_style = &#39;color: #cc0; background-color: #ffc;&#39;;
+
+    /**
+     * The line ending
+     * If null, nl2br() will be used on the result string.
+     * Otherwise, all instances of \n will be replaced with $line_ending
+     * @var string
+     */
+    var $line_ending = null;
+
+    /**
+     * Number at which line numbers should start at
+     * @var int
+     */
+    var $line_numbers_start = 1;
+
+    /**
+     * The overall style for this code block
+     * @var string
+     */
+    var $overall_style = &#39;&#39;;
+
+    /**
+     *  The style for the actual code
+     * @var string
+     */
+    var $code_style = &#39;font-family: \&#39;Courier New\&#39;, Courier, monospace; font-weight: normal; font-style: normal;&#39;;
+
+    /**
+     * The overall class for this code block
+     * @var string
+     */
+    var $overall_class = &#39;&#39;;
+
+    /**
+     * The overall ID for this code block
+     * @var string
+     */
+    var $overall_id = &#39;&#39;;
+
+    /**
+     * Line number styles
+     * @var string
+     */
+    var $line_style1 = &#39;font-weight: normal;&#39;;
+
+    /**
+     * Line number styles for fancy lines
+     * @var string
+     */
+    var $line_style2 = &#39;font-weight: bold;&#39;;
+
+    /**
+     * Flag for how line nubmers are displayed
+     * @var boolean
+     */
+    var $line_numbers = GESHI_NO_LINE_NUMBERS;
+
+    /**
+     * Flag to decide if multi line spans are allowed. Set it to false to make sure
+     * each tag is closed before and reopened after each linefeed.
+     * @var boolean
+     */
+    var $allow_multiline_span = true;
+
+    /**
+     * The &quot;nth&quot; value for fancy line highlighting
+     * @var int
+     */
+    var $line_nth_row = 0;
+
+    /**
+     * The size of tab stops
+     * @var int
+     */
+    var $tab_width = 8;
+
+    /**
+     * Should we use language-defined tab stop widths?
+     * @var int
+     */
+    var $use_language_tab_width = false;
+
+    /**
+     * Default target for keyword links
+     * @var string
+     */
+    var $link_target = &#39;&#39;;
+
+    /**
+     * The encoding to use for entity encoding
+     * NOTE: no longer used
+     * @var string
+     */
+    var $encoding = &#39;ISO-8859-1&#39;;
+
+    /**
+     * Should keywords be linked?
+     * @var boolean
+     */
+    var $keyword_links = true;
+
+    /**
+     * Currently loaded language file
+     * @var string
+     * @since 1.0.7.22
+     */
+    var $loaded_language = &#39;&#39;;
+
+    /**#@-*/
+
+    /**
+     * Creates a new GeSHi object, with source and language
+     *
+     * @param string The source code to highlight
+     * @param string The language to highlight the source with
+     * @param string The path to the language file directory. &lt;b&gt;This
+     *               is deprecated!&lt;/b&gt; I&#39;ve backported the auto path
+     *               detection from the 1.1.X dev branch, so now it
+     *               should be automatically set correctly. If you have
+     *               renamed the language directory however, you will
+     *               still need to set the path using this parameter or
+     *               {@link GeSHi::set_language_path()}
+     * @since 1.0.0
+     */
+    function GeSHi($source, $language, $path = &#39;&#39;) {
+        $this-&gt;set_source($source);
+        $this-&gt;set_language_path($path);
+        $this-&gt;set_language($language);
+    }
+
+    /**
+     * Returns an error message associated with the last GeSHi operation,
+     * or false if no error has occured
+     *
+     * @return string|false An error message if there has been an error, else false
+     * @since  1.0.0
+     */
+    function error() {
+        if ($this-&gt;error) {
+            $msg = $this-&gt;error_messages[$this-&gt;error];
+            $debug_tpl_vars = array(
+                &#39;{LANGUAGE}&#39; =&gt; $this-&gt;language,
+                &#39;{PATH}&#39; =&gt; $this-&gt;language_path
+            );
+            foreach ($debug_tpl_vars as $tpl =&gt; $var) {
+                $msg = str_replace($tpl, $var, $msg);
+            }
+            return &quot;&lt;br /&gt;&lt;strong&gt;GeSHi Error:&lt;/strong&gt; $msg (code $this-&gt;error)&lt;br /&gt;&quot;;
+        }
+        return false;
+    }
+
+    /**
+     * Gets a human-readable language name (thanks to Simon Patterson
+     * for the idea :))
+     *
+     * @return string The name for the current language
+     * @since  1.0.2
+     */
+    function get_language_name() {
+        if (GESHI_ERROR_NO_SUCH_LANG == $this-&gt;error) {
+            return $this-&gt;language_data[&#39;LANG_NAME&#39;] . &#39; (Unknown Language)&#39;;
+        }
+        return $this-&gt;language_data[&#39;LANG_NAME&#39;];
+    }
+
+    /**
+     * Sets the source code for this object
+     *
+     * @param string The source code to highlight
+     * @since 1.0.0
+     */
+    function set_source($source) {
+        $this-&gt;source = $source;
+        $this-&gt;highlight_extra_lines = array();
+    }
+
+    /**
+     * Sets the language for this object
+     *
+     * @param string The name of the language to use
+     * @since 1.0.0
+     */
+    function set_language($language) {
+        $this-&gt;error = false;
+        $this-&gt;strict_mode = GESHI_NEVER;
+
+        $language = preg_replace(&#39;#[^a-zA-Z0-9\-_]#&#39;, &#39;&#39;, $language);
+        $this-&gt;language = strtolower($language);
+
+        $file_name = $this-&gt;language_path . $this-&gt;language . &#39;.php&#39;;
+        if (!is_readable($file_name)) {
+            $this-&gt;error = GESHI_ERROR_NO_SUCH_LANG;
+            return;
+        }
+        // Load the language for parsing
+        $this-&gt;load_language($file_name);
+    }
+
+    /**
+     * Sets the path to the directory containing the language files. Note
+     * that this path is relative to the directory of the script that included
+     * geshi.php, NOT geshi.php itself.
+     *
+     * @param string The path to the language directory
+     * @since 1.0.0
+     * @deprecated The path to the language files should now be automatically
+     *             detected, so this method should no longer be needed. The
+     *             1.1.X branch handles manual setting of the path differently
+     *             so this method will disappear in 1.2.0.
+     */
+    function set_language_path($path) {
+        if ($path) {
+            $this-&gt;language_path = (&#39;/&#39; == $path[strlen($path) - 1]) ? $path : $path . &#39;/&#39;;
+            $this-&gt;set_language($this-&gt;language);        // otherwise set_language_path has no effect
+        }
+    }
+
+    /**
+     * Sets the type of header to be used.
+     *
+     * If GESHI_HEADER_DIV is used, the code is surrounded in a &quot;div&quot;.This
+     * means more source code but more control over tab width and line-wrapping.
+     * GESHI_HEADER_PRE means that a &quot;pre&quot; is used - less source, but less
+     * control. Default is GESHI_HEADER_PRE.
+     *
+     * From 1.0.7.2, you can use GESHI_HEADER_NONE to specify that no header code
+     * should be outputted.
+     *
+     * @param int The type of header to be used
+     * @since 1.0.0
+     */
+    function set_header_type($type) {
+        if (GESHI_HEADER_DIV != $type &amp;&amp; GESHI_HEADER_PRE != $type &amp;&amp; GESHI_HEADER_NONE != $type) {
+            $this-&gt;error = GESHI_ERROR_INVALID_HEADER_TYPE;
+            return;
+        }
+        $this-&gt;header_type = $type;
+        // Set a default overall style if the header is a &lt;div&gt;
+        if (GESHI_HEADER_DIV == $type &amp;&amp; !$this-&gt;overall_style) {
+            $this-&gt;overall_style = &#39;font-family: monospace;&#39;;
+        }
+    }
+
+    /**
+     * Sets the styles for the code that will be outputted
+     * when this object is parsed. The style should be a
+     * string of valid stylesheet declarations
+     *
+     * @param string  The overall style for the outputted code block
+     * @param boolean Whether to merge the styles with the current styles or not
+     * @since 1.0.0
+     */
+    function set_overall_style($style, $preserve_defaults = false) {
+        if (!$preserve_defaults) {
+            $this-&gt;overall_style = $style;
+        }
+        else {
+            $this-&gt;overall_style .= $style;
+        }
+    }
+
+    /**
+     * Sets the overall classname for this block of code. This
+     * class can then be used in a stylesheet to style this object&#39;s
+     * output
+     *
+     * @param string The class name to use for this block of code
+     * @since 1.0.0
+     */
+    function set_overall_class($class) {
+        $this-&gt;overall_class = $class;
+    }
+
+    /**
+     * Sets the overall id for this block of code. This id can then
+     * be used in a stylesheet to style this object&#39;s output
+     *
+     * @param string The ID to use for this block of code
+     * @since 1.0.0
+     */
+    function set_overall_id($id) {
+        $this-&gt;overall_id = $id;
+    }
+
+    /**
+     * Sets whether CSS classes should be used to highlight the source. Default
+     * is off, calling this method with no arguments will turn it on
+     *
+     * @param boolean Whether to turn classes on or not
+     * @since 1.0.0
+     */
+    function enable_classes($flag = true) {
+        $this-&gt;use_classes = ($flag) ? true : false;
+    }
+
+    /**
+     * Sets the style for the actual code. This should be a string
+     * containing valid stylesheet declarations. If $preserve_defaults is
+     * true, then styles are merged with the default styles, with the
+     * user defined styles having priority
+     *
+     * Note: Use this method to override any style changes you made to
+     * the line numbers if you are using line numbers, else the line of
+     * code will have the same style as the line number! Consult the
+     * GeSHi documentation for more information about this.
+     *
+     * @param string  The style to use for actual code
+     * @param boolean Whether to merge the current styles with the new styles
+     * @since 1.0.2
+     */
+    function set_code_style($style, $preserve_defaults = false) {
+        if (!$preserve_defaults) {
+            $this-&gt;code_style = $style;
+        }
+        else {
+            $this-&gt;code_style .= $style;
+        }
+    }
+
+    /**
+     * Sets the styles for the line numbers.
+     *
+     * @param string The style for the line numbers that are &quot;normal&quot;
+     * @param string|boolean If a string, this is the style of the line
+     *        numbers that are &quot;fancy&quot;, otherwise if boolean then this
+     *        defines whether the normal styles should be merged with the
+     *        new normal styles or not
+     * @param boolean If set, is the flag for whether to merge the &quot;fancy&quot;
+     *        styles with the current styles or not
+     * @since 1.0.2
+     */
+    function set_line_style($style1, $style2 = &#39;&#39;, $preserve_defaults = false) {
+        if (is_bool($style2)) {
+            $preserve_defaults = $style2;
+            $style2 = &#39;&#39;;
+        }
+        if (!$preserve_defaults) {
+            $this-&gt;line_style1 = $style1;
+            $this-&gt;line_style2 = $style2;
+        }
+        else {
+            $this-&gt;line_style1 .= $style1;
+            $this-&gt;line_style2 .= $style2;
+        }
+    }
+
+    /**
+     * Sets whether line numbers should be displayed.
+     *
+     * Valid values for the first parameter are:
+     *
+     *  - GESHI_NO_LINE_NUMBERS: Line numbers will not be displayed
+     *  - GESHI_NORMAL_LINE_NUMBERS: Line numbers will be displayed
+     *  - GESHI_FANCY_LINE_NUMBERS: Fancy line numbers will be displayed
+     *
+     * For fancy line numbers, the second parameter is used to signal which lines
+     * are to be fancy. For example, if the value of this parameter is 5 then every
+     * 5th line will be fancy.
+     *
+     * @param int How line numbers should be displayed
+     * @param int Defines which lines are fancy
+     * @since 1.0.0
+     */
+    function enable_line_numbers($flag, $nth_row = 5) {
+        if (GESHI_NO_LINE_NUMBERS != $flag &amp;&amp; GESHI_NORMAL_LINE_NUMBERS != $flag
+            &amp;&amp; GESHI_FANCY_LINE_NUMBERS != $flag) {
+            $this-&gt;error = GESHI_ERROR_INVALID_LINE_NUMBER_TYPE;
+        }
+        $this-&gt;line_numbers = $flag;
+        $this-&gt;line_nth_row = $nth_row;
+    }
+
+    /**
+     * Sets wether spans and other HTML markup generated by GeSHi can
+     * span over multiple lines or not. Defaults to true to reduce overhead.
+     * Set it to false if you want to manipulate the output or manually display
+     * the code in an ordered list.
+     *
+     * @param boolean Wether multiline spans are allowed or not
+     * @since 1.0.7.22
+     */
+    function enable_multiline_span($flag) {
+        $this-&gt;allow_multiline_span = (bool) $flag;
+    }
+
+    /**
+     * Get current setting for multiline spans, see GeSHi::
+     *
+     * @see enable_multiline_span
+     * @return bool
+     */
+    function get_multiline_span() {
+        return $this-&gt;allow_multiline_span;
+    }
+
+    /**
+     * Sets the style for a keyword group. If $preserve_defaults is
+     * true, then styles are merged with the default styles, with the
+     * user defined styles having priority
+     *
+     * @param int     The key of the keyword group to change the styles of
+     * @param string  The style to make the keywords
+     * @param boolean Whether to merge the new styles with the old or just
+     *                to overwrite them
+     * @since 1.0.0
+     */
+    function set_keyword_group_style($key, $style, $preserve_defaults = false) {
+        if (!$preserve_defaults) {
+            $this-&gt;language_data[&#39;STYLES&#39;][&#39;KEYWORDS&#39;][$key] = $style;
+        }
+        else {
+            $this-&gt;language_data[&#39;STYLES&#39;][&#39;KEYWORDS&#39;][$key] .= $style;
+        }
+        if(!isset($this-&gt;lexic_permissions[&#39;KEYWORDS&#39;][$key])) {
+            $this-&gt;lexic_permissions[&#39;KEYWORDS&#39;][$key] = true;
+        }
+    }
+
+    /**
+     * Turns highlighting on/off for a keyword group
+     *
+     * @param int     The key of the keyword group to turn on or off
+     * @param boolean Whether to turn highlighting for that group on or off
+     * @since 1.0.0
+     */
+    function set_keyword_group_highlighting($key, $flag = true) {
+        $this-&gt;lexic_permissions[&#39;KEYWORDS&#39;][$key] = ($flag) ? true : false;
+    }
+
+    /**
+     * Sets the styles for comment groups.  If $preserve_defaults is
+     * true, then styles are merged with the default styles, with the
+     * user defined styles having priority
+     *
+     * @param int     The key of the comment group to change the styles of
+     * @param string  The style to make the comments
+     * @param boolean Whether to merge the new styles with the old or just
+     *                to overwrite them
+     * @since 1.0.0
+     */
+    function set_comments_style($key, $style, $preserve_defaults = false) {
+        if (!$preserve_defaults) {
+            $this-&gt;language_data[&#39;STYLES&#39;][&#39;COMMENTS&#39;][$key] = $style;
+        }
+        else {
+            $this-&gt;language_data[&#39;STYLES&#39;][&#39;COMMENTS&#39;][$key] .= $style;
+        }
+    }
+
+    /**
+     * Turns highlighting on/off for comment groups
+     *
+     * @param int     The key of the comment group to turn on or off
+     * @param boolean Whether to turn highlighting for that group on or off
+     * @since 1.0.0
+     */
+    function set_comments_highlighting($key, $flag = true) {
+        $this-&gt;lexic_permissions[&#39;COMMENTS&#39;][$key] = ($flag) ? true : false;
+    }
+
+    /**
+     * Sets the styles for escaped characters. If $preserve_defaults is
+     * true, then styles are merged with the default styles, with the
+     * user defined styles having priority
+     *
+     * @param string  The style to make the escape characters
+     * @param boolean Whether to merge the new styles with the old or just
+     *                to overwrite them
+     * @since 1.0.0
+     */
+    function set_escape_characters_style($style, $preserve_defaults = false) {
+        if (!$preserve_defaults) {
+            $this-&gt;language_data[&#39;STYLES&#39;][&#39;ESCAPE_CHAR&#39;][0] = $style;
+        }
+        else {
+            $this-&gt;language_data[&#39;STYLES&#39;][&#39;ESCAPE_CHAR&#39;][0] .= $style;
+        }
+    }
+
+    /**
+     * Turns highlighting on/off for escaped characters
+     *
+     * @param boolean Whether to turn highlighting for escape characters on or off
+     * @since 1.0.0
+     */
+    function set_escape_characters_highlighting($flag = true) {
+        $this-&gt;lexic_permissions[&#39;ESCAPE_CHAR&#39;] = ($flag) ? true : false;
+    }
+
+    /**
+     * Sets the styles for brackets. If $preserve_defaults is
+     * true, then styles are merged with the default styles, with the
+     * user defined styles having priority
+     *
+     * This method is DEPRECATED: use set_symbols_style instead.
+     * This method will be removed in 1.2.X
+     *
+     * @param string  The style to make the brackets
+     * @param boolean Whether to merge the new styles with the old or just
+     *                to overwrite them
+     * @since 1.0.0
+     * @deprecated In favour of set_symbols_style
+     */
+    function set_brackets_style($style, $preserve_defaults = false) {
+        if (!$preserve_defaults) {
+            $this-&gt;language_data[&#39;STYLES&#39;][&#39;BRACKETS&#39;][0] = $style;
+        }
+        else {
+            $this-&gt;language_data[&#39;STYLES&#39;][&#39;BRACKETS&#39;][0] .= $style;
+        }
+    }
+
+    /**
+     * Turns highlighting on/off for brackets
+     *
+     * This method is DEPRECATED: use set_symbols_highlighting instead.
+     * This method will be remove in 1.2.X
+     *
+     * @param boolean Whether to turn highlighting for brackets on or off
+     * @since 1.0.0
+     * @deprecated In favour of set_symbols_highlighting
+     */
+    function set_brackets_highlighting($flag) {
+        $this-&gt;lexic_permissions[&#39;BRACKETS&#39;] = ($flag) ? true : false;
+    }
+
+    /**
+     * Sets the styles for symbols. If $preserve_defaults is
+     * true, then styles are merged with the default styles, with the
+     * user defined styles having priority
+     *
+     * @param string  The style to make the symbols
+     * @param boolean Whether to merge the new styles with the old or just
+     *                to overwrite them
+     * @param int     Tells the group of symbols for which style should be set.
+     * @since 1.0.1
+     */
+    function set_symbols_style($style, $preserve_defaults = false, $group = 0) {
+        if (!$preserve_defaults) {
+            $this-&gt;language_data[&#39;STYLES&#39;][&#39;SYMBOLS&#39;][$group] = $style;
+        }
+        else {
+            $this-&gt;language_data[&#39;STYLES&#39;][&#39;SYMBOLS&#39;][$group] .= $style;
+        }
+        // For backward compatibility
+        if(0 == $group) {
+            $this-&gt;set_brackets_style ($style, $preserve_defaults);
+        }
+    }
+
+    /**
+     * Turns highlighting on/off for symbols
+     *
+     * @param boolean Whether to turn highlighting for symbols on or off
+     * @since 1.0.0
+     */
+    function set_symbols_highlighting($flag) {
+        $this-&gt;lexic_permissions[&#39;SYMBOLS&#39;] = ($flag) ? true : false;
+        // For backward compatibility
+        $this-&gt;set_brackets_highlighting ($flag);
+    }
+
+    /**
+     * Sets the styles for strings. If $preserve_defaults is
+     * true, then styles are merged with the default styles, with the
+     * user defined styles having priority
+     *
+     * @param string  The style to make the escape characters
+     * @param boolean Whether to merge the new styles with the old or just
+     *                to overwrite them
+     * @since 1.0.0
+     */
+    function set_strings_style($style, $preserve_defaults = false) {
+        if (!$preserve_defaults) {
+            $this-&gt;language_data[&#39;STYLES&#39;][&#39;STRINGS&#39;][0] = $style;
+        }
+        else {
+            $this-&gt;language_data[&#39;STYLES&#39;][&#39;STRINGS&#39;][0] .= $style;
+        }
+    }
+
+    /**
+     * Turns highlighting on/off for strings
+     *
+     * @param boolean Whether to turn highlighting for strings on or off
+     * @since 1.0.0
+     */
+    function set_strings_highlighting($flag) {
+        $this-&gt;lexic_permissions[&#39;STRINGS&#39;] = ($flag) ? true : false;
+    }
+
+    /**
+     * Sets the styles for numbers. If $preserve_defaults is
+     * true, then styles are merged with the default styles, with the
+     * user defined styles having priority
+     *
+     * @param string  The style to make the numbers
+     * @param boolean Whether to merge the new styles with the old or just
+     *                to overwrite them
+     * @since 1.0.0
+     */
+    function set_numbers_style($style, $preserve_defaults = false) {
+        if (!$preserve_defaults) {
+            $this-&gt;language_data[&#39;STYLES&#39;][&#39;NUMBERS&#39;][0] = $style;
+        }
+        else {
+            $this-&gt;language_data[&#39;STYLES&#39;][&#39;NUMBERS&#39;][0] .= $style;
+        }
+    }
+
+    /**
+     * Turns highlighting on/off for numbers
+     *
+     * @param boolean Whether to turn highlighting for numbers on or off
+     * @since 1.0.0
+     */
+    function set_numbers_highlighting($flag) {
+        $this-&gt;lexic_permissions[&#39;NUMBERS&#39;] = ($flag) ? true : false;
+    }
+
+    /**
+     * Sets the styles for methods. $key is a number that references the
+     * appropriate &quot;object splitter&quot; - see the language file for the language
+     * you are highlighting to get this number. If $preserve_defaults is
+     * true, then styles are merged with the default styles, with the
+     * user defined styles having priority
+     *
+     * @param int     The key of the object splitter to change the styles of
+     * @param string  The style to make the methods
+     * @param boolean Whether to merge the new styles with the old or just
+     *                to overwrite them
+     * @since 1.0.0
+     */
+    function set_methods_style($key, $style, $preserve_defaults = false) {
+        if (!$preserve_defaults) {
+            $this-&gt;language_data[&#39;STYLES&#39;][&#39;METHODS&#39;][$key] = $style;
+        }
+        else {
+            $this-&gt;language_data[&#39;STYLES&#39;][&#39;METHODS&#39;][$key] .= $style;
+        }
+    }
+
+    /**
+     * Turns highlighting on/off for methods
+     *
+     * @param boolean Whether to turn highlighting for methods on or off
+     * @since 1.0.0
+     */
+    function set_methods_highlighting($flag) {
+        $this-&gt;lexic_permissions[&#39;METHODS&#39;] = ($flag) ? true : false;
+    }
+
+    /**
+     * Sets the styles for regexps. If $preserve_defaults is
+     * true, then styles are merged with the default styles, with the
+     * user defined styles having priority
+     *
+     * @param string  The style to make the regular expression matches
+     * @param boolean Whether to merge the new styles with the old or just
+     *                to overwrite them
+     * @since 1.0.0
+     */
+    function set_regexps_style($key, $style, $preserve_defaults = false) {
+        if (!$preserve_defaults) {
+            $this-&gt;language_data[&#39;STYLES&#39;][&#39;REGEXPS&#39;][$key] = $style;
+        }
+        else {
+            $this-&gt;language_data[&#39;STYLES&#39;][&#39;REGEXPS&#39;][$key] .= $style;
+        }
+    }
+
+    /**
+     * Turns highlighting on/off for regexps
+     *
+     * @param int     The key of the regular expression group to turn on or off
+     * @param boolean Whether to turn highlighting for the regular expression group on or off
+     * @since 1.0.0
+     */
+    function set_regexps_highlighting($key, $flag) {
+        $this-&gt;lexic_permissions[&#39;REGEXPS&#39;][$key] = ($flag) ? true : false;
+    }
+
+    /**
+     * Sets whether a set of keywords are checked for in a case sensitive manner
+     *
+     * @param int The key of the keyword group to change the case sensitivity of
+     * @param boolean Whether to check in a case sensitive manner or not
+     * @since 1.0.0
+     */
+    function set_case_sensitivity($key, $case) {
+        $this-&gt;language_data[&#39;CASE_SENSITIVE&#39;][$key] = ($case) ? true : false;
+    }
+
+    /**
+     * Sets the case that keywords should use when found. Use the constants:
+     *
+     *  - GESHI_CAPS_NO_CHANGE: leave keywords as-is
+     *  - GESHI_CAPS_UPPER: convert all keywords to uppercase where found
+     *  - GESHI_CAPS_LOWER: convert all keywords to lowercase where found
+     *
+     * @param int A constant specifying what to do with matched keywords
+     * @since 1.0.1
+     */
+    function set_case_keywords($case) {
+        if(in_array($case, array(
+            GESHI_CAPS_NO_CHANGE, GESHI_CAPS_UPPER, GESHI_CAPS_LOWER))) {
+            $this-&gt;language_data[&#39;CASE_KEYWORDS&#39;] = $case;
+        }
+    }
+
+    /**
+     * Sets how many spaces a tab is substituted for
+     *
+     * Widths below zero are ignored
+     *
+     * @param int The tab width
+     * @since 1.0.0
+     */
+    function set_tab_width($width) {
+        $this-&gt;tab_width = intval($width);
+        //Check if it fit&#39;s the constraints:
+        if($this-&gt;tab_width &lt; 1) {
+            //Return it to the default
+            $this-&gt;tab_width = 8;
+        }
+    }
+
+    /**
+     * Sets whether or not to use tab-stop width specifed by language
+     *
+     * @param boolean Whether to use language-specific tab-stop widths
+     * @since 1.0.7.20
+     */
+    function set_use_language_tab_width($use) {
+        $this-&gt;use_language_tab_width = (bool) $use;
+    }
+
+    /**
+     * Returns the tab width to use, based on the current language and user
+     * preference
+     *
+     * @return int Tab width
+     * @since 1.0.7.20
+     */
+    function get_real_tab_width() {
+        if (!$this-&gt;use_language_tab_width ||
+            !isset($this-&gt;language_data[&#39;TAB_WIDTH&#39;])) {
+            return $this-&gt;tab_width;
+        } else {
+            return $this-&gt;language_data[&#39;TAB_WIDTH&#39;];
+        }
+    }
+
+    /**
+     * Enables/disables strict highlighting. Default is off, calling this
+     * method without parameters will turn it on. See documentation
+     * for more details on strict mode and where to use it.
+     *
+     * @param boolean Whether to enable strict mode or not
+     * @since 1.0.0
+     */
+    function enable_strict_mode($mode = true) {
+        if (GESHI_MAYBE == $this-&gt;language_data[&#39;STRICT_MODE_APPLIES&#39;]) {
+          $this-&gt;strict_mode = ($mode) ? true : false;
+        }
+    }
+
+    /**
+     * Disables all highlighting
+     *
+     * @since 1.0.0
+     * @todo  Rewrite with array traversal
+     * @deprecated In favour of enable_highlighting
+     */
+    function disable_highlighting() {
+        $this-&gt;enable_highlighting(false);
+    }
+
+    /**
+     * Enables all highlighting
+     *
+     * The optional flag parameter was added in version 1.0.7.21 and can be used
+     * to enable (true) or disable (false) all highlighting.
+     *
+     * @since 1.0.0
+     * @param boolean A flag specifying whether to enable or disable all highlighting
+     * @todo  Rewrite with array traversal
+     */
+    function enable_highlighting($flag = true) {
+        $flag = $flag ? true : false;
+        foreach ($this-&gt;lexic_permissions as $key =&gt; $value) {
+            if (is_array($value)) {
+                foreach ($value as $k =&gt; $v) {
+                    $this-&gt;lexic_permissions[$key][$k] = $flag;
+                }
+            }
+            else {
+                $this-&gt;lexic_permissions[$key] = $flag;
+            }
+        }
+        // Context blocks
+        $this-&gt;enable_important_blocks = $flag;
+    }
+
+    /**
+     * Given a file extension, this method returns either a valid geshi language
+     * name, or the empty string if it couldn&#39;t be found
+     *
+     * @param string The extension to get a language name for
+     * @param array  A lookup array to use instead of the default one
+     * @since 1.0.5
+     * @todo Re-think about how this method works (maybe make it private and/or make it
+     *       a extension-&gt;lang lookup?)
+     * @todo static?
+     */
+    function get_language_name_from_extension( $extension, $lookup = array() ) {
+        if ( !is_array($lookup) || empty($lookup)) {
+            $lookup = array(
+                &#39;actionscript&#39; =&gt; array(&#39;as&#39;),
+                &#39;ada&#39; =&gt; array(&#39;a&#39;, &#39;ada&#39;, &#39;adb&#39;, &#39;ads&#39;),
+                &#39;apache&#39; =&gt; array(&#39;conf&#39;),
+                &#39;asm&#39; =&gt; array(&#39;ash&#39;, &#39;asm&#39;),
+                &#39;asp&#39; =&gt; array(&#39;asp&#39;),
+                &#39;bash&#39; =&gt; array(&#39;sh&#39;),
+                &#39;c&#39; =&gt; array(&#39;c&#39;, &#39;h&#39;),
+                &#39;c_mac&#39; =&gt; array(&#39;c&#39;, &#39;h&#39;),
+                &#39;caddcl&#39; =&gt; array(),
+                &#39;cadlisp&#39; =&gt; array(),
+                &#39;cdfg&#39; =&gt; array(&#39;cdfg&#39;),
+                &#39;cpp&#39; =&gt; array(&#39;cpp&#39;, &#39;h&#39;, &#39;hpp&#39;),
+                &#39;csharp&#39; =&gt; array(),
+                &#39;css&#39; =&gt; array(&#39;css&#39;),
+                &#39;delphi&#39; =&gt; array(&#39;dpk&#39;, &#39;dpr&#39;, &#39;pp&#39;, &#39;pas&#39;),
+                &#39;dos&#39; =&gt; array(&#39;bat&#39;, &#39;cmd&#39;),
+                &#39;gettext&#39; =&gt; array(&#39;po&#39;, &#39;pot&#39;),
+                &#39;html4strict&#39; =&gt; array(&#39;html&#39;, &#39;htm&#39;),
+                &#39;java&#39; =&gt; array(&#39;java&#39;),
+                &#39;javascript&#39; =&gt; array(&#39;js&#39;),
+                &#39;lisp&#39; =&gt; array(&#39;lisp&#39;),
+                &#39;lua&#39; =&gt; array(&#39;lua&#39;),
+                &#39;mpasm&#39; =&gt; array(),
+                &#39;nsis&#39; =&gt; array(),
+                &#39;objc&#39; =&gt; array(),
+                &#39;oobas&#39; =&gt; array(),
+                &#39;oracle8&#39; =&gt; array(),
+                &#39;pascal&#39; =&gt; array(),
+                &#39;perl&#39; =&gt; array(&#39;pl&#39;, &#39;pm&#39;),
+                &#39;php&#39; =&gt; array(&#39;php&#39;, &#39;php5&#39;, &#39;phtml&#39;, &#39;phps&#39;),
+                &#39;python&#39; =&gt; array(&#39;py&#39;),
+                &#39;qbasic&#39; =&gt; array(&#39;bi&#39;),
+                &#39;sas&#39; =&gt; array(&#39;sas&#39;),
+                &#39;smarty&#39; =&gt; array(),
+                &#39;vb&#39; =&gt; array(&#39;bas&#39;),
+                &#39;vbnet&#39; =&gt; array(),
+                &#39;visualfoxpro&#39; =&gt; array(),
+                &#39;xml&#39; =&gt; array(&#39;xml&#39;)
+            );
+        }
+
+        foreach ($lookup as $lang =&gt; $extensions) {
+            if (in_array($extension, $extensions)) {
+                return $lang;
+            }
+        }
+        return &#39;&#39;;
+    }
+
+    /**
+     * Given a file name, this method loads its contents in, and attempts
+     * to set the language automatically. An optional lookup table can be
+     * passed for looking up the language name. If not specified a default
+     * table is used
+     *
+     * The language table is in the form
+     * &lt;pre&gt;array(
+     *   &#39;lang_name&#39; =&gt; array(&#39;extension&#39;, &#39;extension&#39;, ...),
+     *   &#39;lang_name&#39; ...
+     * );&lt;/pre&gt;
+     *
+     * @param string The filename to load the source from
+     * @param array  A lookup array to use instead of the default one
+     * @todo Complete rethink of this and above method
+     * @since 1.0.5
+     */
+    function load_from_file($file_name, $lookup = array()) {
+        if (is_readable($file_name)) {
+            $this-&gt;set_source(file_get_contents($file_name));
+            $this-&gt;set_language($this-&gt;get_language_name_from_extension(substr(strrchr($file_name, &#39;.&#39;), 1), $lookup));
+        }
+        else {
+            $this-&gt;error = GESHI_ERROR_FILE_NOT_READABLE;
+        }
+    }
+
+    /**
+     * Adds a keyword to a keyword group for highlighting
+     *
+     * @param int    The key of the keyword group to add the keyword to
+     * @param string The word to add to the keyword group
+     * @since 1.0.0
+     */
+    function add_keyword($key, $word) {
+        $this-&gt;language_data[&#39;KEYWORDS&#39;][$key][] = $word;
+    }
+
+    /**
+     * Removes a keyword from a keyword group
+     *
+     * @param int    The key of the keyword group to remove the keyword from
+     * @param string The word to remove from the keyword group
+     * @since 1.0.0
+     */
+    function remove_keyword($key, $word) {
+        $this-&gt;language_data[&#39;KEYWORDS&#39;][$key] =
+            array_diff($this-&gt;language_data[&#39;KEYWORDS&#39;][$key], array($word));
+    }
+
+    /**
+     * Creates a new keyword group
+     *
+     * @param int    The key of the keyword group to create
+     * @param string The styles for the keyword group
+     * @param boolean Whether the keyword group is case sensitive ornot
+     * @param array  The words to use for the keyword group
+     * @since 1.0.0
+     */
+    function add_keyword_group($key, $styles, $case_sensitive = true, $words = array()) {
+        $words = (array) $words;
+        $this-&gt;language_data[&#39;KEYWORDS&#39;][$key] = $words;
+        $this-&gt;lexic_permissions[&#39;KEYWORDS&#39;][$key] = true;
+        $this-&gt;language_data[&#39;CASE_SENSITIVE&#39;][$key] = $case_sensitive;
+        $this-&gt;language_data[&#39;STYLES&#39;][&#39;KEYWORDS&#39;][$key] = $styles;
+    }
+
+    /**
+     * Removes a keyword group
+     *
+     * @param int    The key of the keyword group to remove
+     * @since 1.0.0
+     */
+    function remove_keyword_group ($key) {
+        unset($this-&gt;language_data[&#39;KEYWORDS&#39;][$key]);
+        unset($this-&gt;lexic_permissions[&#39;KEYWORDS&#39;][$key]);
+        unset($this-&gt;language_data[&#39;CASE_SENSITIVE&#39;][$key]);
+        unset($this-&gt;language_data[&#39;STYLES&#39;][&#39;KEYWORDS&#39;][$key]);
+    }
+
+    /**
+     * Sets the content of the header block
+     *
+     * @param string The content of the header block
+     * @since 1.0.2
+     */
+    function set_header_content($content) {
+        $this-&gt;header_content = $content;
+    }
+
+    /**
+     * Sets the content of the footer block
+     *
+     * @param string The content of the footer block
+     * @since 1.0.2
+     */
+    function set_footer_content($content) {
+        $this-&gt;footer_content = $content;
+    }
+
+    /**
+     * Sets the style for the header content
+     *
+     * @param string The style for the header content
+     * @since 1.0.2
+     */
+    function set_header_content_style($style) {
+        $this-&gt;header_content_style = $style;
+    }
+
+    /**
+     * Sets the style for the footer content
+     *
+     * @param string The style for the footer content
+     * @since 1.0.2
+     */
+    function set_footer_content_style($style) {
+        $this-&gt;footer_content_style = $style;
+    }
+
+    /**
+     * Sets whether to force a surrounding block around
+     * the highlighted code or not
+     *
+     * @param boolean Tells whether to enable or disable this feature
+     * @since 1.0.7.20
+     */
+    function enable_inner_code_block($flag) {
+        $this-&gt;force_code_block = (bool)$flag;
+    }
+
+    /**
+     * Sets the base URL to be used for keywords
+     *
+     * @param int The key of the keyword group to set the URL for
+     * @param string The URL to set for the group. If {FNAME} is in
+     *               the url somewhere, it is replaced by the keyword
+     *               that the URL is being made for
+     * @since 1.0.2
+     */
+    function set_url_for_keyword_group($group, $url) {
+        $this-&gt;language_data[&#39;URLS&#39;][$group] = $url;
+    }
+
+    /**
+     * Sets styles for links in code
+     *
+     * @param int A constant that specifies what state the style is being
+     *            set for - e.g. :hover or :visited
+     * @param string The styles to use for that state
+     * @since 1.0.2
+     */
+    function set_link_styles($type, $styles) {
+        $this-&gt;link_styles[$type] = $styles;
+    }
+
+    /**
+     * Sets the target for links in code
+     *
+     * @param string The target for links in the code, e.g. _blank
+     * @since 1.0.3
+     */
+    function set_link_target($target) {
+        if (!$target) {
+            $this-&gt;link_target = &#39;&#39;;
+        }
+        else {
+            $this-&gt;link_target = &#39; target=&quot;&#39; . $target . &#39;&quot; &#39;;
+        }
+    }
+
+    /**
+     * Sets styles for important parts of the code
+     *
+     * @param string The styles to use on important parts of the code
+     * @since 1.0.2
+     */
+    function set_important_styles($styles) {
+        $this-&gt;important_styles = $styles;
+    }
+
+    /**
+     * Sets whether context-important blocks are highlighted
+     *
+     * @param boolean Tells whether to enable or disable highlighting of important blocks
+     * @todo REMOVE THIS SHIZ FROM GESHI!
+     * @deprecated
+     * @since 1.0.2
+     */
+    function enable_important_blocks($flag) {
+        $this-&gt;enable_important_blocks = ( $flag ) ? true : false;
+    }
+
+    /**
+     * Whether CSS IDs should be added to each line
+     *
+     * @param boolean If true, IDs will be added to each line.
+     * @since 1.0.2
+     */
+    function enable_ids($flag = true) {
+        $this-&gt;add_ids = ($flag) ? true : false;
+    }
+
+    /**
+     * Specifies which lines to highlight extra
+     *
+     * The extra style parameter was added in 1.0.7.21.
+     *
+     * @param mixed An array of line numbers to highlight, or just a line
+     *              number on its own.
+     * @param string A string specifying the style to use for this line
+     * @since 1.0.2
+     * @todo  Some data replication here that could be cut down on
+     */
+    function highlight_lines_extra($lines, $style = null) {
+        if (is_array($lines)) {
+            foreach ($lines as $line) {
+                $this-&gt;highlight_lines_extra($line, $style);
+            }
+        }
+        else {
+            $lines = intval($lines);
+            $this-&gt;highlight_extra_lines[$lines] = $lines;
+            if ($style != null) {
+                $this-&gt;highlight_extra_lines_styles[$lines] = $style;
+            } else {
+                unset($this-&gt;highlight_extra_lines_styles[$lines]);
+            }
+        }
+    }
+
+    /**
+     * Sets the style for extra-highlighted lines
+     *
+     * @param string The style for extra-highlighted lines
+     * @since 1.0.2
+     */
+    function set_highlight_lines_extra_style($styles) {
+        $this-&gt;highlight_extra_lines_style = $styles;
+    }
+
+    /**
+     * Sets the line-ending
+     *
+     * @param string The new line-ending
+     * @since 1.0.2
+     */
+    function set_line_ending($line_ending) {
+        $this-&gt;line_ending = (string)$line_ending;
+    }
+
+    /**
+     * Sets what number line numbers should start at. Should
+     * be a positive integer, and will be converted to one.
+     *
+     * &lt;b&gt;Warning:&lt;/b&gt; Using this method will add the &quot;start&quot;
+     * attribute to the &amp;lt;ol&amp;gt; that is used for line numbering.
+     * This is &lt;b&gt;not&lt;/b&gt; valid XHTML strict, so if that&#39;s what you
+     * care about then don&#39;t use this method. Firefox is getting
+     * support for the CSS method of doing this in 1.1 and Opera
+     * has support for the CSS method, but (of course) IE doesn&#39;t
+     * so it&#39;s not worth doing it the CSS way yet.
+     *
+     * @param int The number to start line numbers at
+     * @since 1.0.2
+     */
+    function start_line_numbers_at($number) {
+        $this-&gt;line_numbers_start = abs(intval($number));
+    }
+
+    /**
+     * Sets the encoding used for htmlspecialchars(), for international
+     * support.
+     *
+     * NOTE: This is not needed for now because htmlspecialchars() is not
+     * being used (it has a security hole in PHP4 that has not been patched).
+     * Maybe in a future version it may make a return for speed reasons, but
+     * I doubt it.
+     *
+     * @param string The encoding to use for the source
+     * @since 1.0.3
+     */
+    function set_encoding($encoding) {
+        if ($encoding) {
+          $this-&gt;encoding = $encoding;
+        }
+    }
+
+    /**
+     * Turns linking of keywords on or off.
+     *
+     * @param boolean If true, links will be added to keywords
+     * @since 1.0.2
+     */
+    function enable_keyword_links($enable = true) {
+        $this-&gt;keyword_links = (bool) $enable;
+    }
+
+    /**
+     * Returns the code in $this-&gt;source, highlighted and surrounded by the
+     * nessecary HTML.
+     *
+     * This should only be called ONCE, cos it&#39;s SLOW! If you want to highlight
+     * the same source multiple times, you&#39;re better off doing a whole lot of
+     * str_replaces to replace the &amp;lt;span&amp;gt;s
+     *
+     * @since 1.0.0
+     */
+    function parse_code () {
+        // Start the timer
+        $start_time = microtime();
+
+        // Firstly, if there is an error, we won&#39;t highlight
+        if ($this-&gt;error) {
+            $result = GeSHi::hsc($this-&gt;source);
+            // Timing is irrelevant
+            $this-&gt;set_time($start_time, $start_time);
+            return $this-&gt;finalise($result);
+        }
+
+        // Replace all newlines to a common form.
+        $code = str_replace(&quot;\r\n&quot;, &quot;\n&quot;, $this-&gt;source);
+        $code = str_replace(&quot;\r&quot;, &quot;\n&quot;, $code);
+        // Add spaces for regular expression matching and line numbers
+        $code = &quot;\n&quot; . $code . &quot;\n&quot;;
+
+        // Initialise various stuff
+        $length           = strlen($code);
+        $COMMENT_MATCHED  = false;
+        // Turn highlighting on if strict mode doesn&#39;t apply to this language
+        $HIGHLIGHTING_ON  = ( !$this-&gt;strict_mode ) ? true : &#39;&#39;;
+        // Whether to highlight inside a block of code
+        $HIGHLIGHT_INSIDE_STRICT = false;
+        $HARDQUOTE_OPEN = false;
+        $STRICTATTRS = &#39;&#39;;
+        $stuff_to_parse   = &#39;&#39;;
+        $result           = &#39;&#39;;
+
+        // &quot;Important&quot; selections are handled like multiline comments
+        // @todo GET RID OF THIS SHIZ
+        if ($this-&gt;enable_important_blocks) {
+            $this-&gt;language_data[&#39;COMMENT_MULTI&#39;][GESHI_START_IMPORTANT] = GESHI_END_IMPORTANT;
+        }
+
+        if ($this-&gt;strict_mode) {
+            // Break the source into bits. Each bit will be a portion of the code
+            // within script delimiters - for example, HTML between &lt; and &gt;
+            $parts = array(0 =&gt; array(0 =&gt; &#39;&#39;, 1 =&gt; &#39;&#39;));
+            $k = 0;
+            for ($i = 0; $i &lt; $length; ++$i) {
+                foreach ($this-&gt;language_data[&#39;SCRIPT_DELIMITERS&#39;] as $delimiters) {
+                    foreach ($delimiters as $open =&gt; $close) {
+                        // Get the next little bit for this opening string
+                        $open_strlen = strlen($open);
+                        $check = substr($code, $i, $open_strlen);
+                        // If it matches...
+                        if ($check == $open) {
+                            // We start a new block with the highlightable
+                            // code in it
+                            ++$k;
+                            $parts[$k][0] = $open;
+                            $close_i = strpos($code, $close, $i + $open_strlen)  + strlen($close);
+                            if ($close_i === false) {
+                                $close_i = $length - 1;
+                            }
+                            $parts[$k][1] = substr($code, $i, $close_i - $i);
+                            $i = $close_i - 1;
+                            ++$k;
+                            $parts[$k][0] = &#39;&#39;;
+                            $parts[$k][1] = &#39;&#39;;
+
+                            // No point going around again...
+                            continue 3;
+                        }
+                    }
+                }
+                // only non-highlightable text reaches this point
+                $parts[$k][1] .= $code[$i];
+            }
+        }
+        else {
+            // Not strict mode - simply dump the source into
+            // the array at index 1 (the first highlightable block)
+            $parts = array(
+                1 =&gt; array(
+                    0 =&gt; &#39;&#39;,
+                    1 =&gt; $code
+                )
+            );
+        }
+
+        //Unset variables we won&#39;t need any longer
+        unset($code);
+
+        //Preload some repeatedly used values regarding hardquotes ...
+        $hq = isset($this-&gt;language_data[&#39;HARDQUOTE&#39;]) ? $this-&gt;language_data[&#39;HARDQUOTE&#39;][0] : false;
+        $hq_strlen = strlen($hq);
+
+        //Preload if line numbers are to be generated afterwards
+        //Added a check if line breaks should be forced even without line numbers, fixes SF#1727398
+        $check_linenumbers = $this-&gt;line_numbers != GESHI_NO_LINE_NUMBERS
+                                || !empty($this-&gt;highlight_extra_lines) || !$this-&gt;allow_multiline_span;
+
+        //preload the escape char for faster checking ...
+        $escaped_escape_char = GeSHi::hsc($this-&gt;language_data[&#39;ESCAPE_CHAR&#39;]);
+
+        if (!$this-&gt;use_classes) {
+            $string_attributes = &#39; style=&quot;&#39; . $this-&gt;language_data[&#39;STYLES&#39;][&#39;STRINGS&#39;][0] . &#39;&quot;&#39;;
+            $escape_char_attributes = &#39; style=&quot;&#39; . $this-&gt;language_data[&#39;STYLES&#39;][&#39;ESCAPE_CHAR&#39;][0] . &#39;&quot;&#39;;
+        }
+        else {
+            $string_attributes = &#39; class=&quot;st0&quot;&#39;;
+            $escape_char_attributes = &#39; class=&quot;es0&quot;&#39;;
+        }
+
+        // this is used for single-line comments
+        $sc_disallowed_before = &quot;&quot;;
+        $sc_disallowed_after = &quot;&quot;;
+
+        if(isset($this-&gt;language_data[&#39;PARSER_CONTROL&#39;])) {
+            if (isset($this-&gt;language_data[&#39;PARSER_CONTROL&#39;][&#39;COMMENTS&#39;])) {
+                if (isset($this-&gt;language_data[&#39;PARSER_CONTROL&#39;][&#39;COMMENTS&#39;][&#39;DISALLOWED_BEFORE&#39;])) {
+                    $sc_disallowed_before = $this-&gt;language_data[&#39;PARSER_CONTROL&#39;][&#39;COMMENTS&#39;][&#39;DISALLOWED_BEFORE&#39;];
+                }
+                if (isset($this-&gt;language_data[&#39;PARSER_CONTROL&#39;][&#39;COMMENTS&#39;][&#39;DISALLOWED_AFTER&#39;])) {
+                    $sc_disallowed_after = $this-&gt;language_data[&#39;PARSER_CONTROL&#39;][&#39;COMMENTS&#39;][&#39;DISALLOWED_AFTER&#39;];
+                }
+            }
+        }
+
+        // Now we go through each part. We know that even-indexed parts are
+        // code that shouldn&#39;t be highlighted, and odd-indexed parts should
+        // be highlighted
+        foreach ($parts as $key =&gt; $data) {
+            $part = $data[1];
+            // If this block should be highlighted...
+            if ($key % 2) {
+                if ($this-&gt;strict_mode) {
+                    // Find the class key for this block of code
+                    foreach ($this-&gt;language_data[&#39;SCRIPT_DELIMITERS&#39;] as $script_key =&gt; $script_data) {
+                        if (isset($script_data[$data[0]])) {
+                            break;
+                        }
+                    }
+
+                    if ($this-&gt;language_data[&#39;STYLES&#39;][&#39;SCRIPT&#39;][$script_key] != &#39;&#39; &amp;&amp;
+                        $this-&gt;lexic_permissions[&#39;SCRIPT&#39;]) {
+                        // Add a span element around the source to
+                        // highlight the overall source block
+                        if (!$this-&gt;use_classes &amp;&amp;
+                            $this-&gt;language_data[&#39;STYLES&#39;][&#39;SCRIPT&#39;][$script_key] != &#39;&#39;) {
+                            $attributes = &#39; style=&quot;&#39; . $this-&gt;language_data[&#39;STYLES&#39;][&#39;SCRIPT&#39;][$script_key] . &#39;&quot;&#39;;
+                        }
+                        else {
+                            $attributes = &#39; class=&quot;sc&#39; . $script_key . &#39;&quot;&#39;;
+                        }
+                        $result .= &quot;&lt;span$attributes&gt;&quot;;
+                        $STRICTATTRS = $attributes;
+                    }
+                }
+
+                if (!$this-&gt;strict_mode || $this-&gt;language_data[&#39;HIGHLIGHT_STRICT_BLOCK&#39;][$script_key]) {
+                    // Now, highlight the code in this block. This code
+                    // is really the engine of GeSHi (along with the method
+                    // parse_non_string_part).
+
+                    // cache comment regexps incrementally
+                    $comment_regexp_cache = array();
+                    $next_comment_regexp_pos = -1;
+                    $comment_regexp_cache_per_key = array();
+
+                    $length = strlen($part);
+                    for ($i = 0; $i &lt; $length; ++$i) {
+                        // Get the next char
+                        $char = $part[$i];
+
+                        if (in_array($char, $this-&gt;language_data[&#39;QUOTEMARKS&#39;]) &amp;&amp; $this-&gt;lexic_permissions[&#39;STRINGS&#39;]) {
+                            // The start of a new string
+
+                            // parse the stuff before this
+                            $result .= $this-&gt;parse_non_string_part($stuff_to_parse);
+                            $stuff_to_parse = &#39;&#39;;
+
+                            // now handle the string
+                            $string = &#39;&#39;;
+
+                            // look for closing quote
+                            $start = $i;
+                            while ($close_pos = strpos($part, $char, $start + 1)) {
+                                $start = $close_pos;
+                                if ($this-&gt;lexic_permissions[&#39;ESCAPE_CHAR&#39;] &amp;&amp; $part[$close_pos - 1] == $this-&gt;language_data[&#39;ESCAPE_CHAR&#39;]) {
+                                    // this quote is escaped
+                                    continue;
+                                }
+                                // found closing quote
+                                break;
+                            }
+                            if (!$close_pos) {
+                              // span till the end of this $part when no closing delimiter is found
+                              $close_pos = $length;
+                            }
+
+                            $string = substr($part, $i, $close_pos - $i + 1);
+                            $i = $close_pos;
+
+                            // handle escape chars and encode html chars
+                            // (special because when we have escape chars within our string they may not be escaped)
+                            if ($this-&gt;lexic_permissions[&#39;ESCAPE_CHAR&#39;] &amp;&amp; $this-&gt;language_data[&#39;ESCAPE_CHAR&#39;]) {
+                                $start = 0;
+                                $new_string = &#39;&#39;;
+                                while ($es_pos = strpos($string, $this-&gt;language_data[&#39;ESCAPE_CHAR&#39;], $start)) {
+                                    $new_string .= GeSHi::hsc(substr($string, $start, $es_pos - $start))
+                                                  . &quot;&lt;span$escape_char_attributes&gt;&quot; . $escaped_escape_char;
+                                    if ($string[$es_pos + 1] == &quot;\n&quot;) {
+                                      // don&#39;t put a newline around newlines
+                                      $new_string .= &quot;&lt;/span&gt;\n&quot;;
+                                    } else {
+                                      $new_string .= GeSHi::hsc($string[$es_pos + 1]) . &#39;&lt;/span&gt;&#39;;
+                                    }
+                                    $start = $es_pos + 2;
+                                }
+                                $string = $new_string . GeSHi::hsc(substr($string, $start));
+                                $new_string = &#39;&#39;;
+                            } else {
+                                $string = GeSHi::hsc($string);
+                            }
+
+                            if ($check_linenumbers) {
+                                // Are line numbers used? If, we should end the string before
+                                // the newline and begin it again (so when &lt;li&gt;s are put in the source
+                                // remains XHTML compliant)
+                                // note to self: This opens up possibility of config files specifying
+                                // that languages can/cannot have multiline strings???
+                                $string = str_replace(&quot;\n&quot;, &quot;&lt;/span&gt;\n&lt;span$string_attributes&gt;&quot;, $string);
+                            }
+
+                            $result .= &quot;&lt;span$string_attributes&gt;&quot; . $string . &#39;&lt;/span&gt;&#39;;
+                            $string = &#39;&#39;;
+                            continue;
+                        }
+                        else if ($hq &amp;&amp; substr($part, $i, $hq_strlen) == $hq &amp;&amp; $this-&gt;lexic_permissions[&#39;STRINGS&#39;]) {
+                            // The start of a hard quoted string
+
+                            // parse the stuff before this
+                            $result .= $this-&gt;parse_non_string_part($stuff_to_parse);
+                            $stuff_to_parse = &#39;&#39;;
+
+                            // now handle the string
+                            $string = &#39;&#39;;
+
+                            // look for closing quote
+                            $start = $i + $hq_strlen;
+                            while ($close_pos = strpos($part, $this-&gt;language_data[&#39;HARDQUOTE&#39;][1], $start + 1)) {
+                                $start = $close_pos;
+                                if ($this-&gt;lexic_permissions[&#39;ESCAPE_CHAR&#39;] &amp;&amp; $part[$close_pos - 1] == $this-&gt;language_data[&#39;ESCAPE_CHAR&#39;]) {
+                                    // make sure this quote is not escaped
+                                    foreach ($this-&gt;language_data[&#39;HARDESCAPE&#39;] as $hardescape) {
+                                        if (substr($part, $close_pos - 1, strlen($hardescape)) == $hardescape) {
+                                            // this quote is escaped
+                                            continue 2;
+                                        }
+                                    }
+                                }
+                                // found closing quote
+                                break;
+                            }
+                            if (!$close_pos) {
+                              // span till the end of this $part when no closing delimiter is found
+                              $close_pos = $length;
+                            }
+
+                            $string = substr($part, $i, $close_pos - $i + 1);
+                            $i = $close_pos;
+
+                            // handle escape chars and encode html chars
+                            // (special because when we have escape chars within our string they may not be escaped)
+                            if ($this-&gt;lexic_permissions[&#39;ESCAPE_CHAR&#39;] &amp;&amp; $this-&gt;language_data[&#39;ESCAPE_CHAR&#39;]) {
+                                $start = 0;
+                                $new_string = &#39;&#39;;
+                                while ($es_pos = strpos($string, $this-&gt;language_data[&#39;ESCAPE_CHAR&#39;], $start)) {
+                                    // hmtl escape stuff before
+                                    $new_string .= GeSHi::hsc(substr($string, $start, $es_pos - $start));
+                                    // check if this is a hard escape
+                                    foreach ($this-&gt;language_data[&#39;HARDESCAPE&#39;] as $hardescape) {
+                                        if (substr($string, $es_pos, strlen($hardescape)) == $hardescape) {
+                                            // indeed, this is a hardescape
+                                          $new_string .= &quot;&lt;span$escape_char_attributes&gt;&quot; . GeSHi::hsc($hardescape)
+                                                        . &#39;&lt;/span&gt;&#39;;
+                                          $start = $es_pos + strlen($hardescape);
+                                          continue 2;
+                                        }
+                                    }
+                                    // not a hard escape
+                                    $new_string .= $escaped_escape_char;
+                                    $start = $es_pos + 1;
+                                }
+                                $string = $new_string . GeSHi::hsc(substr($string, $start));
+                            } else {
+                                $string = GeSHi::hsc($string);
+                            }
+
+                            if ($check_linenumbers) {
+                                // Are line numbers used? If, we should end the string before
+                                // the newline and begin it again (so when &lt;li&gt;s are put in the source
+                                // remains XHTML compliant)
+                                // note to self: This opens up possibility of config files specifying
+                                // that languages can/cannot have multiline strings???
+                                $string = str_replace(&quot;\n&quot;, &quot;&lt;/span&gt;\n&lt;span$string_attributes&gt;&quot;, $string);
+                            }
+
+                            $result .= &quot;&lt;span$string_attributes&gt;&quot; . $string . &#39;&lt;/span&gt;&#39;;
+                            $string = &#39;&#39;;
+                            continue;
+                        }
+                        else {
+                            // update regexp comment cache if needed
+                            if (isset($this-&gt;language_data[&#39;COMMENT_REGEXP&#39;]) &amp;&amp; $next_comment_regexp_pos &lt; $i) {
+                                $next_comment_regexp_pos = $length;
+                                foreach ($this-&gt;language_data[&#39;COMMENT_REGEXP&#39;] as $comment_key =&gt; $regexp) {
+                                    $match_i = false;
+                                    if (isset($comment_regexp_cache_per_key[$comment_key]) &amp;&amp;
+                                        $comment_regexp_cache_per_key[$comment_key] &gt;= $i) {
+                                        // we have already matched something
+                                        $match_i = $comment_regexp_cache_per_key[$comment_key];
+                                    }
+                                    else if (preg_match($regexp, $part, $match, PREG_OFFSET_CAPTURE, $i)) {
+                                        $match_i = $match[0][1];
+                                        $comment_regexp_cache[$match_i] = array(
+                                            &#39;key&#39; =&gt; $comment_key,
+                                            &#39;length&#39; =&gt; strlen($match[0][0]),
+                                        );
+                                        $comment_regexp_cache_per_key[$comment_key] = $match_i;
+                                    } else {
+                                        $comment_regexp_cache_per_key[$comment_key] = false;
+                                        continue;
+                                    }
+
+                                    if ($match_i !== false &amp;&amp; $match_i &lt; $next_comment_regexp_pos) {
+                                        $next_comment_regexp_pos = $match_i;
+                                        if ($match_i === $i) {
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            //Have a look for regexp comments
+                            if ($i == $next_comment_regexp_pos) {
+                                $COMMENT_MATCHED = true;
+                                $comment = $comment_regexp_cache[$next_comment_regexp_pos];
+                                $test_str = GeSHi::hsc(substr($part, $i, $comment[&#39;length&#39;]));
+
+                                //@todo If remove important do remove here
+                                if ($this-&gt;lexic_permissions[&#39;COMMENTS&#39;][&#39;MULTI&#39;]) {
+                                    if (!$this-&gt;use_classes) {
+                                        $attributes = &#39; style=&quot;&#39; . $this-&gt;language_data[&#39;STYLES&#39;][&#39;COMMENTS&#39;][$comment[&#39;key&#39;]] . &#39;&quot;&#39;;
+                                    }
+                                    else {
+                                        $attributes = &#39; class=&quot;co&#39; . $comment[&#39;key&#39;] . &#39;&quot;&#39;;
+                                    }
+                                    $test_str = &quot;&lt;span$attributes&gt;&quot; . $test_str . &quot;&lt;/span&gt;&quot;;
+
+                                    // Short-cut through all the multiline code
+                                    if ($check_linenumbers) {
+                                        // strreplace to put close span and open span around multiline newlines
+                                        $test_str = str_replace(
+                                            &quot;\n&quot;, &quot;&lt;/span&gt;\n&lt;span$attributes&gt;&quot;,
+                                            str_replace(&quot;\n &quot;, &quot;\n&amp;nbsp;&quot;, $test_str)
+                                        );
+                                    }
+                                }
+
+                                $i += $comment[&#39;length&#39;] - 1;
+
+                                // parse the rest
+                                $result .= $this-&gt;parse_non_string_part($stuff_to_parse);
+                                $stuff_to_parse = &#39;&#39;;
+                            }
+                            // If we haven&#39;t matched a regexp comment, try multi-line comments
+                            if (!$COMMENT_MATCHED) {
+                                // Is this a multiline comment?
+                                foreach ($this-&gt;language_data[&#39;COMMENT_MULTI&#39;] as $open =&gt; $close) {
+                                    $com_len = strlen($open);
+                                    $test_str = substr( $part, $i, $com_len );
+                                    $test_str_match = $test_str;
+                                    if (strtolower($open) == strtolower($test_str)) {
+                                        $COMMENT_MATCHED = true;
+                                        //@todo If remove important do remove here
+                                        if ($this-&gt;lexic_permissions[&#39;COMMENTS&#39;][&#39;MULTI&#39;] ||
+                                            $test_str == GESHI_START_IMPORTANT) {
+                                            if ($test_str != GESHI_START_IMPORTANT) {
+                                                if (!$this-&gt;use_classes) {
+                                                    $attributes = &#39; style=&quot;&#39; . $this-&gt;language_data[&#39;STYLES&#39;][&#39;COMMENTS&#39;][&#39;MULTI&#39;] . &#39;&quot;&#39;;
+                                                }
+                                                else {
+                                                    $attributes = &#39; class=&quot;coMULTI&quot;&#39;;
+                                                }
+                                                $test_str = &quot;&lt;span$attributes&gt;&quot; . GeSHi::hsc($test_str);
+                                            }
+                                            else {
+                                                if (!$this-&gt;use_classes) {
+                                                    $attributes = &#39; style=&quot;&#39; . $this-&gt;important_styles . &#39;&quot;&#39;;
+                                                }
+                                                else {
+                                                    $attributes = &#39; class=&quot;imp&quot;&#39;;
+                                                }
+                                                // We don&#39;t include the start of the comment if it&#39;s an
+                                                // &quot;important&quot; part
+                                                $test_str = &quot;&lt;span$attributes&gt;&quot;;
+                                            }
+                                        }
+                                        else {
+                                            $test_str = GeSHi::hsc($test_str);
+                                        }
+
+                                        $close_pos = strpos( $part, $close, $i + strlen($open) );
+
+                                        if ($close_pos === false) {
+                                            $close_pos = $length;
+                                        }
+
+                                        // Short-cut through all the multiline code
+                                        $rest_of_comment = GeSHi::hsc(substr($part, $i + strlen($open), $close_pos - $i - strlen($open) + strlen($close)));
+                                        if (($this-&gt;lexic_permissions[&#39;COMMENTS&#39;][&#39;MULTI&#39;] ||
+                                            $test_str_match == GESHI_START_IMPORTANT) &amp;&amp;
+                                            $check_linenumbers) {
+                                            // strreplace to put close span and open span around multiline newlines
+                                            $test_str .= str_replace(
+                                                &quot;\n&quot;, &quot;&lt;/span&gt;\n&lt;span$attributes&gt;&quot;,
+                                                str_replace(&quot;\n &quot;, &quot;\n&amp;nbsp;&quot;, $rest_of_comment)
+                                            );
+                                        }
+                                        else {
+                                            $test_str .= $rest_of_comment;
+                                        }
+
+                                        if ($this-&gt;lexic_permissions[&#39;COMMENTS&#39;][&#39;MULTI&#39;] ||
+                                            $test_str_match == GESHI_START_IMPORTANT) {
+                                            $test_str .= &#39;&lt;/span&gt;&#39;;
+                                        }
+                                        $i = $close_pos + strlen($close) - 1;
+                                        // parse the rest
+                                        $result .= $this-&gt;parse_non_string_part($stuff_to_parse);
+                                        $stuff_to_parse = &#39;&#39;;
+                                        break;
+                                    }
+                                }
+                            }
+                            // If we haven&#39;t matched a multiline comment, try single-line comments
+                            if (!$COMMENT_MATCHED) {
+                                foreach ($this-&gt;language_data[&#39;COMMENT_SINGLE&#39;] as $comment_key =&gt; $comment_mark) {
+                                    $com_len = strlen($comment_mark);
+                                    $test_str = substr($part, $i, $com_len);
+                                    if ($this-&gt;language_data[&#39;CASE_SENSITIVE&#39;][GESHI_COMMENTS]) {
+                                        $match = ($comment_mark == $test_str);
+                                    }
+                                    else {
+                                        $match = (strtolower($comment_mark) == strtolower($test_str));
+                                    }
+                                    //This check will find special variables like $# in bash or compiler directives of Delphi beginning {$
+                                    if($match) {
+                                        $match = $match &amp;&amp; (empty($sc_disallowed_before) || ((false === strpos($sc_disallowed_before, $part[$i-1])) &amp;&amp; (0 != $i)));
+                                        $match = $match &amp;&amp; (empty($sc_disallowed_after) || ((false === strpos($sc_disallowed_after, $part[$i+1])) &amp;&amp; ($length-1&gt;$i)));
+                                    }
+                                    if ($match) {
+                                        $COMMENT_MATCHED = true;
+                                        if ($this-&gt;lexic_permissions[&#39;COMMENTS&#39;][$comment_key]) {
+                                            if (!$this-&gt;use_classes) {
+                                                $attributes = &#39; style=&quot;&#39; . $this-&gt;language_data[&#39;STYLES&#39;][&#39;COMMENTS&#39;][$comment_key] . &#39;&quot;&#39;;
+                                            }
+                                            else {
+                                                $attributes = &#39; class=&quot;co&#39; . $comment_key . &#39;&quot;&#39;;
+                                            }
+                                            $test_str = &quot;&lt;span$attributes&gt;&quot; . GeSHi::hsc($this-&gt;change_case($test_str));
+                                        }
+                                        else {
+                                            $test_str = GeSHi::hsc($test_str);
+                                        }
+                                        $close_pos = strpos($part, &quot;\n&quot;, $i);
+                                        $oops = false;
+                                        if ($close_pos === false) {
+                                            $close_pos = $length;
+                                            $oops = true;
+                                        }
+                                        $test_str .= GeSHi::hsc(substr($part, $i + $com_len, $close_pos - $i - $com_len));
+                                        if ($this-&gt;lexic_permissions[&#39;COMMENTS&#39;][$comment_key]) {
+                                            $test_str .= &quot;&lt;/span&gt;&quot;;
+                                        }
+                                        // Take into account that the comment might be the last in the source
+                                        if (!$oops) {
+                                          $test_str .= &quot;\n&quot;;
+                                        }
+                                        $i = $close_pos;
+                                        // parse the rest
+                                        $result .= $this-&gt;parse_non_string_part($stuff_to_parse);
+                                        $stuff_to_parse = &#39;&#39;;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        // Where are we adding this char?
+                        if (!$COMMENT_MATCHED) {
+                            $stuff_to_parse .= $char;
+                        }
+                        else {
+                            $result .= $test_str;
+                            $COMMENT_MATCHED = false;
+                        }
+                    }
+                    // Parse the last bit
+                    $result .= $this-&gt;parse_non_string_part($stuff_to_parse);
+                    $stuff_to_parse = &#39;&#39;;
+                }
+                else {
+                    if ($STRICTATTRS != &#39;&#39;) {
+                        $part = str_replace(&quot;\n&quot;, &quot;&lt;/span&gt;\n&lt;span$STRICTATTRS&gt;&quot;, GeSHi::hsc($part));
+                        $STRICTATTRS = &#39;&#39;;
+                    }
+                    $result .= $part;
+                }
+                // Close the &lt;span&gt; that surrounds the block
+                if ($this-&gt;strict_mode &amp;&amp; $this-&gt;language_data[&#39;STYLES&#39;][&#39;SCRIPT&#39;][$script_key] != &#39;&#39; &amp;&amp;
+                    $this-&gt;lexic_permissions[&#39;SCRIPT&#39;]) {
+                    $result .= &#39;&lt;/span&gt;&#39;;
+                }
+            }
+            else {
+                // Else not a block to highlight
+                $result .= GeSHi::hsc($part);
+            }
+        }
+
+        //This fix is related to SF#1923020, but has to be applied regardless of
+        //actually highlighting symbols.
+        $result = str_replace(array(&#39;&lt;SEMI&gt;&#39;, &#39;&lt;PIPE&gt;&#39;), array(&#39;;&#39;, &#39;|&#39;), $result);
+
+//        // Parse the last stuff (redundant?)
+//        $result .= $this-&gt;parse_non_string_part($stuff_to_parse);
+
+        // Lop off the very first and last spaces
+        $result = substr($result, 1, -1);
+
+        // We&#39;re finished: stop timing
+        $this-&gt;set_time($start_time, microtime());
+
+        return $this-&gt;finalise($result);
+    }
+
+    /**
+     * Swaps out spaces and tabs for HTML indentation. Not needed if
+     * the code is in a pre block...
+     *
+     * @param  string The source to indent
+     * @return string The source with HTML indenting applied
+     * @since  1.0.0
+     * @access private
+     */
+    function indent(&amp;$result) {
+        /// Replace tabs with the correct number of spaces
+        if (false !== strpos($result, &quot;\t&quot;)) {
+            $lines = explode(&quot;\n&quot;, $result);
+            $result = null;//Save memory while we process the lines individually
+            $tab_width = $this-&gt;get_real_tab_width();
+            $tab_string = &#39;&amp;nbsp;&#39; . str_repeat(&#39; &#39;, $tab_width);
+
+            for ($key = 0, $n = count($lines); $key &lt; $n; $key++) {
+                $line = $lines[$key];
+                if (false === strpos($line, &quot;\t&quot;)) {
+                    continue;
+                }
+
+                $pos = 0;
+                $length = strlen($line);
+                $lines[$key] = &#39;&#39;; // reduce memory
+
+                $IN_TAG = false;
+                for ($i = 0; $i &lt; $length; ++$i) {
+                    $char = $line[$i];
+                    // Simple engine to work out whether we&#39;re in a tag.
+                    // If we are we modify $pos. This is so we ignore HTML
+                    // in the line and only workout the tab replacement
+                    // via the actual content of the string
+                    // This test could be improved to include strings in the
+                    // html so that &lt; or &gt; would be allowed in user&#39;s styles
+                    // (e.g. quotes: &#39;&lt;&#39; &#39;&gt;&#39;; or similar)
+                    if ($IN_TAG) {
+                        if(&#39;&gt;&#39; == $char) {
+                            $IN_TAG = false;
+                        }
+                        $lines[$key] .= $char;
+                    }
+                    else if (&#39;&lt;&#39; == $char) {
+                        $IN_TAG = true;
+                        $lines[$key] .= &#39;&lt;&#39;;
+                    }
+                    else if (&#39;&amp;&#39; == $char) {
+                        $substr = substr($line, $i + 3, 5);
+                        $posi = strpos($substr, &#39;;&#39;);
+                        if (false === $posi) {
+                            ++$pos;
+                        } else {
+                            $pos -= $posi+2;
+                        }
+                        $lines[$key] .= $char;
+                    }
+                    else if (&quot;\t&quot; == $char) {
+                        $str = &#39;&#39;;
+                        // OPTIMISE - move $strs out. Make an array:
+                        // $tabs = array(
+                        //  1 =&gt; &#39;&amp;nbsp;&#39;,
+                        //  2 =&gt; &#39;&amp;nbsp; &#39;,
+                        //  3 =&gt; &#39;&amp;nbsp; &amp;nbsp;&#39; etc etc
+                        // to use instead of building a string every time
+                        $tab_end_width = $tab_width - ($pos % $tab_width); //Moved out of the look as it doesn&#39;t change within the loop
+                        if(($pos%2) || 1 == $tab_end_width) {
+                            $str .= substr($tab_string, 6, $tab_end_width);
+                        } else {
+                            $str .= substr($tab_string, 0, $tab_end_width+5);
+                        }
+                        $lines[$key] .= $str;
+                        $pos += $tab_end_width;
+
+                        if (false === strpos($line, &quot;\t&quot;, $i + 1)) {
+                            $lines[$key] .= substr($line, $i + 1);
+                            break;
+                        }
+                    }
+                    else if (0 == $pos &amp;&amp; &#39; &#39; == $char) {
+                        $lines[$key] .= &#39;&amp;nbsp;&#39;;
+                        ++$pos;
+                    }
+                    else {
+                        $lines[$key] .= $char;
+                        ++$pos;
+                    }
+                }
+            }
+            $result = implode(&quot;\n&quot;, $lines);
+            unset($lines);//We don&#39;t need the lines separated beyond this --- free them!
+        }
+        // Other whitespace
+        // BenBE: Fix to reduce the number of replacements to be done
+        $result = preg_replace(&#39;/^ /m&#39;, &#39;&amp;nbsp;&#39;, $result);
+        $result = str_replace(&#39;  &#39;, &#39; &amp;nbsp;&#39;, $result);
+
+        if ($this-&gt;line_numbers == GESHI_NO_LINE_NUMBERS) {
+            if ($this-&gt;line_ending === null) {
+                $result = nl2br($result);
+            } else {
+                $result = str_replace(&quot;\n&quot;, $this-&gt;line_ending, $result);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Changes the case of a keyword for those languages where a change is asked for
+     *
+     * @param  string The keyword to change the case of
+     * @return string The keyword with its case changed
+     * @since  1.0.0
+     * @access private
+     */
+    function change_case($instr) {
+        switch ($this-&gt;language_data[&#39;CASE_KEYWORDS&#39;]) {
+            case GESHI_CAPS_UPPER:
+                return strtoupper($instr);
+            case GESHI_CAPS_LOWER:
+                return strtolower($instr);
+            default:
+                return $instr;
+        }
+    }
+
+    /**
+     * Adds a url to a keyword where needed.
+     *
+     * @param  string The keyword to add the URL HTML to
+     * @param  int What group the keyword is from
+     * @param  boolean Whether to get the HTML for the start or end
+     * @return The HTML for either the start or end of the HTML &amp;lt;a&amp;gt; tag
+     * @since  1.0.2
+     * @access private
+     * @todo   Get rid of ender
+     */
+    function add_url_to_keyword($keyword, $group, $start_or_end) {
+        if (!$this-&gt;keyword_links) {
+            // Keyword links have been disabled
+            return;
+        }
+
+        if (isset($this-&gt;language_data[&#39;URLS&#39;][$group]) &amp;&amp;
+            $this-&gt;language_data[&#39;URLS&#39;][$group] != &#39;&#39; &amp;&amp;
+            substr($keyword, 0, 5) != &#39;&amp;lt;/&#39;) {
+            // There is a base group for this keyword
+            if ($start_or_end == &#39;BEGIN&#39;) {
+                // HTML workaround... not good form (tm) but should work for 1.0.X
+                if ($keyword != &#39;&#39;) {
+                    // Old system: strtolower
+                    //$keyword = ( $this-&gt;language_data[&#39;CASE_SENSITIVE&#39;][$group] ) ? $keyword : strtolower($keyword);
+                    // New system: get keyword from language file to get correct case
+                    $lower_keyword = strtolower($keyword);
+                    foreach ($this-&gt;language_data[&#39;KEYWORDS&#39;][$group] as $word) {
+                        if (strtolower($word) == $lower_keyword) {
+                            break;
+                        }
+                    }
+                    $word = ( substr($word, 0, 4) == &#39;&amp;lt;&#39; ) ? substr($word, 4) : $word;
+                    $word = ( substr($word, -4) == &#39;&amp;gt;&#39; ) ? substr($word, 0, - 4) : $word;
+                    if (!$word) return &#39;&#39;;
+
+                    return &#39;&lt;|UR1|&quot;&#39; .
+                        str_replace(
+                            array(&#39;{FNAME}&#39;, &#39;{FNAMEL}&#39;, &#39;{FNAMEU}&#39;, &#39;.&#39;),
+                            array(GeSHi::hsc($word), GeSHi::hsc(strtolower($word)),
+                                GeSHi::hsc(strtoupper($word)), &#39;&lt;DOT&gt;&#39;),
+                            $this-&gt;language_data[&#39;URLS&#39;][$group]
+                        ) . &#39;&quot;&gt;&#39;;
+                }
+                return &#39;&#39;;
+            // HTML fix. Again, dirty hackage...
+            }
+            else if (!($this-&gt;language == &#39;html4strict&#39; &amp;&amp; (&#39;&amp;gt;&#39; == $keyword || &#39;&amp;lt;&#39; == $keyword))) {
+                return &#39;&lt;/a&gt;&#39;;
+            }
+        }
+    }
+
+    /**
+     * Takes a string that has no strings or comments in it, and highlights
+     * stuff like keywords, numbers and methods.
+     *
+     * @param string The string to parse for keyword, numbers etc.
+     * @since 1.0.0
+     * @access private
+     * @todo BUGGY! Why? Why not build string and return?
+     */
+    function parse_non_string_part(&amp;$stuff_to_parse) {
+        $stuff_to_parse = &#39; &#39; . GeSHi::hsc($stuff_to_parse);
+        $stuff_to_parse_pregquote = preg_quote($stuff_to_parse, &#39;/&#39;);
+        $func = &#39;$this-&gt;change_case&#39;;
+        $func2 = &#39;$this-&gt;add_url_to_keyword&#39;;
+
+        //
+        // Regular expressions
+        //
+        foreach ($this-&gt;language_data[&#39;REGEXPS&#39;] as $key =&gt; $regexp) {
+            if ($this-&gt;lexic_permissions[&#39;REGEXPS&#39;][$key]) {
+                if (is_array($regexp)) {
+                    $stuff_to_parse = preg_replace(
+                        &quot;/&quot; .
+                        str_replace(&#39;/&#39;, &#39;\/&#39;, $regexp[GESHI_SEARCH]) .
+                        &quot;/{$regexp[GESHI_MODIFIERS]}&quot;,
+                        &quot;{$regexp[GESHI_BEFORE]}&lt;|!REG3XP$key!&gt;{$regexp[GESHI_REPLACE]}|&gt;{$regexp[GESHI_AFTER]}&quot;,
+                        $stuff_to_parse
+                    );
+                }
+                else {
+                    $stuff_to_parse = preg_replace( &quot;/(&quot; . str_replace(&#39;/&#39;, &#39;\/&#39;, $regexp) . &quot;)/&quot;, &quot;&lt;|!REG3XP$key!&gt;\\1|&gt;&quot;, $stuff_to_parse);
+                }
+            }
+        }
+
+        //
+        // Highlight numbers. This regexp sucks... anyone with a regexp that WORKS
+        // here wins a cookie if they send it to me. At the moment there&#39;s two doing
+        // almost exactly the same thing, except the second one prevents a number
+        // being highlighted twice (eg &lt;span...&gt;&lt;span...&gt;5&lt;/span&gt;&lt;/span&gt;)
+        // Put /NUM!/ in for the styles, which gets replaced at the end.
+        //
+        // NEW ONE: Brice Bernard
+        //
+        if ($this-&gt;lexic_permissions[&#39;NUMBERS&#39;] &amp;&amp; preg_match(&#39;#[0-9]#&#39;, $stuff_to_parse )) {
+            $stuff_to_parse = preg_replace(&#39;/([-+]?\\b(?:[0-9]*\\.)?[0-9]+\\b)/&#39;, &#39;&lt;|/NUM!/&gt;\\1|&gt;&#39;, $stuff_to_parse);
+        }
+
+        // Highlight keywords
+        // if there is a couple of alpha symbols there *might* be a keyword
+        if (preg_match(&#39;#[a-zA-Z]{2,}#&#39;, $stuff_to_parse)) {
+            $disallowed_before = &quot;a-zA-Z0-9\$_\|\#;&gt;|^&quot;;
+            $disallowed_after = &quot;a-zA-Z0-9_\|%\\-&amp;&quot;;
+            if(isset($this-&gt;language_data[&#39;PARSER_CONTROL&#39;])) {
+                if (isset($this-&gt;language_data[&#39;PARSER_CONTROL&#39;][&#39;KEYWORDS&#39;])) {
+                    if (isset($this-&gt;language_data[&#39;PARSER_CONTROL&#39;][&#39;KEYWORDS&#39;][&#39;DISALLOWED_BEFORE&#39;])) {
+                        $disallowed_before = $this-&gt;language_data[&#39;PARSER_CONTROL&#39;][&#39;KEYWORDS&#39;][&#39;DISALLOWED_BEFORE&#39;];
+                    }
+                    if (isset($this-&gt;language_data[&#39;PARSER_CONTROL&#39;][&#39;KEYWORDS&#39;][&#39;DISALLOWED_AFTER&#39;])) {
+                        $disallowed_after = $this-&gt;language_data[&#39;PARSER_CONTROL&#39;][&#39;KEYWORDS&#39;][&#39;DISALLOWED_AFTER&#39;];
+                    }
+                }
+            }
+
+            foreach ($this-&gt;language_data[&#39;KEYWORDS&#39;] as $k =&gt; $keywordset) {
+                if (!isset($this-&gt;lexic_permissions[&#39;KEYWORDS&#39;][$k]) ||
+                    $this-&gt;lexic_permissions[&#39;KEYWORDS&#39;][$k]) {
+
+                    $case_sensitive = $this-&gt;language_data[&#39;CASE_SENSITIVE&#39;][$k];
+                    $modifiers = $case_sensitive ? &#39;e&#39; : &#39;ie&#39;;
+                    $styles = &quot;/$k/&quot;;
+
+                    foreach ($keywordset as $keyword) {
+                        $keyword = preg_quote($keyword, &#39;/&#39;);
+                        //
+                        // This replacement checks the word is on it&#39;s own (except if brackets etc
+                        // are next to it), then highlights it. We don&#39;t put the color=&quot; for the span
+                        // in just yet - otherwise languages with the keywords &quot;color&quot; or &quot;or&quot; have
+                        // a fit.
+                        //
+                        if ($case_sensitive) {
+                            $keyword_found = strpos($stuff_to_parse_pregquote, $keyword) !== false;
+                        } else {
+                            $keyword_found = stristr($stuff_to_parse_pregquote, $keyword) !== false;
+                        }
+                        if ($keyword_found) {
+                            // Might make a more unique string for putting the number in soon
+                            // Basically, we don&#39;t put the styles in yet because then the styles themselves will
+                            // get highlighted if the language has a CSS keyword in it (like CSS, for example ;))
+
+                            $stuff_to_parse .= &#39; &#39;;
+                            $stuff_to_parse = preg_replace(
+                                &quot;/([^$disallowed_before])($keyword)(?!\&lt;DOT\&gt;(?:htm|php))(?=[^$disallowed_after])/$modifiers&quot;,
+                                &quot;&#39;\\1&#39; . $func2(&#39;\\2&#39;, &#39;$k&#39;, &#39;BEGIN&#39;) . &#39;&lt;|$styles&gt;&#39; . $func(&#39;\\2&#39;) . &#39;|&gt;&#39; . $func2(&#39;\\2&#39;, &#39;$k&#39;, &#39;END&#39;)&quot;,
+                                $stuff_to_parse
+                            );
+
+                            $stuff_to_parse = substr($stuff_to_parse, 0, -1);
+                        }
+                    }
+                }
+            }
+        }
+
+        //
+        // Now that&#39;s all done, replace /[number]/ with the correct styles
+        //
+        foreach ($this-&gt;language_data[&#39;KEYWORDS&#39;] as $k =&gt; $kws) {
+            if (!$this-&gt;use_classes) {
+                $attributes = &#39; style=&quot;&#39; .
+                    (isset($this-&gt;language_data[&#39;STYLES&#39;][&#39;KEYWORDS&#39;][$k]) ?
+                    $this-&gt;language_data[&#39;STYLES&#39;][&#39;KEYWORDS&#39;][$k] : &quot;&quot;) . &#39;&quot;&#39;;
+            }
+            else {
+                $attributes = &#39; class=&quot;kw&#39; . $k . &#39;&quot;&#39;;
+            }
+            $stuff_to_parse = str_replace(&quot;/$k/&quot;, $attributes, $stuff_to_parse);
+        }
+
+        // Put number styles in
+        if (!$this-&gt;use_classes &amp;&amp; $this-&gt;lexic_permissions[&#39;NUMBERS&#39;]) {
+            $attributes = &#39; style=&quot;&#39; . $this-&gt;language_data[&#39;STYLES&#39;][&#39;NUMBERS&#39;][0] . &#39;&quot;&#39;;
+        }
+        else {
+            $attributes = &#39; class=&quot;nu0&quot;&#39;;
+        }
+        $stuff_to_parse = str_replace(&#39;/NUM!/&#39;, $attributes, $stuff_to_parse);
+
+        //
+        // Highlight methods and fields in objects
+        //
+        if ($this-&gt;lexic_permissions[&#39;METHODS&#39;] &amp;&amp; $this-&gt;language_data[&#39;OOLANG&#39;]) {
+            foreach ($this-&gt;language_data[&#39;OBJECT_SPLITTERS&#39;] as $key =&gt; $splitter) {
+                if (false !== stristr($stuff_to_parse, $splitter)) {
+                    if (!$this-&gt;use_classes) {
+                        $attributes = &#39; style=&quot;&#39; . $this-&gt;language_data[&#39;STYLES&#39;][&#39;METHODS&#39;][$key] . &#39;&quot;&#39;;
+                    }
+                    else {
+                        $attributes = &#39; class=&quot;me&#39; . $key . &#39;&quot;&#39;;
+                    }
+                    $stuff_to_parse = preg_replace(&quot;/(&quot; . preg_quote($this-&gt;language_data[&#39;OBJECT_SPLITTERS&#39;][$key], 1) . &quot;[\s]*)([a-zA-Z\*\(][a-zA-Z0-9_\*]*)/&quot;, &quot;\\1&lt;|$attributes&gt;\\2|&gt;&quot;, $stuff_to_parse);
+                }
+            }
+        }
+
+        //
+        // Highlight brackets. Yes, I&#39;ve tried adding a semi-colon to this list.
+        // You try it, and see what happens ;)
+        // TODO: Fix lexic permissions not converting entities if shouldn&#39;t
+        // be highlighting regardless
+        //
+        if ($this-&gt;lexic_permissions[&#39;BRACKETS&#39;]) {
+            $code_entities_match = array(&#39;[&#39;, &#39;]&#39;, &#39;(&#39;, &#39;)&#39;, &#39;{&#39;, &#39;}&#39;);
+            if (!$this-&gt;use_classes &amp;&amp; isset($this-&gt;language_data[&#39;STYLES&#39;][&#39;BRACKETS&#39;][0])) {
+                $code_entities_replace = array(
+                    &#39;&lt;| style=&quot;&#39; . $this-&gt;language_data[&#39;STYLES&#39;][&#39;BRACKETS&#39;][0] . &#39;&quot;&gt;&amp;#91;|&gt;&#39;,
+                    &#39;&lt;| style=&quot;&#39; . $this-&gt;language_data[&#39;STYLES&#39;][&#39;BRACKETS&#39;][0] . &#39;&quot;&gt;&amp;#93;|&gt;&#39;,
+                    &#39;&lt;| style=&quot;&#39; . $this-&gt;language_data[&#39;STYLES&#39;][&#39;BRACKETS&#39;][0] . &#39;&quot;&gt;&amp;#40;|&gt;&#39;,
+                    &#39;&lt;| style=&quot;&#39; . $this-&gt;language_data[&#39;STYLES&#39;][&#39;BRACKETS&#39;][0] . &#39;&quot;&gt;&amp;#41;|&gt;&#39;,
+                    &#39;&lt;| style=&quot;&#39; . $this-&gt;language_data[&#39;STYLES&#39;][&#39;BRACKETS&#39;][0] . &#39;&quot;&gt;&amp;#123;|&gt;&#39;,
+                    &#39;&lt;| style=&quot;&#39; . $this-&gt;language_data[&#39;STYLES&#39;][&#39;BRACKETS&#39;][0] . &#39;&quot;&gt;&amp;#125;|&gt;&#39;,
+                );
+            }
+            else {
+                $code_entities_replace = array(
+                    &#39;&lt;| class=&quot;br0&quot;&gt;&amp;#91;|&gt;&#39;,
+                    &#39;&lt;| class=&quot;br0&quot;&gt;&amp;#93;|&gt;&#39;,
+                    &#39;&lt;| class=&quot;br0&quot;&gt;&amp;#40;|&gt;&#39;,
+                    &#39;&lt;| class=&quot;br0&quot;&gt;&amp;#41;|&gt;&#39;,
+                    &#39;&lt;| class=&quot;br0&quot;&gt;&amp;#123;|&gt;&#39;,
+                    &#39;&lt;| class=&quot;br0&quot;&gt;&amp;#125;|&gt;&#39;,
+                );
+            }
+            $stuff_to_parse = str_replace( $code_entities_match,  $code_entities_replace, $stuff_to_parse );
+        }
+
+        //FIX for symbol highlighting ...
+        if($this-&gt;lexic_permissions[&#39;SYMBOLS&#39;] &amp;&amp; !empty($this-&gt;language_data[&#39;SYMBOLS&#39;])) {
+            //As this is a costy operation, we avoid doing it for multiple groups ...
+            //Instead we perform it for all symbols at once.
+            //
+            //For this to work, we need to reorganize the data arrays.
+            $symbol_data = $symbol_preg = array();
+            foreach($this-&gt;language_data[&#39;SYMBOLS&#39;] as $key =&gt; $symbols) {
+                if(is_array($symbols)) {
+                    foreach($symbols as $sym) {
+                        if(!isset($symbol_data[$sym])) {
+                            $symbol_data[GeSHi::hsc($sym)] = $key;
+                            $symbol_preg[] = preg_quote(GeSHi::hsc($sym), &#39;/&#39;);
+                        }
+                    }
+                } else {
+                    if(!isset($symbol_data[$symbols])) {
+                        $symbol_data[GeSHi::hsc($symbols)] = 0;
+                        $symbol_preg[] = preg_quote(GESHI::hsc($symbols), &#39;/&#39;);
+                    }
+                }
+            }
+            //Now we have an array with each possible symbol as the key and the style as the actual data.
+            //This way we can set the correct style just the moment we highlight ...
+            //
+            //Now we need to rewrite our array to get a search string that
+            $sym_search = implode(&quot;|&quot;, $symbol_preg);
+            //Get all matches and throw away those witin a block that is already highlighted... (i.e. matched by a regexp)
+            preg_match_all(&quot;/(?:&quot; . $sym_search . &quot;)+/&quot;, $stuff_to_parse, $matches_in_stuff, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+            //Match anything that is a highlighted block ...
+            preg_match_all(&quot;/&lt;\|(?:&lt;DOT&gt;|[^&gt;])+&gt;(?:(?!\|&gt;).*?)\|&gt;|&lt;\/a&gt;/&quot;, $stuff_to_parse, $highlighted_in_stuff, PREG_OFFSET_CAPTURE);
+            foreach($matches_in_stuff as $stuff_match_id =&gt; $stuff_match_data) {
+                foreach($highlighted_in_stuff[0] as $highlight_id =&gt; $highlight_data) {
+                    //Do a range check of the found highlight identifier and the OOP match ...
+                    if(($highlight_data[1] &lt;= $stuff_match_data[0][1]) &amp;&amp;
+                        ($highlight_data[1] + strlen($highlight_data[0]) &gt;= $stuff_match_data[0][1] + strlen($stuff_match_data[0][0])))
+                    {
+                        //We found a match that was already highlighted ...
+                        unset($matches_in_stuff[$stuff_match_id]);
+                        break;
+                    }
+                }
+            }
+            //Rebuild the matches array to be ordered by offset ...
+            $symbol_offsets = array();
+            foreach($matches_in_stuff as $stuff_match_data) {
+                $symbol_offsets[$stuff_match_data[0][1]] = $stuff_match_data[0][0];
+            }
+            krsort($symbol_offsets);
+            //Perform the actual replacements ...
+            foreach($symbol_offsets as $symbol_offset =&gt; $symbol_match) {
+                $symbol_hl = &quot;&quot;;
+                $old_sym = -1;
+                //Split the current stuff to replace into its atomic symbols ...
+                preg_match_all(&quot;/$sym_search/&quot;, $symbol_match, $sym_match_syms, PREG_PATTERN_ORDER);
+                foreach($sym_match_syms[0] as $sym_ms) {
+                    //Check if consequtive symbols belong to the same group to save output ...
+                    if (isset($symbol_data[$sym_ms]) &amp;&amp; ($symbol_data[$sym_ms] != $old_sym)) {
+                        if(-1 != $old_sym) {
+                            $symbol_hl .= &quot;|&gt;&quot;;
+                        }
+                        $old_sym = $symbol_data[$sym_ms];
+                        if (!$this-&gt;use_classes) {
+                            $symbol_hl .= &#39;&lt;| style=&quot;&#39; . $this-&gt;language_data[&#39;STYLES&#39;][&#39;SYMBOLS&#39;][$old_sym] . &#39;&quot;&gt;&#39;;
+                        }
+                        else {
+                            $symbol_hl .= &#39;&lt;| class=&quot;sy&#39; . $old_sym . &#39;&quot;&gt;&#39;;
+                        }
+                    }
+                    $symbol_hl .= $sym_ms;
+                }
+                //Close remaining tags and insert the replacement at the right position ...
+                //Take caution if symbol_hl is empty to avoid doubled closing spans.
+                if (-1 != $old_sym) {
+                    $symbol_hl .= &quot;|&gt;&quot;;
+                }
+                $stuff_to_parse = substr($stuff_to_parse, 0, $symbol_offset) . $symbol_hl . substr($stuff_to_parse, $symbol_offset + strlen($symbol_match));
+            }
+        }
+        //FIX for symbol highlighting ...
+
+        //
+        // Add class/style for regexps
+        //
+        foreach ($this-&gt;language_data[&#39;REGEXPS&#39;] as $key =&gt; $regexp) {
+            if ($this-&gt;lexic_permissions[&#39;REGEXPS&#39;][$key]) {
+                if (is_callable($this-&gt;language_data[&#39;STYLES&#39;][&#39;REGEXPS&#39;][$key])) {
+                    $func = $this-&gt;language_data[&#39;STYLES&#39;][&#39;REGEXPS&#39;][$key];
+                    $stuff_to_parse = preg_replace(&quot;/!REG3XP$key!(.*)\|&gt;/eU&quot;,
+                        &quot;&#39; style=\&quot;&#39; . call_user_func(\&quot;$func\&quot;, &#39;\\1&#39;) . &#39;\&quot;\\1|&gt;&#39;&quot;, $stuff_to_parse);
+                }
+                else {
+                    if (!$this-&gt;use_classes) {
+                        $attributes = &#39; style=&quot;&#39; . $this-&gt;language_data[&#39;STYLES&#39;][&#39;REGEXPS&#39;][$key] . &#39;&quot;&#39;;
+                    }
+                    else {
+                        if (is_array($this-&gt;language_data[&#39;REGEXPS&#39;][$key]) &amp;&amp;
+                            array_key_exists(GESHI_CLASS, $this-&gt;language_data[&#39;REGEXPS&#39;][$key])) {
+                            $attributes = &#39; class=&quot;&#39; .
+                                $this-&gt;language_data[&#39;REGEXPS&#39;][$key][GESHI_CLASS] . &#39;&quot;&#39;;
+                        }
+                        else {
+                           $attributes = &#39; class=&quot;re&#39; . $key . &#39;&quot;&#39;;
+                        }
+                    }
+                    $stuff_to_parse = str_replace(&quot;!REG3XP$key!&quot;, &quot;$attributes&quot;, $stuff_to_parse);
+                }
+            }
+        }
+
+        // Replace &lt;DOT&gt; with . for urls
+        $stuff_to_parse = str_replace(&#39;&lt;DOT&gt;&#39;, &#39;.&#39;, $stuff_to_parse);
+        // Replace &lt;|UR1| with &lt;a href= for urls also
+        if (isset($this-&gt;link_styles[GESHI_LINK])) {
+            if ($this-&gt;use_classes) {
+                $stuff_to_parse = str_replace(&#39;&lt;|UR1|&#39;, &#39;&lt;a&#39; . $this-&gt;link_target . &#39; href=&#39;, $stuff_to_parse);
+            }
+            else {
+                $stuff_to_parse = str_replace(&#39;&lt;|UR1|&#39;, &#39;&lt;a&#39; . $this-&gt;link_target . &#39; style=&quot;&#39; . $this-&gt;link_styles[GESHI_LINK] . &#39;&quot; href=&#39;, $stuff_to_parse);
+            }
+        }
+        else {
+            $stuff_to_parse = str_replace(&#39;&lt;|UR1|&#39;, &#39;&lt;a&#39; . $this-&gt;link_target . &#39; href=&#39;, $stuff_to_parse);
+        }
+
+        //
+        // NOW we add the span thingy ;)
+        //
+
+        $stuff_to_parse = str_replace(&#39;&lt;|&#39;, &#39;&lt;span&#39;, $stuff_to_parse);
+        $stuff_to_parse = str_replace ( &#39;|&gt;&#39;, &#39;&lt;/span&gt;&#39;, $stuff_to_parse );
+
+        return substr($stuff_to_parse, 1);
+    }
+
+    /**
+     * Sets the time taken to parse the code
+     *
+     * @param microtime The time when parsing started
+     * @param microtime The time when parsing ended
+     * @since 1.0.2
+     * @access private
+     */
+    function set_time($start_time, $end_time) {
+        $start = explode(&#39; &#39;, $start_time);
+        $end = explode(&#39; &#39;, $end_time);
+        $this-&gt;time = $end[0] + $end[1] - $start[0] - $start[1];
+    }
+
+    /**
+     * Gets the time taken to parse the code
+     *
+     * @return double The time taken to parse the code
+     * @since  1.0.2
+     */
+    function get_time() {
+        return $this-&gt;time;
+    }
+
+    /**
+     * Gets language information and stores it for later use
+     *
+     * @param string The filename of the language file you want to load
+     * @since 1.0.0
+     * @access private
+     * @todo Needs to load keys for lexic permissions for keywords, regexps etc
+     */
+    function load_language($file_name) {
+        if ($file_name == $this-&gt;loaded_language) {
+            // this file is already loaded!
+            return;
+        }
+        $this-&gt;loaded_language = $file_name;
+        $this-&gt;enable_highlighting();
+        $language_data = array();
+        require $file_name;
+        // Perhaps some checking might be added here later to check that
+        // $language data is a valid thing but maybe not
+        $this-&gt;language_data = $language_data;
+        // Set strict mode if should be set
+        if ($this-&gt;language_data[&#39;STRICT_MODE_APPLIES&#39;] == GESHI_ALWAYS) {
+            $this-&gt;strict_mode = true;
+        }
+        // Set permissions for all lexics to true
+        // so they&#39;ll be highlighted by default
+        foreach ($this-&gt;language_data[&#39;KEYWORDS&#39;] as $key =&gt; $words) {
+            $this-&gt;lexic_permissions[&#39;KEYWORDS&#39;][$key] = true;
+        }
+        foreach ($this-&gt;language_data[&#39;COMMENT_SINGLE&#39;] as $key =&gt; $comment) {
+            $this-&gt;lexic_permissions[&#39;COMMENTS&#39;][$key] = true;
+        }
+        foreach ($this-&gt;language_data[&#39;REGEXPS&#39;] as $key =&gt; $regexp) {
+            $this-&gt;lexic_permissions[&#39;REGEXPS&#39;][$key] = true;
+        }
+        // Set default class for CSS
+        $this-&gt;overall_class = $this-&gt;language;
+    }
+
+    /**
+     * Takes the parsed code and various options, and creates the HTML
+     * surrounding it to make it look nice.
+     *
+     * @param  string The code already parsed
+     * @return string The code nicely finalised
+     * @since  1.0.0
+     * @access private
+     */
+    function finalise(&amp;$parsed_code) {
+        // Remove end parts of important declarations
+        // This is BUGGY!! My fault for bad code: fix coming in 1.2
+        // @todo Remove this crap
+        if ($this-&gt;enable_important_blocks &amp;&amp;
+            (strpos($parsed_code, GeSHi::hsc(GESHI_START_IMPORTANT)) === false)) {
+            $parsed_code = str_replace(GeSHi::hsc(GESHI_END_IMPORTANT), &#39;&#39;, $parsed_code);
+        }
+
+        // Add HTML whitespace stuff if we&#39;re using the &lt;div&gt; header
+        if ($this-&gt;header_type != GESHI_HEADER_PRE) {
+            $parsed_code = $this-&gt;indent($parsed_code);
+        }
+
+        // purge some unnecessary stuff
+        $parsed_code = preg_replace(&#39;#&lt;span[^&gt;]+&gt;(\s*)&lt;/span&gt;#&#39;, &#39;\\1&#39;, $parsed_code);
+        $parsed_code = preg_replace(&#39;#&lt;div[^&gt;]+&gt;(\s*)&lt;/div&gt;#&#39;, &#39;\\1&#39;, $parsed_code);
+
+        // If we are using IDs for line numbers, there needs to be an overall
+        // ID set to prevent collisions.
+        if ($this-&gt;add_ids &amp;&amp; !$this-&gt;overall_id) {
+            $this-&gt;overall_id = &#39;geshi-&#39; . substr(md5(microtime()), 0, 4);
+        }
+
+        // Get code into lines
+        $code = explode(&quot;\n&quot;, $parsed_code);
+        $parsed_code = &#39;&#39;;
+
+        // If we&#39;re using line numbers, we insert &lt;li&gt;s and appropriate
+        // markup to style them (otherwise we don&#39;t need to do anything)
+        if ($this-&gt;line_numbers != GESHI_NO_LINE_NUMBERS) {
+            // If we&#39;re using the &lt;pre&gt; header, we shouldn&#39;t add newlines because
+            // the &lt;pre&gt; will line-break them (and the &lt;li&gt;s already do this for us)
+            $ls = ($this-&gt;header_type != GESHI_HEADER_PRE) ? &quot;\n&quot; : &#39;&#39;;
+
+            // Set vars to defaults for following loop
+            $i = 0;
+
+            // Foreach line...
+            for ($i = 0, $n = count($code); $i &lt; $n;) {
+                //Reset the attributes for a new line ...
+                $attrs = array();
+
+                // Make lines have at least one space in them if they&#39;re empty
+                // BenBE: Checking emptiness using trim instead of relying on blanks
+                if (&#39;&#39; == trim($code[$i])) {
+                    $code[$i] = &#39;&amp;nbsp;&#39;;
+                }
+
+                // If this is a &quot;special line&quot;...
+                if ($this-&gt;line_numbers == GESHI_FANCY_LINE_NUMBERS &amp;&amp;
+                    $i % $this-&gt;line_nth_row == ($this-&gt;line_nth_row - 1)) {
+                    // Set the attributes to style the line
+                    if ($this-&gt;use_classes) {
+                        //$attr = &#39; class=&quot;li2&quot;&#39;;
+                        $attrs[&#39;class&#39;][] = &#39;li2&#39;;
+                        $def_attr = &#39; class=&quot;de2&quot;&#39;;
+                    }
+                    else {
+                        //$attr = &#39; style=&quot;&#39; . $this-&gt;line_style2 . &#39;&quot;&#39;;
+                        $attrs[&#39;style&#39;][] = $this-&gt;line_style2;
+                        // This style &quot;covers up&quot; the special styles set for special lines
+                        // so that styles applied to special lines don&#39;t apply to the actual
+                        // code on that line
+                        $def_attr = &#39; style=&quot;&#39; . $this-&gt;code_style . &#39;&quot;&#39;;
+                    }
+                    // Span or div?
+                    $start = &quot;&lt;div$def_attr&gt;&quot;;
+                    $end = &#39;&lt;/div&gt;&#39;;
+                }
+                else {
+                    if ($this-&gt;use_classes) {
+                        //$attr = &#39; class=&quot;li1&quot;&#39;;
+                        $attrs[&#39;class&#39;][] = &#39;li1&#39;;
+                        $def_attr = &#39; class=&quot;de1&quot;&#39;;
+                    }
+                    else {
+                        //$attr = &#39; style=&quot;&#39; . $this-&gt;line_style1 . &#39;&quot;&#39;;
+                        $attrs[&#39;style&#39;][] = $this-&gt;line_style1;
+                        $def_attr = &#39; style=&quot;&#39; . $this-&gt;code_style . &#39;&quot;&#39;;
+                    }
+                    $start = &quot;&lt;div$def_attr&gt;&quot;;
+                    $end = &#39;&lt;/div&gt;&#39;;
+                }
+
+                ++$i;
+
+                // Are we supposed to use ids? If so, add them
+                if ($this-&gt;add_ids) {
+                    $attrs[&#39;id&#39;][] = &quot;$this-&gt;overall_id-$i&quot;;
+                }
+
+                if (in_array($i, $this-&gt;highlight_extra_lines)) {
+                    if ($this-&gt;use_classes) {
+                        if (isset($this-&gt;highlight_extra_lines_styles[$i])) {
+                            $attrs[&#39;class&#39;][] = &quot;lx$i&quot;;
+                        } else {
+                            $attrs[&#39;class&#39;][] = &quot;ln-xtra&quot;;
+                        }
+                    } else {
+                        array_push($attrs[&#39;style&#39;], $this-&gt;get_line_style($i));
+                    }
+                }
+
+                // Add in the line surrounded by appropriate list HTML
+                $attr_string = &#39;&#39;;
+                foreach ($attrs as $key =&gt; $attr) {
+                    $attr_string .= &#39; &#39; . $key . &#39;=&quot;&#39; . implode(&#39; &#39;, $attr) . &#39;&quot;&#39;;
+                }
+
+                $parsed_code .= &quot;&lt;li$attr_string&gt;$start{$code[$i - 1]}$end&lt;/li&gt;$ls&quot;;
+            }
+        }
+        else {
+            // No line numbers, but still need to handle highlighting lines extra.
+            // Have to use divs so the full width of the code is highlighted
+            for ($i = 0, $n = count($code); $i &lt; $n; ++$i) {
+                // Make lines have at least one space in them if they&#39;re empty
+                // BenBE: Checking emptiness using trim instead of relying on blanks
+                if (&#39;&#39; == trim($code[$i])) {
+                    $code[$i] = &#39;&amp;nbsp;&#39;;
+                }
+                if (in_array($i + 1, $this-&gt;highlight_extra_lines)) {
+                    if ($this-&gt;use_classes) {
+                        if (isset($this-&gt;highlight_extra_lines_styles[$i])) {
+                            $parsed_code .= &quot;&lt;div class=\&quot;lx$i\&quot;&gt;&quot;;
+                        } else {
+                            $parsed_code .= &quot;&lt;div class=\&quot;ln-xtra\&quot;&gt;&quot;;
+                        }
+                    } else {
+                        $parsed_code .= &quot;&lt;div style=\&quot;&quot; . $this-&gt;get_line_style($i) . &quot;\&quot;&gt;&quot;;
+                    }
+                    // Remove \n because it stuffs up &lt;pre&gt; header
+                    $parsed_code .= $code[$i] . &quot;&lt;/div&gt;&quot;;
+                } else {
+                    $parsed_code .= $code[$i] . &quot;\n&quot;;
+                }
+            }
+        }
+        unset($code);
+
+        return $this-&gt;header() . chop($parsed_code) . $this-&gt;footer();
+    }
+
+    /**
+     * Creates the header for the code block (with correct attributes)
+     *
+     * @return string The header for the code block
+     * @since  1.0.0
+     * @access private
+     */
+    function header() {
+        // Get attributes needed
+        $attributes = $this-&gt;get_attributes();
+
+        $ol_attributes = &#39;&#39;;
+
+        if ($this-&gt;line_numbers_start != 1) {
+            $ol_attributes .= &#39; start=&quot;&#39; . $this-&gt;line_numbers_start . &#39;&quot;&#39;;
+        }
+
+        // Get the header HTML
+        $header = $this-&gt;format_header_content();
+
+        if (GESHI_HEADER_NONE == $this-&gt;header_type) {
+            if ($this-&gt;line_numbers != GESHI_NO_LINE_NUMBERS) {
+                return &quot;$header&lt;ol$ol_attributes&gt;&quot;;
+            }
+            return $header .
+                ($this-&gt;force_code_block ? &#39;&lt;div&gt;&#39; : &#39;&#39;);
+        }
+
+        // Work out what to return and do it
+        if ($this-&gt;line_numbers != GESHI_NO_LINE_NUMBERS) {
+            if ($this-&gt;header_type == GESHI_HEADER_PRE) {
+                return &quot;&lt;pre$attributes&gt;$header&lt;ol$ol_attributes&gt;&quot;;
+            }
+            else if ($this-&gt;header_type == GESHI_HEADER_DIV) {
+                return &quot;&lt;div$attributes&gt;$header&lt;ol$ol_attributes&gt;&quot;;
+            }
+        }
+        else {
+            if ($this-&gt;header_type == GESHI_HEADER_PRE) {
+                return &quot;&lt;pre$attributes&gt;$header&quot;  .
+                    ($this-&gt;force_code_block ? &#39;&lt;div&gt;&#39; : &#39;&#39;);
+            }
+            else if ($this-&gt;header_type == GESHI_HEADER_DIV) {
+                return &quot;&lt;div$attributes&gt;$header&quot; .
+                    ($this-&gt;force_code_block ? &#39;&lt;div&gt;&#39; : &#39;&#39;);
+            }
+        }
+    }
+
+    /**
+     * Returns the header content, formatted for output
+     *
+     * @return string The header content, formatted for output
+     * @since  1.0.2
+     * @access private
+     */
+    function format_header_content() {
+        $header = $this-&gt;header_content;
+        if ($header) {
+            if ($this-&gt;header_type == GESHI_HEADER_PRE) {
+                $header = str_replace(&quot;\n&quot;, &#39;&#39;, $header);
+            }
+            $header = $this-&gt;replace_keywords($header);
+
+            if ($this-&gt;use_classes) {
+                $attr = &#39; class=&quot;head&quot;&#39;;
+            }
+            else {
+                $attr = &quot; style=\&quot;{$this-&gt;header_content_style}\&quot;&quot;;
+            }
+            return &quot;&lt;div$attr&gt;$header&lt;/div&gt;&quot;;
+        }
+    }
+
+    /**
+     * Returns the footer for the code block.
+     *
+     * @return string The footer for the code block
+     * @since  1.0.0
+     * @access private
+     */
+    function footer() {
+        $footer_content = $this-&gt;format_footer_content();
+
+        if (GESHI_HEADER_NONE == $this-&gt;header_type) {
+            return ($this-&gt;line_numbers != GESHI_NO_LINE_NUMBERS) ? &#39;&lt;/ol&gt;&#39; . $footer_content
+                : $footer_content;
+        }
+
+        if ($this-&gt;header_type == GESHI_HEADER_DIV) {
+            if ($this-&gt;line_numbers != GESHI_NO_LINE_NUMBERS) {
+                return &quot;&lt;/ol&gt;$footer_content&lt;/div&gt;&quot;;
+            }
+            return ($this-&gt;force_code_block ? &#39;&lt;/div&gt;&#39; : &#39;&#39;) .
+                &quot;$footer_content&lt;/div&gt;&quot;;
+        }
+        else {
+            if ($this-&gt;line_numbers != GESHI_NO_LINE_NUMBERS) {
+                return &quot;&lt;/ol&gt;$footer_content&lt;/pre&gt;&quot;;
+            }
+            return ($this-&gt;force_code_block ? &#39;&lt;/div&gt;&#39; : &#39;&#39;) .
+                &quot;$footer_content&lt;/pre&gt;&quot;;
+        }
+    }
+
+    /**
+     * Returns the footer content, formatted for output
+     *
+     * @return string The footer content, formatted for output
+     * @since  1.0.2
+     * @access private
+     */
+    function format_footer_content() {
+        $footer = $this-&gt;footer_content;
+        if ($footer) {
+            if ($this-&gt;header_type == GESHI_HEADER_PRE) {
+                $footer = str_replace(&quot;\n&quot;, &#39;&#39;, $footer);;
+            }
+            $footer = $this-&gt;replace_keywords($footer);
+
+            if ($this-&gt;use_classes) {
+                $attr = &#39; class=&quot;foot&quot;&#39;;
+            }
+            else {
+                $attr = &quot; style=\&quot;{$this-&gt;footer_content_style}\&quot;&quot;;
+            }
+            return &quot;&lt;div$attr&gt;$footer&lt;/div&gt;&quot;;
+        }
+    }
+
+    /**
+     * Replaces certain keywords in the header and footer with
+     * certain configuration values
+     *
+     * @param  string The header or footer content to do replacement on
+     * @return string The header or footer with replaced keywords
+     * @since  1.0.2
+     * @access private
+     */
+    function replace_keywords($instr) {
+        $keywords = $replacements = array();
+
+        $keywords[] = &#39;&lt;TIME&gt;&#39;;
+        $keywords[] = &#39;{TIME}&#39;;
+        $replacements[] = $replacements[] = number_format($this-&gt;get_time(), 3);
+
+        $keywords[] = &#39;&lt;LANGUAGE&gt;&#39;;
+        $keywords[] = &#39;{LANGUAGE}&#39;;
+        $replacements[] = $replacements[] = $this-&gt;language;
+
+        $keywords[] = &#39;&lt;VERSION&gt;&#39;;
+        $keywords[] = &#39;{VERSION}&#39;;
+        $replacements[] = $replacements[] = GESHI_VERSION;
+
+        return str_replace($keywords, $replacements, $instr);
+    }
+
+    /**
+     * Gets the CSS attributes for this code
+     *
+     * @return The CSS attributes for this code
+     * @since  1.0.0
+     * @access private
+     * @todo   Document behaviour change - class is outputted regardless of whether we&#39;re using classes or not.
+     *         Same with style
+     */
+    function get_attributes() {
+        $attributes = &#39;&#39;;
+
+        if ($this-&gt;overall_class != &#39;&#39;) {
+            $attributes .= &quot; class=\&quot;{$this-&gt;overall_class}\&quot;&quot;;
+        }
+        if ($this-&gt;overall_id != &#39;&#39;) {
+            $attributes .= &quot; id=\&quot;{$this-&gt;overall_id}\&quot;&quot;;
+        }
+        if ($this-&gt;overall_style != &#39;&#39;) {
+            $attributes .= &#39; style=&quot;&#39; . $this-&gt;overall_style . &#39;&quot;&#39;;
+        }
+        return $attributes;
+    }
+
+    /**
+     * Secure replacement for PHP built-in function htmlspecialchars().
+     *
+     * See ticket #427 (http://wush.net/trac/wikka/ticket/427) for the rationale
+     * for this replacement function.
+     *
+     * The INTERFACE for this function is almost the same as that for
+     * htmlspecialchars(), with the same default for quote style; however, there
+     * is no &#39;charset&#39; parameter. The reason for this is as follows:
+     *
+     * The PHP docs say:
+     *      &quot;The third argument charset defines character set used in conversion.&quot;
+     *
+     * I suspect PHP&#39;s htmlspecialchars() is working at the byte-value level and
+     * thus _needs_ to know (or asssume) a character set because the special
+     * characters to be replaced could exist at different code points in
+     * different character sets. (If indeed htmlspecialchars() works at
+     * byte-value level that goes some  way towards explaining why the
+     * vulnerability would exist in this function, too, and not only in
+     * htmlentities() which certainly is working at byte-value level.)
+     *
+     * This replacement function however works at character level and should
+     * therefore be &quot;immune&quot; to character set differences - so no charset
+     * parameter is needed or provided. If a third parameter is passed, it will
+     * be silently ignored.
+     *
+     * In the OUTPUT there is a minor difference in that we use &#39;&amp;#39;&#39; instead
+     * of PHP&#39;s &#39;&amp;#039;&#39; for a single quote: this provides compatibility with
+     *      get_html_translation_table(HTML_SPECIALCHARS, ENT_QUOTES)
+     * (see comment by mikiwoz at yahoo dot co dot uk on
+     * http://php.net/htmlspecialchars); it also matches the entity definition
+     * for XML 1.0
+     * (http://www.w3.org/TR/xhtml1/dtds.html#a_dtd_Special_characters).
+     * Like PHP we use a numeric character reference instead of &#39;&amp;apos;&#39; for the
+     * single quote. For the other special characters we use the named entity
+     * references, as PHP is doing.
+     *
+     * @author      {@link http://wikkawiki.org/JavaWoman Marjolein Katsma}
+     *
+     * @license     http://www.gnu.org/copyleft/lgpl.html
+     *              GNU Lesser General Public License
+     * @copyright   Copyright 2007, {@link http://wikkawiki.org/CreditsPage
+     *              Wikka Development Team}
+     *
+     * @access      private
+     * @param       string  $string string to be converted
+     * @param       integer $quote_style
+     *                      - ENT_COMPAT:   escapes &amp;, &lt;, &gt; and double quote (default)
+     *                      - ENT_NOQUOTES: escapes only &amp;, &lt; and &gt;
+     *                      - ENT_QUOTES:   escapes &amp;, &lt;, &gt;, double and single quotes
+     * @return      string  converted string
+     * @since       1.0.7.18
+     */
+    function hsc($string, $quote_style=ENT_COMPAT) {
+        // init
+        $aTransSpecchar = array(
+            &#39;&amp;&#39; =&gt; &#39;&amp;amp;&#39;,
+            &#39;&quot;&#39; =&gt; &#39;&amp;quot;&#39;,
+            &#39;&lt;&#39; =&gt; &#39;&amp;lt;&#39;,
+            &#39;&gt;&#39; =&gt; &#39;&amp;gt;&#39;,
+
+            //This fix is related to SF#1923020, but has to be applied
+            //regardless of actually highlighting symbols.
+
+            //Circumvent a bug with symbol highlighting
+            //This is required as ; would produce undesirable side-effects if it
+            //was not to be processed as an entity.
+            &#39;;&#39; =&gt; &#39;&lt;SEMI&gt;&#39;, // Force ; to be processed as entity
+            &#39;|&#39; =&gt; &#39;&lt;PIPE&gt;&#39; // Force | to be processed as entity
+            );                      // ENT_COMPAT set
+
+        if (ENT_NOQUOTES == $quote_style)       // don&#39;t convert double quotes
+        {
+            unset($aTransSpecchar[&#39;&quot;&#39;]);
+        }
+        elseif (ENT_QUOTES == $quote_style)     // convert single quotes as well
+        {
+            $aTransSpecchar[&quot;&#39;&quot;] = &#39;&amp;#39;&#39;; // (apos) htmlspecialchars() uses &#39;&amp;#039;&#39;
+        }
+
+        // return translated string
+        return strtr($string,$aTransSpecchar);
+    }
+
+    /**
+     * Returns a stylesheet for the highlighted code. If $economy mode
+     * is true, we only return the stylesheet declarations that matter for
+     * this code block instead of the whole thing
+     *
+     * @param  boolean Whether to use economy mode or not
+     * @return string A stylesheet built on the data for the current language
+     * @since  1.0.0
+     */
+    function get_stylesheet($economy_mode = true) {
+        // If there&#39;s an error, chances are that the language file
+        // won&#39;t have populated the language data file, so we can&#39;t
+        // risk getting a stylesheet...
+        if ($this-&gt;error) {
+            return &#39;&#39;;
+        }
+        // First, work out what the selector should be. If there&#39;s an ID,
+        // that should be used, the same for a class. Otherwise, a selector
+        // of &#39;&#39; means that these styles will be applied anywhere
+        $selector = ($this-&gt;overall_id != &#39;&#39;) ? &quot;#{$this-&gt;overall_id} &quot; : &#39;&#39;;
+        $selector = ($selector == &#39;&#39; &amp;&amp; $this-&gt;overall_class != &#39;&#39;) ? &quot;.{$this-&gt;overall_class} &quot; : $selector;
+
+        // Header of the stylesheet
+        if (!$economy_mode) {
+            $stylesheet = &quot;/**\n&quot;.
+                &quot; * GeSHi Dynamically Generated Stylesheet\n&quot;.
+                &quot; * --------------------------------------\n&quot;.
+                &quot; * Dynamically generated stylesheet for {$this-&gt;language}\n&quot;.
+                &quot; * CSS class: {$this-&gt;overall_class}, CSS id: {$this-&gt;overall_id}\n&quot;.
+                &quot; * GeSHi (C) 2004 - 2007 Nigel McNie, 2007 - 2008 Benny Baumann\n&quot; .
+                &quot; * (http://qbnz.com/highlighter/ and http://geshi.org/)\n&quot;.
+                &quot; * --------------------------------------\n&quot;.
+                &quot; */\n&quot;;
+         } else {
+            $stylesheet = &quot;/**\n&quot;.
+                &quot; * GeSHi (C) 2004 - 2007 Nigel McNie, 2007 - 2008 Benny Baumann\n&quot; .
+                &quot; * (http://qbnz.com/highlighter/ and http://geshi.org/)\n&quot;.
+                &quot; */\n&quot;;
+        }
+
+        // Set the &lt;ol&gt; to have no effect at all if there are line numbers
+        // (&lt;ol&gt;s have margins that should be destroyed so all layout is
+        // controlled by the set_overall_style method, which works on the
+        // &lt;pre&gt; or &lt;div&gt; container). Additionally, set default styles for lines
+        if (!$economy_mode || $this-&gt;line_numbers != GESHI_NO_LINE_NUMBERS) {
+            //$stylesheet .= &quot;$selector, {$selector}ol, {$selector}ol li {margin: 0;}\n&quot;;
+            $stylesheet .= &quot;$selector.de1, $selector.de2 {{$this-&gt;code_style}}\n&quot;;
+        }
+
+        // Add overall styles
+        if (!$economy_mode || $this-&gt;overall_style != &#39;&#39;) {
+            $stylesheet .= &quot;$selector {{$this-&gt;overall_style}}\n&quot;;
+        }
+
+        // Add styles for links
+        foreach ($this-&gt;link_styles as $key =&gt; $style) {
+            if (!$economy_mode || $key == GESHI_LINK &amp;&amp; $style != &#39;&#39;) {
+                $stylesheet .= &quot;{$selector}a:link {{$style}}\n&quot;;
+            }
+            if (!$economy_mode || $key == GESHI_HOVER &amp;&amp; $style != &#39;&#39;) {
+                $stylesheet .= &quot;{$selector}a:hover {{$style}}\n&quot;;
+            }
+            if (!$economy_mode || $key == GESHI_ACTIVE &amp;&amp; $style != &#39;&#39;) {
+                $stylesheet .= &quot;{$selector}a:active {{$style}}\n&quot;;
+            }
+            if (!$economy_mode || $key == GESHI_VISITED &amp;&amp; $style != &#39;&#39;) {
+                $stylesheet .= &quot;{$selector}a:visited {{$style}}\n&quot;;
+            }
+        }
+
+        // Header and footer
+        if (!$economy_mode || $this-&gt;header_content_style != &#39;&#39;) {
+            $stylesheet .= &quot;$selector.head {{$this-&gt;header_content_style}}\n&quot;;
+        }
+        if (!$economy_mode || $this-&gt;footer_content_style != &#39;&#39;) {
+            $stylesheet .= &quot;$selector.foot {{$this-&gt;footer_content_style}}\n&quot;;
+        }
+
+        // Styles for important stuff
+        if (!$economy_mode || $this-&gt;important_styles != &#39;&#39;) {
+            $stylesheet .= &quot;$selector.imp {{$this-&gt;important_styles}}\n&quot;;
+        }
+
+        // Simple line number styles
+        if (!$economy_mode || ($this-&gt;line_numbers != GESHI_NO_LINE_NUMBERS &amp;&amp; $this-&gt;line_style1 != &#39;&#39;)) {
+            $stylesheet .= &quot;{$selector}li, {$selector}li.li1 {{$this-&gt;line_style1}}\n&quot;;
+        }
+        // If there is a style set for fancy line numbers, echo it out
+        if (!$economy_mode || ($this-&gt;line_numbers == GESHI_FANCY_LINE_NUMBERS &amp;&amp; $this-&gt;line_style2 != &#39;&#39;)) {
+            $stylesheet .= &quot;{$selector}li.li2 {{$this-&gt;line_style2}}\n&quot;;
+        }
+
+        foreach ($this-&gt;language_data[&#39;STYLES&#39;][&#39;KEYWORDS&#39;] as $group =&gt; $styles) {
+            if (!$economy_mode || ($economy_mode &amp;&amp; $styles != &#39;&#39;) &amp;&amp;
+                (isset($this-&gt;lexic_permissions[&#39;KEYWORDS&#39;][$group]) &amp;&amp;
+                $this-&gt;lexic_permissions[&#39;KEYWORDS&#39;][$group])) {
+                $stylesheet .= &quot;$selector.kw$group {{$styles}}\n&quot;;
+            }
+        }
+        foreach ($this-&gt;language_data[&#39;STYLES&#39;][&#39;COMMENTS&#39;] as $group =&gt; $styles) {
+            if (!$economy_mode || ($economy_mode &amp;&amp; $styles != &#39;&#39;) &amp;&amp;
+                (isset($this-&gt;lexic_permissions[&#39;COMMENTS&#39;][$group]) &amp;&amp;
+                $this-&gt;lexic_permissions[&#39;COMMENTS&#39;][$group])) {
+                $stylesheet .= &quot;$selector.co$group {{$styles}}\n&quot;;
+            }
+        }
+        foreach ($this-&gt;language_data[&#39;STYLES&#39;][&#39;ESCAPE_CHAR&#39;] as $group =&gt; $styles) {
+            if (!$economy_mode || !($economy_mode &amp;&amp; $styles == &#39;&#39;) &amp;&amp; !($economy_mode &amp;&amp;
+                !$this-&gt;lexic_permissions[&#39;ESCAPE_CHAR&#39;])) {
+                $stylesheet .= &quot;$selector.es$group {{$styles}}\n&quot;;
+            }
+        }
+        foreach ($this-&gt;language_data[&#39;STYLES&#39;][&#39;BRACKETS&#39;] as $group =&gt; $styles) {
+            if (!$economy_mode || !($economy_mode &amp;&amp; $styles == &#39;&#39;) &amp;&amp; !($economy_mode &amp;&amp;
+                !$this-&gt;lexic_permissions[&#39;BRACKETS&#39;])) {
+                $stylesheet .= &quot;$selector.br$group {{$styles}}\n&quot;;
+            }
+        }
+        foreach ($this-&gt;language_data[&#39;STYLES&#39;][&#39;SYMBOLS&#39;] as $group =&gt; $styles) {
+            if (!$economy_mode || !($economy_mode &amp;&amp; $styles == &#39;&#39;) &amp;&amp; !($economy_mode &amp;&amp;
+                !$this-&gt;lexic_permissions[&#39;SYMBOLS&#39;])) {
+                $stylesheet .= &quot;$selector.sy$group {{$styles}}\n&quot;;
+            }
+        }
+        foreach ($this-&gt;language_data[&#39;STYLES&#39;][&#39;STRINGS&#39;] as $group =&gt; $styles) {
+            if (!$economy_mode || !($economy_mode &amp;&amp; $styles == &#39;&#39;) &amp;&amp; !($economy_mode &amp;&amp;
+                !$this-&gt;lexic_permissions[&#39;STRINGS&#39;])) {
+                $stylesheet .= &quot;$selector.st$group {{$styles}}\n&quot;;
+            }
+        }
+        foreach ($this-&gt;language_data[&#39;STYLES&#39;][&#39;NUMBERS&#39;] as $group =&gt; $styles) {
+            if (!$economy_mode || !($economy_mode &amp;&amp; $styles == &#39;&#39;) &amp;&amp; !($economy_mode &amp;&amp;
+                !$this-&gt;lexic_permissions[&#39;NUMBERS&#39;])) {
+                $stylesheet .= &quot;$selector.nu$group {{$styles}}\n&quot;;
+            }
+        }
+        foreach ($this-&gt;language_data[&#39;STYLES&#39;][&#39;METHODS&#39;] as $group =&gt; $styles) {
+            if (!$economy_mode || !($economy_mode &amp;&amp; $styles == &#39;&#39;) &amp;&amp; !($economy_mode &amp;&amp;
+                !$this-&gt;lexic_permissions[&#39;METHODS&#39;])) {
+                $stylesheet .= &quot;$selector.me$group {{$styles}}\n&quot;;
+            }
+        }
+        foreach ($this-&gt;language_data[&#39;STYLES&#39;][&#39;SCRIPT&#39;] as $group =&gt; $styles) {
+            if (!$economy_mode || !($economy_mode &amp;&amp; $styles == &#39;&#39;)) {
+                $stylesheet .= &quot;$selector.sc$group {{$styles}}\n&quot;;
+            }
+        }
+        foreach ($this-&gt;language_data[&#39;STYLES&#39;][&#39;REGEXPS&#39;] as $group =&gt; $styles) {
+            if (!$economy_mode || ($economy_mode &amp;&amp; $styles != &#39;&#39;) &amp;&amp;
+                (isset($this-&gt;lexic_permissions[&#39;REGEXPS&#39;][$group]) &amp;&amp;
+                $this-&gt;lexic_permissions[&#39;REGEXPS&#39;][$group])) {
+                if (is_array($this-&gt;language_data[&#39;REGEXPS&#39;][$group]) &amp;&amp;
+                         array_key_exists(GESHI_CLASS,
+                                    $this-&gt;language_data[&#39;REGEXPS&#39;][$group])) {
+                    $stylesheet .= &quot;$selector.&quot;;
+                    $stylesheet .= $this-&gt;language_data[&#39;REGEXPS&#39;][$group][GESHI_CLASS];
+                    $stylesheet .= &quot; {{$styles}}\n&quot;;
+                }
+                else {
+                    $stylesheet .= &quot;$selector.re$group {{$styles}}\n&quot;;
+                }
+            }
+        }
+        // Styles for lines being highlighted extra
+        if (!$economy_mode || (count($this-&gt;highlight_extra_lines)!=count($this-&gt;highlight_extra_lines_styles))) {
+            $stylesheet .= &quot;{$selector}.ln-xtra, {$selector}li.ln-xtra, {$selector}div.ln-xtra {{$this-&gt;highlight_extra_lines_style}}\n&quot;;
+        }
+        foreach ($this-&gt;highlight_extra_lines_styles as $lineid =&gt; $linestyle) {
+            $stylesheet .= &quot;{$selector}.lx$lineid, {$selector}li.lx$lineid, {$selector}div.lx$lineid {{$linestyle}}\n&quot;;
+        }
+
+        return $stylesheet;
+    }
+
+    /**
+     * Get&#39;s the style that is used for the specified line
+     *
+     * @param int The line number information is requested for
+     * @access private
+     * @since 1.0.7.21
+     */
+    function get_line_style($line) {
+        //$style = null;
+        $style = null;
+        if (isset($this-&gt;highlight_extra_lines_styles[$line])) {
+            $style = $this-&gt;highlight_extra_lines_styles[$line];
+        } else { // if no &quot;extra&quot; style assigned
+            $style = $this-&gt;highlight_extra_lines_style;
+        }
+
+        return $style;
+    }
+} // End Class GeSHi
+
+
+if (!function_exists(&#39;geshi_highlight&#39;)) {
+    /**
+     * Easy way to highlight stuff. Behaves just like highlight_string
+     *
+     * @param string The code to highlight
+     * @param string The language to highlight the code in
+     * @param string The path to the language files. You can leave this blank if you need
+     *               as from version 1.0.7 the path should be automatically detected
+     * @param boolean Whether to return the result or to echo
+     * @return string The code highlighted (if $return is true)
+     * @since 1.0.2
+     */
+    function geshi_highlight($string, $language, $path = null, $return = false) {
+        $geshi = new GeSHi($string, $language, $path);
+        $geshi-&gt;set_header_type(GESHI_HEADER_NONE);
+        if ($return) {
+            return &#39;&lt;code&gt;&#39; . $geshi-&gt;parse_code() . &#39;&lt;/code&gt;&#39;;
+        }
+        echo &#39;&lt;code&gt;&#39; . $geshi-&gt;parse_code() . &#39;&lt;/code&gt;&#39;;
+        if ($geshi-&gt;error()) {
+            return false;
+        }
+        return true;
+    }
+}
+
+?&gt;
+
+</code></pre>
+</div>
+
+
+</body>
+</html>
