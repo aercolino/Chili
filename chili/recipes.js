@@ -9,11 +9,11 @@ WEBSITE: http://noteslog.com/chili/
 ===============================================================================
 */
 
-ChiliBook.recipeLoading = false;
+Chili.recipeLoading = false;
 
 
 
-ChiliBook.recipes[ "php.js" ] =
+Chili.recipes[ "php.js" ] = 
 /* ----------------------------------------------------------------------------
  * this recipe uses a little trick for highlighting php code
  *   1: replace each php snippet with a placeholder
@@ -144,7 +144,7 @@ ChiliBook.recipes[ "php.js" ] =
 
 
 
-ChiliBook.recipes[ "html.js" ] = 
+Chili.recipes[ "html.js" ] = 
 {
 	  _name: 'html'
 	, _case: false
@@ -217,7 +217,7 @@ ChiliBook.recipes[ "html.js" ] =
 
 
 
-ChiliBook.recipes[ "js.js" ] = 
+Chili.recipes[ "js.js" ] = 
 {
 	  _name: 'js'
 	, _case: true
@@ -285,7 +285,7 @@ ChiliBook.recipes[ "js.js" ] =
 
 
 
-ChiliBook.recipes[ "css.js" ] = 
+Chili.recipes[ "css.js" ] = 
 {
 	  _name: 'css'
 	, _case: true
