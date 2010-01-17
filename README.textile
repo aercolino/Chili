@@ -1,0 +1,14 @@
+h1. "Chili":http://noteslog.com/chili/ - The jQuery Plugin for Highlighting Code
+
+h2. What you need to build your own Chili
+
+* Make sure that you have "Java":http://java.sun.com/javase/downloads/index.jsp installed.
+* Make sure that you have "Ant":http://ant.apache.org/bindownload.cgi installed.
+
+h2. How to build your own Chili
+
+# Open a command window and go to the directory this file is in.
+# At the prompt, type
+* @ant chili@ for building the uncompressed Chili distribution, with examples.
+* @ant chili.min@ for building the compressed Chili code (using Google Closure Compiler).
+* @ant clean@ for removing all the built files.

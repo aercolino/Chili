@@ -1,0 +1,11 @@
+# Eclipse: ignore project
+.project
+
+# Eclipse: ignore settings
+.settings
+
+# Eclipse: ignore temporary files
+.tmp_*.*
+
+# Chili: ignore dist folder, which holds build result
+dist

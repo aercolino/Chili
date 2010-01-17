@@ -1,0 +1,99 @@
+<project name="Chili" default="chili" basedir=".">
+    <tstamp prefix="start" />
+    <loadfile property="version" srcfile="version.txt" />
+    
+    <property 
+        name="dist" 
+        value="./dist" 
+        description="Folder for built and minified Chili, with examples" />
+    <property 
+        name="CHILI" 
+        value="${dist}/jquery.chili.js" />
+    <property 
+        name="CHILI_MIN" 
+        value="${dist}/jquery.chili.min.js" />
+    
+    <target 
+        description="Development build: concatenated"
+        name="chili">
+        <echo message="Building ${CHILI}" />
+        
+        <delete dir="${dist}" />
+        <mkdir dir="${dist}" />
+        
+        <copy 
+            file="jquery/jquery.js" 
+            tofile="${dist}/jquery.js" />
+        
+        <concat destfile="${CHILI}">
+            <fileset file="src/chili.js" />
+        </concat>
+        
+        <!-- concat destfile="${dist}/recipes.js">
+            <fileset dir="src/recipes" includes="*.js" />
+        </concat -->
+        <copy 
+            file="src/recipes.js" 
+            tofile="${dist}/recipes.js" />
+        
+        <mkdir dir="${dist}/recipes" />
+        <copy todir="${dist}/recipes">
+            <fileset dir="src/recipes" />
+        </copy>
+        
+        <mkdir dir="${dist}/examples" />
+        <copy todir="${dist}/examples">
+            <fileset dir="src/examples" />
+        </copy>
+        
+        <replaceregexp 
+            match="@VERSION" 
+            replace="${version}" 
+            flags="g" 
+            byline="true" 
+            file="${CHILI}" />
+            
+        <replaceregexp 
+            match="@DATE" 
+            replace="${start.DSTAMP} ${start.TSTAMP}" 
+            file="${CHILI}" />
+            
+        <echo message="${CHILI} built." />
+    </target>
+
+    <target description="Production build: minified" 
+        name="chili.min" 
+        depends="chili">
+        <echo message="Building ${CHILI_MIN}" />
+        
+        <apply executable="java" parallel="false" verbose="true" dest="${dist}">
+            <fileset dir="${dist}">
+                <include name="jquery.chili.js" />
+            </fileset>
+            <arg line="-jar" />
+            <arg path="build/compiler.jar" />
+            <arg value="--warning_level" />
+            <arg value="QUIET" />
+            <arg value="--js_output_file" />
+            <targetfile />
+            <arg value="--js" />
+            <mapper type="glob" from="jquery.chili.js" to="tmpmin" />
+        </apply>
+        <concat destfile="${CHILI_MIN}">
+            <filelist files="${CHILI}" />
+            <filterchain>
+                <headfilter lines="11" />
+            </filterchain>
+        </concat>
+        <concat destfile="${CHILI_MIN}" append="yes">
+            <filelist files="dist/tmpmin"/>
+        </concat>
+        <delete file="dist/tmpmin"/>
+        <echo message="${CHILI_MIN} built." />
+    </target>
+
+    <target name="clean">
+        <delete dir="${dist}" />
+    </target>
+
+</project>

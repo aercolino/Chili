@@ -1,0 +1,807 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3c.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+
+<title>TESTING CHILI 2.2 - HTML, CSS, JavaScript</title>
+
+<script type="text/javascript">
+/*
+===============================================================================
+Chili is the jQuery code highlighter plugin
+...............................................................................
+LICENSE: http://www.opensource.org/licenses/mit-license.php
+WEBSITE: http://noteslog.com/chili/
+
+											   Copyright 2008 / Andrea Ercolino
+===============================================================================
+*/
+</script>
+
+<script type="text/javascript" src="../jquery.js"></script>
+<script type="text/javascript" src="../jquery.chili.js"></script>
+
+
+<script type="text/javascript" src="../recipes.js"></script> <!-- Chili settings for a static setup -->
+
+
+<script id="setup" type="text/javascript">
+Chili.automatic = false;
+Chili.lineNumbers = true;
+$( function() {
+	$( '#highlight' )
+	.one( 'click', function() {
+		var time1 = new Date();
+		var $chili = $( '#jq' ).chili();
+		var time2 = new Date();
+		var delta = time2 - time1;
+		var spans = $chili.find( 'span' ).length;
+		var rate = Math.round( spans / delta * 100 ) / 100;
+		$( '#highlight' ).html( 
+			'highlight done in ' + delta + ' milliseconds'
+			+ ' with ' + spans + ' spans'
+			+ ' at a rate of ' + rate * 1000 + ' span/sec'
+		);
+	} )
+	.show()
+	;
+} );
+</script>
+
+<script type="text/javascript" src="examples.js"></script>
+<link type="text/css" rel="stylesheet" href="examples.css" />
+
+</head>
+<body>
+
+<h2 id="title"></h2>
+
+<h3 id="highlight" style="color:red; display:none;">
+<a href="#">highlight</a> now
+</h3>
+
+<p>
+This page has the following setup.
+</p>
+<div id="show_setup"></div>
+
+
+<hr/>
+
+
+<div class="section">
+<h3>HTML, CSS, JavaScript</h3>
+<p><a href="http://noteslog.com/chili/" target="_blank">Chili</a> highlights <a href="http://mail.yahoo.com/" target="_blank">Yahoo Mail</a> login page</p>
+<pre><code id='jq' class="html">
+&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01//EN&quot; &quot;http://www.w3.org/TR/html4/strict.dtd&quot;&gt; 
+&lt;html&gt; 
+&lt;head&gt; 
+&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt; 
+&lt;title&gt;Yahoo! Mail: The best web-based email!&lt;/title&gt; 
+&lt;!-- Refresh login page every 15 minutes --&gt; 
+&lt;meta http-equiv=&quot;Pragma&quot; content=&quot;no-cache&quot;&gt; 
+&lt;meta http-equiv=&quot;Expires&quot; content=&quot;0&quot;&gt; 
+&lt;meta http-equiv=&quot;refresh&quot; content=&quot;900&quot;&gt; 
+&lt;meta content=&quot;index,follow&quot; name=&quot;robots&quot;&gt; 
+&lt;meta content=&quot;Yahoo! Mail Free reliable easy efficient PhotoMail SpamGuard antivirus storage mail for mobile award-winning&quot; name=&quot;keywords&quot;&gt; 
+&lt;meta content=&quot;Get free web-based email from Yahoo! Access email from anywhere, enjoy unlimited storage space, and feel secure with award-winning spam protection.&quot; name=&quot;description&quot;&gt; 
+&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://a248.e.akamai.net/sec.yimg.com/lib/common/css/fonts_2.0.0-b2.css&quot;&gt; 
+&lt;style type=&quot;text/css&quot;&gt; 
+ 
+ 
+ 
+@import url(https://a248.e.akamai.net/sec.yimg.com/lib/reg/css/yregbase_sec_200704191234.css);  
+.ct{background:transparent url(https://a248.e.akamai.net/sec.yimg.com/i/reg/cr_gg_ne.gif) no-repeat top right;top:-1px}  
+.ct .cl{background:transparent url(https://a248.e.akamai.net/sec.yimg.com/i/reg/cr_gg_nw.gif) no-repeat top left}  
+.cb{background:transparent url(https://a248.e.akamai.net/sec.yimg.com/i/reg/cr_gg_se.gif) no-repeat bottom right;bottom:-1px}  
+.cb .cl{background:transparent url(https://login.yahoo.com/i/reg/cr_gg_sw.gif) no-repeat bottom left} 
+.clear{clear:both} 
+yreglg select, #yreglg input, #yreglg p, #yreglgtb td, #yreglgtb th{font-size:93%} 
+div.yregdsilu h2.yregdnt, div.yregdsilu p.yregsueasy{width:110px} 
+/*popup template css */ 
+yregtpopup #yregtxt {width:260px;margin:0 0 10px} /* popup template */ 
+yregtpopup #yregwp, #yregtpopup #yregmst{width:525px} 
+yregtpopup #yregmst{margin-bottom:5px} 
+yregtpopup #yreglg{margin-bottom:0} 
+yregtpopup #yregft{padding-top:5px} 
+/* adding login_verify popup css */ 
+yregtgen #yregct{margin-right:15px} 
+yregtgen #yregtxt h2, #yregtpopup #yregtxt h2, #yregpmtxt h3{font:bold 152%/152% arial;color:#333;margin:0} 
+yregtgen #yregtxt p.yregpti, #yregtpopup #yregtxt p.yregpti {color:#666;margin:0 0 2px;font:bold 100%/100% arial} 
+yregtgen #yregtxt, #yregtpopup #yregtxt{margin-bottom:20px} 
+yregtgen #yregtxt #yreghtxt h3, #yregtpopup #yregtxt #yreghtxt h3{margin:0;font:bold 107%/114% arial;color:#8C57A1} 
+yregtgen #yregtxt li h3, #yregtpopup #yregtxt li h3{font:bold 114%/122% arial} 
+yregtgen #yregtxt p, #yregtpopup #yregtxt p{margin:0 0 0.8em;line-height:129%} 
+yregtgen #yregtxt .yregbpt li, #yregtpopup #yregtxt .yregbpt li{margin:0 0 10px 4px;padding:0 0 10px 22px;background:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/purple_arrow.gif) no-repeat 1px 4px} 
+yregtgen.yregab #yregtxt{width:380px} 
+yregtpopup.yregab #yregtxt{width:180px} 
+yregtgen #yregtxt #yreghtxt h2, #yregtpopup #yregtxt #yreghtxt h2{color:#7A067F} 
+.yregbx{z-index:3;margin-right:0!important} 
+.flicker h3 span {color:#ff0084;font-weight:bold} 
+.flicker h3 a {text-decoration:underline;} 
+ 
+/* persistency message right above &quot;sign in&quot; bottom */ 
+em.nwred a {font-style: normal; font-size: 85%; vertical-align:5px;} 
+.kmsibold {font-weight:bold; font-size: 114%;} 
+input#persistent {margin-bottom: -0em;} 
+.subperstxt {line-height:1.75em;} 
+.subperstxt2 {margin: 0 0 0 2em; display:block;} 
+/* #yregft p.yregfb { font-size:120%; padding-bottom: 5px; padding-up: 5px} */ 
+ 
+.yreglgsb{margin-top:0} 
+ 
+yregwp #yregct #yreglg .yregbxi #yreglgmd {margin-top:1.75em} 
+body#yregtgen fieldset {margin-bottom:2.5em} 
+yreglgtb tr {width:17.92em} 
+/* p#sigcopys {text-align: left; font-size: 85%; float: right; padding: .4em; margin: .6em .4em 1em 0; border-bottom: 1px dotted #9D9C9D; border-top: 1px dotted #9D9C9D;} 
+*/ 
+p#sigcopys {text-align: left; font-size: 85%; padding: .4em; margin: .6em .0em 1em 0; border-bottom: 1px dotted #9D9C9D; border-top: 1px dotted #9D9C9D;} 
+sigcopys label{display:block; margin:-1.5em 0 0 2em;} 
+ 
+&lt;/style&gt; 
+ 
+&lt;style type=&quot;text/css&quot;&gt; 
+ 
+/*anti phish badge */ 
+.top {position:relative} 
+antiphish{position:absolute;right:5px;top:5px;}   
+antiphish.dogear{right:0px;top:0px;}  
+antiphish a {font-size:92%;} 
+img.picture {border:2px solid} 
+ 
+/* badge backgrounds */    
+.badge{background-color:#f9f9f9; background-repeat:no-repeat; background-position:top right;}   
+.badge #yreglgtb {margin-top:18px;} /* increased badge size */ 
+ 
+.badge{background-image:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/bdg_01_9a2180.gif)} 
+.badge img.picture{border-color:#9a2180} 
+ #loading #previewpane #previewgraphic {top:50%} 
+/* popup code... */ 
+security {display:none;position:absolute;top:-15px;left:-85px;z-index:1000;background-color:#a5a5a5;} 
+security.noimage {left:-76px;top:-10px} 
+securityi{position:relative;z-index:1;right:1px;bottom:1px;padding:11px;width:219px;background-color:#fff;border:1px solid #636363;}  
+knob{position:absolute;top:30px;right:-10px;width:10px;height:18px;background:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/sideknob.png) no-repeat top left} 
+.noimage #knob{top:22px} 
+security p, #security ul li{font:77%/107% verdana;} 
+security p a {text-decoration:underline;} 
+security p{padding-bottom:5px;} 
+security ul{margin:5px 0 0;padding:0 5px 0 0;text-align:right;list-style:none;}    
+security ul li{margin:0;padding:0 0 2px;} 
+ 
+/* help text updates... */ 
+yregtgen #yregtxt .yregbpt li ul{margin:10px 0 0;padding:0 0 0 15px;} 
+yregtgen #yregtxt .yregbpt li ul li{background:none;list-style:disc;margin:0 0 5px 0;padding:0;} 
+yreghtxt ul{margin-left:0} 
+yreghtxt ul.inlineHeaders li h3{display:inline;} 
+/* remove top margin on li ul */ 
+.addressbar {display:block;margin:1em 0 1em 0} 
+.mono{font-family: courier new, courier, monospace;color:#000;font-weight:bold} 
+ 
+ 
+rcta {width:99%; border:1px solid #898989; margin-top:10px; background-image:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/gradient.png); background-repeat:repeat-x; background-color:#fde37c} 
+.ct {background:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/upper-right.gif) no-repeat scroll right top; top:-1px} 
+.ct .cl {background:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/upper-left.gif) no-repeat scroll left top;} 
+rcta .key {width:40px; height:40px; border:1px solid #666666; background-image:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/key.png); background-repeat: no-repeat; float:left; margin-top:1px} 
+rcta .txt {margin-left:48px} 
+.cb {background:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/lower-right.gif) no-repeat scroll right bottom; bottom:-1px} 
+.cb .cl {background:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/lower-left.gif) no-repeat scroll left bottom;} 
+rcta .ctact {margin:4px 10px;min-height:44px} 
+rcta .txt .qs {font:normal bold 92% arial, Helvetica, sans-serif; color:#000; text-decoration:none} 
+rcta .txt .sl {font:normal normal 100% arial, Helvetica, sans-serif; color:#000; text-decoration:none} 
+rcta .txt .why {font:normal normal 85% arial, Helvetica, sans-serif;} 
+rcta .txt .sltxt {line-height:0.9em} 
+.sltxt a {line-height:0.5em; font-size:85%} 
+.sltxt .why a{font-size:100%} 
+ 
+&lt;/style&gt; 
+&lt;!--[if IE]&gt; 
+&lt;style type=&quot;text/css&quot;&gt; 
+.yregclb{height:1%} 
+yreglgtb td{text-align:left} 
+yreglgtb td input{width:110px}      
+antiphish img{right:15px} 
+antiphish.dogear{right:1px;top:1px;} 
+knob{background:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/sideknob_b.gif);right:-11px} 
+.badge #yreglgtb {margin-top:20px;} 
+rcta .key {margin-top:0} 
+.badge {height:1%} 
+&lt;/style&gt; 
+&lt;![endif]--&gt; 
+ 
+&lt;!--[if lte IE 6]&gt; 
+&lt;style type=&quot;text/css&quot;&gt; 
+.yregclb{height:30em} 
+yregtxt {height:1%} 
+&lt;/style&gt; 
+&lt;![endif]--&gt; 
+ 
+ 
+&lt;!--[if IE]&gt; 
+&lt;style type=&quot;text/css&quot;&gt; 
+.yregclb,.yregbxi,.yregbx {height:1%} 
+yreglgtb td{text-align:left} 
+yregtxt #banner div{position:static}    /* ie z-index context stacking bug work-around */ 
+yregtpopup #yregtxt{clear:both; float:left;} 
+yregct{padding:0 0 30px} 
+.yregbx{width: 100%} 
+&lt;/style&gt; 
+&lt;![endif]--&gt; 
+ 
+&lt;!--[if IE 6]&gt; 
+&lt;style type=&quot;text/css&quot;&gt; 
+.yregclb{height:30em}  
+yregtxt {height:1%} 
+/*p#sigcopys {margin-right:0.2em}*/ 
+&lt;/style&gt; 
+&lt;![endif]--&gt; 
+ 
+ 
+ 
+ 
+ 
+ 
+&lt;style type=&quot;text/css&quot;&gt; 
+@import url(https://a248.e.akamai.net/sec.yimg.com/lib/reg/css/yregml_sec_200604111840.css); 
+div.yregdsilu h2.yregdnt, div.yregdsilu p.yregsueasy{width:110px} 
+/* persistency message right above &quot;sign in&quot; bottom */ 
+em.nwred a {font-style: normal; font-size: 85%; top:-1px; position: relative } 
+.kmsibold {font-weight:bold; font-size: 114%;} 
+p#sigcopys {text-align: left; font-size: 85%; padding: .4em; margin: .6em .4em 1em 0; border-bottom: 1px dotted #9D9C9D; border-top: 1px dotted #9D9C9D;} 
+input#persistent {margin-bottom: -0em;} 
+.subperstxt {line-height:1.75em;} 
+.subperstxt2 {margin: 0 0 0 2em; display:block;} 
+/* #yregft p.yregfb { font-size:120%; padding-bottom: 5px; padding-up: 5px} */ 
+&lt;/style&gt; 
+&lt;style type=&quot;text/css&quot;&gt; 
+ 
+/*anti phish badge */ 
+.top {position:relative} 
+antiphish{position:absolute;right:5px;top:5px;}   
+antiphish.dogear{right:0px;top:0px;}  
+antiphish a {font-size:92%;} 
+img.picture {border:2px solid} 
+ 
+/* badge backgrounds */    
+.badge{background-color:#f9f9f9; background-repeat:no-repeat; background-position:top right;}   
+.badge #yreglgtb {margin-top:18px;} /* increased badge size */ 
+ 
+.badge{background-image:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/bdg_01_9a2180.gif)} 
+.badge img.picture{border-color:#9a2180} 
+ #loading #previewpane #previewgraphic {top:50%} 
+/* popup code... */ 
+security {display:none;position:absolute;top:-15px;left:-85px;z-index:1000;background-color:#a5a5a5;} 
+security.noimage {left:-76px;top:-10px} 
+securityi{position:relative;z-index:1;right:1px;bottom:1px;padding:11px;width:219px;background-color:#fff;border:1px solid #636363;}  
+knob{position:absolute;top:30px;right:-10px;width:10px;height:18px;background:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/sideknob.png) no-repeat top left} 
+.noimage #knob{top:22px} 
+security p, #security ul li{font:77%/107% verdana;} 
+security p a {text-decoration:underline;} 
+security p{padding-bottom:5px;} 
+security ul{margin:5px 0 0;padding:0 5px 0 0;text-align:right;list-style:none;}    
+security ul li{margin:0;padding:0 0 2px;} 
+ 
+/* help text updates... */ 
+yregtgen #yregtxt .yregbpt li ul{margin:10px 0 0;padding:0 0 0 15px;} 
+yregtgen #yregtxt .yregbpt li ul li{background:none;list-style:disc;margin:0 0 5px 0;padding:0;} 
+yreghtxt ul{margin-left:0} 
+yreghtxt ul.inlineHeaders li h3{display:inline;} 
+/* remove top margin on li ul */ 
+.addressbar {display:block;margin:1em 0 1em 0} 
+.mono{font-family: courier new, courier, monospace;color:#000;font-weight:bold} 
+ 
+ 
+rcta {width:99%; border:1px solid #898989; margin-top:10px; background-image:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/gradient.png); background-repeat:repeat-x; background-color:#fde37c} 
+.ct {background:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/upper-right.gif) no-repeat scroll right top; top:-1px} 
+.ct .cl {background:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/upper-left.gif) no-repeat scroll left top;} 
+rcta .key {width:40px; height:40px; border:1px solid #666666; background-image:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/key.png); background-repeat: no-repeat; float:left; margin-top:1px} 
+rcta .txt {margin-left:48px} 
+.cb {background:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/lower-right.gif) no-repeat scroll right bottom; bottom:-1px} 
+.cb .cl {background:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/lower-left.gif) no-repeat scroll left bottom;} 
+rcta .ctact {margin:4px 10px;min-height:44px} 
+rcta .txt .qs {font:normal bold 92% arial, Helvetica, sans-serif; color:#000; text-decoration:none} 
+rcta .txt .sl {font:normal normal 100% arial, Helvetica, sans-serif; color:#000; text-decoration:none} 
+rcta .txt .why {font:normal normal 85% arial, Helvetica, sans-serif;} 
+rcta .txt .sltxt {line-height:0.9em} 
+.sltxt a {line-height:0.5em; font-size:85%} 
+.sltxt .why a{font-size:100%} 
+ 
+&lt;/style&gt; 
+&lt;!--[if IE]&gt; 
+&lt;style type=&quot;text/css&quot;&gt; 
+.yregclb{height:1%} 
+yreglgtb td{text-align:left} 
+yreglgtb td input{width:110px}      
+antiphish img{right:15px} 
+antiphish.dogear{right:1px;top:1px;} 
+knob{background:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/sideknob_b.gif);right:-11px} 
+.badge #yreglgtb {margin-top:20px;} 
+rcta .key {margin-top:0} 
+.badge {height:1%} 
+&lt;/style&gt; 
+&lt;![endif]--&gt; 
+ 
+&lt;!--[if lte IE 6]&gt; 
+&lt;style type=&quot;text/css&quot;&gt; 
+.yregclb{height:30em} 
+yregtxt {height:1%} 
+&lt;/style&gt; 
+&lt;![endif]--&gt; 
+     
+&lt;!--[if IE]&gt; 
+&lt;style type=&quot;text/css&quot;&gt; 
+antiphish.dogear{right:1px;} 
+/* #antiphish{right:15px;} */ 
+&lt;/style&gt; 
+&lt;![endif]--&gt; 
+&lt;!--[if IE 5]&gt; 
+&lt;style  type=&quot;text/css&quot;&gt; 
+yregbnr{margin-top:23px;padding-top:0}  /* offset login box */ 
+.yregbnrimg {margin:0 0 0 -3px}  /* 3px jog Win/IE5  */ 
+&lt;/style&gt; 
+&lt;![endif]--&gt; 
+&lt;!--[if IE]&gt; 
+&lt;style type=&quot;text/css&quot;&gt; 
+.yregclb{height:1%} 
+yregbnrti{height:159px;padding-top:0} 
+yregbnrtii{margin-top:0}  
+.knob{top:-5px} 
+yregtml .mailplus{height:60px;padding-top:0} 
+yregtml .mailplus div{margin-top:0} 
+yregtml .spamguard{height:52px;padding-top:0} 
+yregtml .spamguard div{margin-top:0} 
+yregtml .addressbook{height:50px;padding-top:0} 
+yregtml .addressbook div{margin-top:0} 
+yregtml .messenger{height:60px;padding-top:0} 
+yregtml .messenger div{margin-top:0} 
+yregtml .photos{height:60px;padding-top:0} 
+yregtml .photos div{margin-top:0} 
+yregtml .mobile{height:60px;padding-top:0} 
+yregtml .mobile div{margin-top:0} 
+yregtml .antivirus{height:60px;padding-top:0} 
+yregtml .antivirus div{margin-top:0} 
+yregtml .cnet{height:72px;padding-top:0} 
+yregtml .cnet div{margin-top:0} 
+yregtml .pcmag{height:94px;padding-top:0} 
+yregtml .pcmag div{margin-top:0} 
+ 
+&lt;/style&gt; 
+&lt;![endif]--&gt; 
+&lt;!--[if IE 7]&gt; 
+&lt;style type=&quot;text/css&quot;&gt; 
+.knob{top:-6px} 
+antiphish.dogear{top:0;right:0;} 
+antiphish{right:5px;} 
+&lt;/style&gt; 
+&lt;![endif]--&gt; 
+ 
+&lt;!--[if lte IE 6]&gt; 
+&lt;style type=&quot;text/css&quot;&gt; 
+.yregclb{height:30em} 
+yregtxt {height:1%} 
+p#sigcopys {margin-right:0.2em} 
+&lt;/style&gt; 
+&lt;![endif]--&gt; 
+ 
+ 
+&lt;style type=&quot;text/css&quot;&gt; 
+    p#sigcopys {float: right;} 
+    #yregtxt {width:66%; overflow:hidden} 
+    #yregbnr {padding-top:0} 
+    #yregbnr #yregbnrti #yregbnrtii {width:240px} 
+    #yregiclst {padding-right:0} 
+&lt;/style&gt; 
+&lt;!--[if IE]&gt; 
+&lt;style type=&quot;text/css&quot;&gt; 
+    #yregbnr #yregbnrti {margin-top:-160px} 
+    #yregtxt {height:auto} 
+&lt;/style&gt; 
+&lt;![endif]--&gt; 
+ 
+ 
+ 
+ 
+ 
+&lt;/head&gt; 
+ 
+      
+    &lt;body id=&quot;yregtml&quot;&gt; 
+ 
+&lt;div id=&quot;yregwp&quot;&gt; 
+&lt;!-- begin header --&gt; 
+&lt;table id=&quot;yregmst&quot; width=&quot;750&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; border=&quot;0&quot;&gt;&lt;tr valign=&quot;top&quot;&gt; 
+&lt;td width=&quot;100%&quot;&gt;&lt;table width=&quot;100%&quot; cellspacing=&quot;0&quot; border=&quot;0&quot;&gt;&lt;tr valign=&quot;top&quot;&gt; 
+&lt;td width=&quot;1%&quot;&gt;&lt;img src=&quot;https://a248.e.akamai.net/sec.yimg.com/i/us/nt/ma/ma_mail_1.gif&quot; alt=&quot;Yahoo! Mail&quot; width=196 height=33 border=0&gt;&lt;/td&gt; 
+&lt;td&gt;&lt;table width=&quot;100%&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; border=&quot;0&quot;&gt;&lt;tr valign=&quot;top&quot;&gt; 
+&lt;td align=&quot;right&quot; id=&quot;ygmaproplinks&quot; style=&quot;padding-right:3px;line-height:12px;&quot;&gt;&lt;font face=&quot;verdana,geneva,sans-serif&quot; size=&quot;-2&quot;&gt;&lt;a href=&quot;http://www.yahoo.com &quot; target=&quot;www&quot; class=&quot;header&quot; title=&quot;Click here to go to Yahoo! homepage&quot;&gt;Yahoo!&lt;/a&gt; - &lt;a href=&quot;http://help.yahoo.com/help/us/edit/&quot; class=&quot;header&quot; target=&quot;yhelp&quot; title=&quot;Click here for help&quot;&gt;Help&lt;/a&gt;&lt;/font&gt;&lt;/td&gt; 
+&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt; 
+&lt;td align=&quot;right&quot; style=&quot;padding: 6px 0 0 4px;&quot;&gt; 
+&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt; 
+ 
+     
+&lt;!-- end header --&gt; 
+&lt;span id=&quot;cache&quot;&gt;&lt;/span&gt; 
+&lt;script language=&quot;JavaScript&quot;&gt; 
+     
+function checkBrowser(){ 
+    var appName = navigator.appName; 
+    if( appName == &quot;Microsoft Internet Explorer&quot; ) 
+    { 
+        // this only works in IE 5 for windows and higher ... 
+        if( navigator.appVersion.indexOf(&quot;Windows&quot;) == -1 ) 
+            return -1; 
+        var appVersionAry = navigator.appVersion.split(&quot;(&quot;); 
+        if( appVersionAry.length &lt; 2 ) 
+            return -1; 
+        var appVersion = appVersionAry[1]; 
+        appVersionAry = appVersion.split(&quot;; &quot;); 
+        if( appVersionAry.length &lt; 2 ) 
+            return -1; 
+        appVersion = appVersionAry[1]; 
+        appVersionAry = appVersion.split(&quot; &quot;); 
+        if( appVersionAry.length &lt; 2 ) 
+            return -1; 
+        appVersion = appVersionAry[1]; 
+        var appVersionNumber = parseInt(appVersion); 
+ 
+        if( appVersionNumber &lt; 5 ) 
+            return -1; 
+    } 
+    else 
+    { 
+        return -1; 
+    } 
+} 
+ 
+&lt;/script&gt; 
+ 
+ 
+&lt;script language=&quot;JavaScript&quot;&gt; 
+ 
+ 
+function flashCacheReady (initialized){ //invoked directly by Flash 
+    } 
+&lt;/script&gt; 
+ 
+ 
+ 
+ 
+ 
+&lt;div id=&quot;yregct&quot; class=&quot;yregclb&quot;&gt; 
+    &lt;div id=&quot;yreglg&quot;&gt; 
+&lt;!-- login box goes here --&gt;             
+        &lt;div class=&quot;top yregbx&quot;&gt; 
+    &lt;script type=&quot;text/javascript&quot;&gt;if(top == self) { document.write(&quot;&lt;div class=\&quot; badge\&quot;&gt;&quot;)}&lt;/script&gt;    &lt;span class=&quot;ct&quot;&gt;&lt;span class=&quot;cl&quot;&gt;&lt;/span&gt;&lt;/span&gt; 
+            &lt;div class=&quot;yregbxi&quot;&gt;  
+&lt;script type=&quot;text/javascript&quot;&gt;if(top == self) { document.write(&quot;&lt;p id=\&quot;antiphish\&quot;&gt;&lt;a id=\&quot;antiphishlnk\&quot; href=\&quot;https://protect.login.yahoo.com/login/set_pref?.intl=us&amp;.src=ym&amp;.u=b0qug6p41jrkh&amp;.partner=&amp;pkg=&amp;stepid=&amp;.pd=c=&amp;.crumb=czozMjoiMzA4NGEzZTIyZjFlZDZjMWIzYTNkZjAxN2FjMTEwOWIiOw--&amp;.done=https%3A%2F%2Flogin.yahoo.com%2Fconfig%2Flogin_verify2%3F%26.src%3Dym\&quot; title=\&quot;Change Settings\&quot;&gt;&lt;img src=\&quot;https://f5.yahoofs.com/login/036411737158c5602bdd645a93877058/71211880373668ehssu53bcf1r.gif?loc7eGIBgKt6Wbtg\&quot; width=\&quot;60\&quot; height=\&quot;60\&quot;alt=\&quot;Yahoo! sign-in seal\&quot;&gt;&lt;/a&gt;&lt;/p&gt;              &lt;div id=\&quot;security\&quot;&gt;                &lt;div id=\&quot;securityi\&quot;&gt;                    &lt;div id=\&quot;knob\&quot;&gt;&lt;/div&gt;                    &lt;div&gt;                        &lt;p&gt;Is this your sign-in seal? If it isn&#39;t, &lt;a href=\&quot;https://login.yahoo.com/config/login?.src=ym&amp;.v=0&amp;.u=b0qug6p41jrkh&amp;.last=&amp;promo=&amp;.intl=us&amp;.bypass=&amp;.help=3&amp;.partner=&amp;pkg=&amp;stepid=&amp;.pd=ym_ver%3d0%2526c=&amp;.done=http%3A//mail.yahoo.com\&quot;&gt;make sure&lt;/a&gt; you&#39;re on a legitimate Yahoo! web site.&lt;/p&gt;                        &lt;/div&gt;                    &lt;ul&gt;                        &lt;li&gt;&lt;a href=\&quot;https://protect.login.yahoo.com/login/set_pref?.intl=us&amp;.src=ym&amp;.u=b0qug6p41jrkh&amp;.partner=&amp;pkg=&amp;stepid=&amp;.pd=c=&amp;.crumb=czozMjoiMzA4NGEzZTIyZjFlZDZjMWIzYTNkZjAxN2FjMTEwOWIiOw--&amp;.done=https%3A%2F%2Flogin.yahoo.com%2Fconfig%2Flogin_verify2%3F%26.src%3Dym\&quot; title=\&quot;Change Your Sign-in Settings\&quot;&gt;Change Sign-in Settings&lt;/a&gt;&lt;/li&gt;                        &lt;li&gt;&lt;a href=\&quot;https://protect.login.yahoo.com/?.src=ym&amp;.v=0&amp;.u=b0qug6p41jrkh&amp;.last=&amp;promo=&amp;.intl=us&amp;.bypass=&amp;.help=3&amp;.partner=&amp;pkg=&amp;stepid=&amp;.pd=ym_ver%3d0%2526c=&amp;.done=http%3A//mail.yahoo.com\&quot; title=\&quot;What&#39;s this?\&quot;&gt;What&#39;s this?&lt;/a&gt;&lt;/li&gt;                    &lt;/ul&gt;                &lt;/div&gt;                &lt;/div&gt;&quot;) } else  { top.location.href = &quot;http://www.yahoo.com&quot; }&lt;/script&gt;                 
+                &lt;h1&gt;Sign in&lt;br&gt; to Yahoo!&lt;/h1&gt; 
+     
+                &lt;fieldset&gt; 
+                &lt;legend&gt;Login Form&lt;/legend&gt; 
+&lt;form method=&quot;post&quot; action=&quot;https://login.yahoo.com/config/login?&quot; autocomplete=&quot;off&quot; name=&quot;login_form&quot; onsubmit=&quot;return hash2(this)&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;.tries&quot; value=&quot;1&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;.src&quot; value=&quot;ym&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;.md5&quot; value=&quot;&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;.hash&quot; value=&quot;&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;.js&quot; value=&quot;&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;.last&quot; value=&quot;&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;promo&quot; value=&quot;&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;.intl&quot; value=&quot;us&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;.bypass&quot; value=&quot;&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;.partner&quot; value=&quot;&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;.u&quot; value=&quot;b0qug6p41jrkh&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;.v&quot; value=&quot;0&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;.challenge&quot; value=&quot;nE0Jxs40cprAQt0U2NsDQhXzVY_X&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;.yplus&quot; value=&quot;&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;.emailCode&quot; value=&quot;&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;pkg&quot; value=&quot;&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;stepid&quot; value=&quot;&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;.ev&quot; value=&quot;&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;hasMsgr&quot; value=&quot;0&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;.chkP&quot; value=&quot;Y&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;.done&quot; value=&quot;http://mail.yahoo.com&quot;&gt; 
+                &lt;input type=&quot;hidden&quot; name=&quot;.pd&quot; value=&quot;ym_ver=0&amp;c=&quot;&gt; 
+                &lt;table id=&quot;yreglgtb&quot; summary=&quot;form: login information&quot;&gt; 
+                    &lt;tr&gt; 
+                        &lt;th&gt;&lt;label for=&quot;username&quot;&gt;Yahoo! ID:&lt;/label&gt;&lt;/th&gt; 
+                        &lt;td&gt;&lt;input name=&quot;login&quot; id=&quot;username&quot; value=&quot;&quot; size=&quot;17&quot; class=&quot;yreg_ipt&quot; type=&quot;text&quot; maxlength=&quot;96&quot;&gt;&lt;/td&gt; 
+                                                &lt;script language=&quot;JavaScript&quot; type=&quot;text/javascript&quot;&gt;if(document.getElementById) document.getElementById(&#39;username&#39;).focus();&lt;/script&gt; 
+                    &lt;/tr&gt; 
+                    &lt;tr&gt; 
+                        &lt;th&gt;&lt;label for=&quot;passwd&quot;&gt;Password:&lt;/label&gt;&lt;/th&gt; 
+                        &lt;td&gt;&lt;input name=&quot;passwd&quot; id=&quot;passwd&quot; value=&quot;&quot; size=&quot;17&quot; class=&quot;yreg_ipt&quot; type=&quot;password&quot; maxlength=&quot;64&quot;&gt;&lt;/td&gt; 
+                    &lt;/tr&gt; 
+                 
+                &lt;/table&gt; 
+ 
+&lt;p id=&quot;sigcopys&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;persistent&quot; name=&quot;.persistent&quot; value=&quot;y&quot; 
+&gt;   
+    &lt;label for=&quot;persistent&quot;&gt; &lt;span class=&quot;kmsibold&quot;&gt;Keep me signed in&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;subperstxt&quot;&gt;for 2 weeks unless I sign out.&lt;/span&gt; &lt;em class=&quot;nwred&quot;&gt;&lt;a href=&quot;http://us.rd.yahoo.com/reg/login1/lisu/pst_help/us/ym/*https://login.yahoo.com/config/login?.src=ym&amp;.intl=us&amp;.help=4&amp;.v=0&amp;.u=b0qug6p41jrkh&amp;.last=&amp;promo=&amp;.bypass=&amp;.partner=&amp;pkg=&amp;stepid=&amp;.pd=ym_ver%3d0%26c=&amp;.ab=&amp;.done=http%3A//mail.yahoo.com&quot; tabindex=&quot;99999&quot;&gt;Info&lt;/a&gt;&lt;/em&gt;&lt;/label&gt; 
+    &lt;span class=&quot;subperstxt2&quot;&gt;[Uncheck if on a shared computer]&lt;/span&gt; 
+&lt;/p&gt; 
+&lt;div class=&quot;clear&quot;&gt;&lt;/div&gt; 
+                    &lt;p class=&quot;yreglgsb&quot;&gt;&lt;input type=&quot;submit&quot; name=&quot;.save&quot; value=&quot;Sign In&quot;&gt;&lt;/p&gt; 
+                &lt;/form&gt;     
+                &lt;/fieldset&gt; 
+                        &lt;a href=&quot;http://us.rd.yahoo.com/reg/login1/lisu/forgot_lib/us/ym/*https://edit.europe.yahoo.com/config/eval_forgot_pw?new=1&amp;.done=http%3A//mail.yahoo.com&amp;.src=ym&amp;partner=&amp;.intl=us&amp;pkg=&amp;stepid=&amp;.pd=ym_ver%3d0%26c=&amp;.ab=&amp;.last=&quot;&gt;Forget your ID or password?&lt;/a&gt; | &lt;a href=&quot;http://us.rd.yahoo.com/reg/login1/lisu/sih_lib/us/ym/*https://login.yahoo.com/config/login?.src=ym&amp;.intl=us&amp;.help=1&amp;.v=0&amp;.u=b0qug6p41jrkh&amp;.last=&amp;.last=&amp;promo=&amp;.bypass=&amp;.partner=&amp;pkg=&amp;stepid=&amp;.pd=ym_ver%3d0%26c=&amp;.ab=&amp;.done=http%3A//mail.yahoo.com&quot;&gt;Help&lt;/a&gt; 
+                    &lt;/p&gt;         
+     
+                                 
+                    &lt;div class=&quot;yregdlisu&quot;&gt; 
+                        &lt;h2&gt;Don&#39;t have a Yahoo! ID?&lt;/h2&gt; 
+                        &lt;p&gt;Signing up is easy.&lt;/p&gt;  
+                        &lt;p class=&quot;yreglgsu&quot;&gt;&lt;a href=&quot;https://edit.europe.yahoo.com/config/eval_register?.intl=us&amp;new=1&amp;.done=http%3A//mail.yahoo.com&amp;.src=ym&amp;.v=0&amp;.u=b0qug6p41jrkh&amp;partner=&amp;.partner=&amp;pkg=&amp;stepid=&amp;.p=&amp;promo=&amp;.last=&quot;&gt;Sign Up&lt;/a&gt;&lt;/p&gt; 
+                    &lt;/div&gt; 
+ 
+&lt;!-- end lisu --&gt; 
+            &lt;/div&gt; 
+    &lt;span class=&quot;cb&quot;&gt;&lt;span class=&quot;cl&quot;&gt;&lt;/span&gt;&lt;/span&gt; 
+      &lt;script type=&quot;text/javascript&quot;&gt;document.write(&quot;&lt;/div&gt;&quot;)&lt;/script&gt; 
+        &lt;/div&gt; 
+ 
+    &lt;!-- promo marketing header --&gt; 
+                &lt;div class=&quot;second yregbx&quot;&gt; 
+                        &lt;span class=&quot;ct&quot;&gt;&lt;span class=&quot;cl&quot;&gt;&lt;/span&gt;&lt;/span&gt; 
+                        &lt;div class=&quot;yregbxi&quot;&gt; 
+                         &lt;h3&gt;One Yahoo! ID. So much fun!&lt;/h3&gt; 
+                         &lt;p&gt;Use your single ID for everything from checking Mail to checking out Yahoo! Music, Photos, Messenger, and more.&lt;/p&gt; 
+                        &lt;/div&gt; 
+                        &lt;span class=&quot;cb&quot;&gt;&lt;span class=&quot;cl&quot;&gt;&lt;/span&gt;&lt;/span&gt; 
+                &lt;/div&gt; 
+&lt;!-- End promo marketing header --&gt; 
+    
+ 
+&lt;!-- end login box --&gt;     
+    &lt;/div&gt; 
+    &lt;div id=&quot;yregtxt&quot;&gt;     
+&lt;!-- begin left side content --&gt;     
+&lt;!-- SpaceID=150001465 loc=R1 noad --&gt; 
+&lt;!-- SpaceID=150001465 loc=R2 noad --&gt; 
+&lt;!-- top static call --&gt; 
+    &lt;div class=&quot;rootbeer&quot;&gt; 
+    &lt;div id=&quot;yregbnr&quot;&gt; 
+    &lt;img src=&quot;https://a248.e.akamai.net/sec.yimg.com/i/reg/bnr_28.jpg&quot; alt=&quot;Filter&quot; class=&quot;yregbnrimg&quot; height=&quot;173&quot; width=&quot;204&quot;&gt; 
+    &lt;div id=&quot;yregbnrt&quot;&gt;&lt;div id=&quot;yregbnrti&quot;&gt;&lt;div id=&quot;yregbnrtii&quot;&gt; 
+        &lt;img src=&quot;https://a248.e.akamai.net/sec.yimg.com/i/reg/title_mailtour_rb.gif&quot; alt=&quot;You deserve the best. Yahoo! Mail delivers.&quot; height=&quot;50&quot; width=&quot;244&quot;&gt; 
+        &lt;p&gt;Enjoy tons of features and fun ways to stay in touch and share. Sign up now, it&#39;s FREE!&lt;/p&gt; 
+        &lt;p&gt;&lt;a class=&quot;yregnlnk&quot; href=&quot;http://tour.mail.yahoo.com/mailtour.html&quot; onclick=&quot;yg_popup(&#39;http://tour.mail.yahoo.com/mailtour.html&#39;,&#39;y&#39;,700,450); return false&quot; target=&quot;_blank&quot;&gt;Tour Yahoo! Mail&lt;/a&gt;&lt;/p&gt; 
+    &lt;/div&gt;&lt;/div&gt;&lt;/div&gt; 
+    &lt;/div&gt;&lt;/div&gt; 
+     
+    &lt;!-- end top add call --&gt; 
+ 
+    &lt;!-- bottom ad call --&gt; 
+    &lt;div id=&quot;yregiclst&quot;&gt; 
+    &lt;div class=&quot;ic mobile&quot;&gt;&lt;div&gt;&lt;h3&gt;Get mobile. Get messages.&lt;/h3&gt; 
+        &lt;cite&gt;&lt;a class=&quot;yregnlnk&quot; onclick=&quot;yreg_popLayer(&#39;hl_list&#39;,this,0,25,&#39;96946863&#39;);&quot;&gt;Yahoo! alerts you&lt;/a&gt; of new email and lets you read them on your mobile phone.&lt;/cite&gt; 
+    &lt;/div&gt;&lt;/div&gt; 
+ 
+    &lt;!-- begin hidden layer    --&gt; 
+    &lt;div id=&quot;hl_list&quot; class=&quot;hiddenlayer&quot;&gt; 
+        &lt;div class=&quot;yreginhdly&quot;&gt; 
+        &lt;h4&gt;Stay connected with  yahoo! mobile alerts&lt;/h4&gt; 
+        &lt;p&gt;Don&#39;t miss important news just because you&#39;re away from the PC.&lt;/p&gt; 
+        &lt;ul&gt; 
+            &lt;li&gt;Get alerts on your mobile phone the second new Mail arrives.&lt;/li&gt; 
+            &lt;li&gt;Set up free&amp;#42; alerts for the latest news, weather, stocks, sports scores, more.&lt;/li&gt; 
+            &lt;li&gt;Personalize alerts to get the exact info you want.&lt;/li&gt; 
+        &lt;/ul&gt; 
+        &lt;p class=&quot;yreglegal&quot;&gt;&amp;#42;Yahoo! Mobile Alerts are available at no charge from Yahoo!  However, your carrier.s normal data transfer charges apply.&lt;/p&gt; 
+        &lt;p class=&quot;close&quot;&gt;&lt;a class=&quot;yregnlnk&quot; onclick=&quot;yreg_popLayer(&#39;hl_list&#39;);&quot;&gt;Close&lt;/a&gt;&lt;/p&gt; 
+        &lt;/div&gt; 
+    &lt;/div&gt; 
+     
+    &lt;!-- End hidden layer --&gt; 
+    &lt;div class=&quot;ic antivirus&quot;&gt;&lt;div&gt;&lt;h3&gt;AntiVirus that works twice as hard.&lt;/h3&gt; 
+        &lt;cite&gt;Your Yahoo! Mail scans and cleans email attachments to help keep nasty viruses out of your life.&lt;/cite&gt; 
+    &lt;/div&gt;&lt;/div&gt; 
+    &lt;div class=&quot;ic pcmag&quot;&gt;&lt;div&gt;&lt;h3&gt;Wanna share in our trophy?&lt;/h3&gt; 
+        &lt;cite&gt;&lt;i&gt;PC Magazine&lt;/i&gt; knows a thing or two about free email, including which one stands out. &lt;a class=&quot;yregnlnk&quot; onclick=&quot;yreg_popLayer(&#39;h2_list&#39;,this,-150 ,25,&#39;96946861&#39;);&quot;&gt;Show me&lt;/a&gt;&lt;/cite&gt; 
+    &lt;/div&gt;&lt;/div&gt; 
+     
+    &lt;!-- begin hidden layer    --&gt; 
+    &lt;div id=&quot;h2_list&quot; class=&quot;hiddenlayer&quot;&gt; 
+        &lt;div class=&quot;yreginhdly&quot;&gt; 
+        &lt;h4&gt;PC Magazine Editors&#39; Choice 2005&lt;/h4&gt; 
+        &lt;p&gt;&quot;Yahoo! Mail has made considerable strides since the last time we reviewed it. It&#39;s the most comprehensive free service in this roundup, with sophisticated security features, a configurable spam filter, Norton Anti-Virus scanning and cleaning, and the ability to integrate cleanly with Yahoo! Messenger. Yahoo! Mail was the first Web-based mail service to include a detailed address book, calendar, and notepad, and these work as well as ever. You can also sync their content with mobile devices. ...Yahoo! Mail takes the lead overall.&quot; -- &lt;i&gt;PC Magazine&lt;/i&gt;, June 22, 2005.&lt;/p&gt; 
+        &lt;p class=&quot;close&quot;&gt;&lt;a class=&quot;yregnlnk&quot; onclick=&quot;yreg_popLayer(&#39;h2_list&#39;);&quot;&gt;Close&lt;/a&gt;&lt;/p&gt; 
+        &lt;/div&gt; 
+    &lt;/div&gt; 
+     
+    &lt;!-- End hidden layer --&gt; 
+    &lt;/div&gt;     
+     
+    &lt;!-- end bottom ad call --&gt; 
+ 
+&lt;!-- Content module end --&gt; 
+ 
+&lt;!-- end left side content --&gt;         
+    &lt;/div&gt; 
+&lt;/div&gt; 
+&lt;!-- begin footer --&gt; 
+ 
+&lt;div id=&quot;yregft&quot;&gt; 
+    &lt;p&gt;Copyright &amp;copy; 2008 Yahoo! Inc. All rights reserved. &lt;a href=&quot;http://docs.yahoo.com/info/copyright/copyright.html&quot; target=&quot;cp&quot;&gt;Copyright/IP Policy&lt;/a&gt; | &lt;a href=&quot;http://docs.yahoo.com/info/terms/&quot; target=&quot;tos&quot;&gt;Terms of Service&lt;/a&gt; | &lt;a href=&quot;http://security.yahoo.com/&quot; target=&quot;sc&quot;&gt;Guide to Online Security&lt;/a&gt;&lt;/p&gt; 
+  &lt;p&gt;NOTICE: We collect personal information on this site.&lt;/p&gt;  
+  &lt;p&gt;To learn more about how we use your information, see our &lt;a href=&quot;http://privacy.yahoo.com/&quot; target=&quot;_new&quot; title=&quot;Click here to view Yahoo! Privacy Policy&quot;&gt;Privacy Policy&lt;/a&gt;&lt;/p&gt; 
+&lt;/div&gt; 
+  
+     
+&lt;!-- end footer --&gt; 
+&lt;/div&gt; 
+&lt;/div&gt; 
+            &lt;script src=&quot;https://a248.e.akamai.net/sec.yimg.com/lib/common/utils/2/yahoo_2.0.0-b4.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt; 
+&lt;script src=&quot;https://a248.e.akamai.net/sec.yimg.com/lib/common/utils/2/dom_2.0.0-b4.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt; 
+&lt;script src=&quot;https://a248.e.akamai.net/sec.yimg.com/lib/common/utils/2/event_2.0.0-b4.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt; 
+&lt;script src=&quot;https://a248.e.akamai.net/sec.yimg.com/lib/common/utils/2/animation_2.0.0-b4.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt; 
+ 
+&lt;script type=&quot;text/javascript&quot;&gt; 
+var badgeOffset = 25; 
+&lt;/script&gt; 
+&lt;!--[if IE]&gt; 
+&lt;script type=&quot;text/javascript&quot;&gt; 
+badgeOffset = 45; 
+&lt;/script&gt; 
+&lt;![endif]--&gt; 
+ 
+&lt;script type=&quot;text/javascript&quot;&gt; 
+/*namespace method:*/ 
+YAHOO.namespace(&quot;Membership&quot;); 
+ 
+/* Crockford&#39;s &quot;Module Pattern&quot;:  */ 
+YAHOO.Membership.login = function() { 
+ 
+        /*private methods: */ 
+ 
+        // set focus on text box 
+/*        var setfocusonavailable = function(e) { 
+                var myElem = document.getElementById(this.id); 
+          myElem.focus(); 
+        } 
+*/ 
+        // make popup visisble 
+        var imageRollover = function(e) { 
+          if (!imageIsOn) { 
+             document.getElementById(&#39;security&#39;).style.display = &#39;block&#39; ; 
+             // Get XY position of the &quot;badge&quot; 
+             xy = YAHOO.util.Dom.getXY(&#39;antiphish&#39;); 
+             // get width of security badge.. 
+             securityWidth = YAHOO.util.Dom.getStyle(&#39;security&#39;, &#39;width&#39;);  
+             // If no specific width is set... IE returns auto... add width 
+             if (securityWidth == &#39;auto&#39;) {  
+              securityWidth = 218; 
+             } 
+             // parse width 
+             securityWidth = parseInt(securityWidth); 
+             // Set the XY position of the popup based on the position of the image above 
+             // Reusing the xp arr we got, just modifying the positions 
+             xy[0] = ((xy[0] - securityWidth) - badgeOffset); 
+             xy[1] = (xy[1] - 20); 
+             // Apply the new XY arr to the popup 
+             YAHOO.util.Dom.setXY(&#39;security&#39;, xy); 
+             // if badge is not visible then show 
+             if (myFadeOut.getAttribute(&#39;opacity&#39;) != 1) { 
+              myFadeIn.animate(); 
+             } 
+             // remove rollover event 
+             myFadeIn.onComplete.subscribe(removeRollover); 
+             imageIsOn = true; 
+          } 
+          if (imageTimer) { 
+            clearTimeout(imageTimer); 
+          } 
+        } 
+ 
+        // make popup hidden 
+        var imageRollout = function(e) { 
+                myFadeOut.animate(); 
+                myFadeOut.onComplete.subscribe(makeHidden); 
+                imageIsOn = false; 
+        } 
+ 
+        // remove rollover from link 
+        var removeRollover = function(e) { 
+         document.getElementById(&#39;security&#39;).style.filter = &#39;&#39;; // fixing ie issue on overflow 
+         //YAHOO.util.Event.removeListener(&quot;antiphishlnk&quot;, &quot;mouseover&quot;, imageRollover); 
+        } 
+ 
+        // hide image 
+        var makeHidden = function(e) { 
+         //YAHOO.util.Event.addListener(&quot;antiphishlnk&quot;, &quot;mouseover&quot;, imageRollover); 
+         var myElem = document.getElementById(&#39;security&#39;); 
+         myElem.style.display = &#39;none&#39;; 
+        } 
+ 
+  var myFadeIn = new YAHOO.util.Anim(&#39;security&#39;, {opacity: { from:0, to: 1 } },0.5,YAHOO.util.Easing.easeOut ); 
+  var myFadeOut = new YAHOO.util.Anim(&#39;security&#39;, {opacity: { from:1, to: 0 } },0.5, YAHOO.util.Easing.easeOut); 
+ 
+        /*return an object*/ 
+        return { 
+ 
+                /*another public method*/ 
+                init: function() { 
+ 
+                  /* attach your event handlers here*/ 
+                  imageIsOn = false; 
+                  imageTimer = false; 
+     
+                  myFadeOut.animate();    
+//                  YAHOO.util.Event.onAvailable(&quot;username&quot;, setfocusonavailable, this); 
+                  YAHOO.util.Event.addListener(&quot;antiphishlnk&quot;, &quot;mouseover&quot;, imageRollover); 
+                  YAHOO.util.Event.addListener(&quot;antiphishlnk&quot;, &quot;mouseout&quot;, YAHOO.Membership.login.setRollover, YAHOO.Membership.login, true); 
+                  YAHOO.util.Event.addListener(&quot;security&quot;, &quot;mouseover&quot;, YAHOO.Membership.login.clearRollover, YAHOO.Membership.login, true); 
+                  YAHOO.util.Event.addListener(&quot;security&quot;, &quot;mouseout&quot;, YAHOO.Membership.login.setRollover, YAHOO.Membership.login, true); 
+                }, 
+                 
+                setRollover: function(e) { 
+                  imageTimer = setTimeout(&#39;YAHOO.Membership.login.imageRollout()&#39;, 1000); 
+                  imageIsOn = false; 
+                }, 
+                clearRollover: function(e) { 
+                  clearTimeout(imageTimer); 
+                  imageTimer = false; 
+                }, 
+                imageRollout: function(e) { 
+                  myFadeOut.animate(); 
+                  myFadeOut.onComplete.subscribe(makeHidden); 
+                } 
+        } 
+    } (); /* &lt;-- it&#39;s the parens here that cause our anonymous function to *return* immediately */ 
+ 
+    /*attach our public init method  */ 
+    YAHOO.util.Event.addListener(window, &quot;load&quot;, YAHOO.Membership.login.init, YAHOO.Membership.login, true); 
+&lt;/script&gt; 
+ 
+                &lt;script type=&quot;text/javascript&quot;&gt; 
+        if (top != self) top.location.href = location.href; 
+ 
+        &lt;/script&gt; 
+        &lt;script type=&quot;text/javascript&quot;&gt; 
+&lt;!-- 
+browser_string = navigator.appVersion + &quot; &quot; + navigator.userAgent; 
+if ( browser_string.indexOf(&quot;MSIE&quot;) &lt; 0 ) { 
+    if (navigator.mimeTypes) { 
+        for (i = 0 ; i &lt; navigator.mimeTypes.length ; i++) { 
+            if (navigator.mimeTypes[i].suffixes.indexOf(&quot;yps&quot;) &gt; -1) { 
+                 doGotIt(); 
+            } 
+        } 
+    } else { 
+        dontGotIt(); 
+    } 
+} else { 
+    if (browser_string.indexOf(&quot;Windows&quot;)&gt;=0) { 
+        doGotIt(); 
+        document.write(&#39;&lt;object classid=&quot;clsid:41695A8E-6414-11D4-8FB3-00D0B7730277&quot; CODEBASE=&quot;javascript:dontGotIt();&quot; ID=&quot;Ymsgr&quot; width=&quot;1&quot; height=&quot;1&quot;&gt;&#39;); 
+        document.write(&#39;&lt;/object&gt;&#39;); 
+    } 
+} 
+hasMsgr = 0; 
+function dontGotIt(){ 
+  hasMsgr = 0; 
+  document.login_form.hasMsgr.value=0; 
+} 
+function doGotIt(){ 
+  hasMsgr = 1; 
+  document.login_form.hasMsgr.value=1; 
+} 
+//--&gt; 
+&lt;/script&gt; 
+&lt;script src=&quot;https://a248.e.akamai.net/sec.yimg.com/lib/reg/js/login_md5_1_14.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt; 
+&lt;script src=&quot;https://a248.e.akamai.net/sec.yimg.com/lib/g/ylib_dom.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt; 
+&lt;script src=&quot;https://a248.e.akamai.net/sec.yimg.com/lib/g/util/yg_browserext_1_5.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt; 
+&lt;script src=&quot;https://a248.e.akamai.net/sec.yimg.com/lib/reg/js/yregml_200611021154.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt; 
+ 
+&lt;!-- spaceid: 150001465 INT.OFFSET: 0 --&gt;&lt;!-- SpaceID=150001465 loc=FOOT9 noad --&gt; 
+ 
+&lt;/body&gt; 
+&lt;/html&gt; 
+</code></pre>
+</div>
+
+
+
+
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">_uacct = "UA-754930-3";urchinTracker();</script>
+</body>
+</html>
