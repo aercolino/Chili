@@ -9,6 +9,6 @@ h2. How to build your own Chili
 
 # Open a command window and go to the directory this file is in.
 # At the prompt, type
-* @ant chili@ for building the uncompressed Chili distribution, with examples.
-* @ant chili.min@ for building the compressed Chili code (using Google Closure Compiler).
-* @ant clean@ for removing all the built files.
+** @ant chili@ for building the uncompressed Chili distribution, with examples.
+** @ant chili.min@ for building the compressed Chili code (using Google Closure Compiler).
+** @ant clean@ for removing all the built files.
