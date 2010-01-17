@@ -9,20 +9,6 @@
  * ============================================================================
  */
 
-/*
-maybe it's worth to make a better object with a recipe
-I mean, we could take the recipe JSON object 
-and add methods and properties to it
-so that we can later call methods on it
-like: recipe.hilite(text)
-
-for lineNumbers could be better to use <li>
-from the start, instead of &nbsp;<br>, so we could
-use <ul> or <ol> as a wrapper, after a given option
-of course, <pre><code><ul> should be styled accordingly
-so that no bullets get shown
-*/
- 
 (function( $ ) 
 {
     Chili = //implied global
