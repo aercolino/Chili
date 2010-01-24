@@ -140,7 +140,7 @@ Chili.recipes[ "php.js" ] =
 			, _replace: '<span class="keyword">$1</span><span class="string1">$2</span><span class="string2">$3</span><span class="string1">$4</span>' 
 		}
 	}
-}
+};
 
 
 
