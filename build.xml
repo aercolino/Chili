@@ -26,7 +26,13 @@
             tofile="${dist}/jquery.js" />
         
         <concat destfile="${CHILI}">
-            <fileset file="src/chili.js" />
+            <fileset file="src/_begin.js" />
+            <fileset file="src/user_options.js" />
+            <fileset file="src/runner.js" />
+            <fileset file="src/core.js" />
+            <fileset file="src/line_numbers.js" />
+            <fileset file="src/text_selection.js" />
+            <fileset file="src/_end.js" />
         </concat>
         
         <!-- concat destfile="${dist}/recipes.js">
