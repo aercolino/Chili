@@ -15,7 +15,7 @@
                 addLineNumbers( dom_element );
                 setLineNumbersStart.apply( dom_element, ln );
             }
-            else if ( Chili.lineNumbers ) 
+            else if ( $.chili.options.lineNumbers ) 
             {
                 addLineNumbers(dom_element);
             }
@@ -185,7 +185,7 @@
             function fillEmptyListItems( html )
             {
                 var expr = /<li><\/li>/ig;
-                var repl = '<li>' + book.replaceSpace + '</li>';
+                var repl = '<li>' + $.chili.replaceSpace + '</li>';
                 var result = html.replace( expr, repl );
                 return result;
             }

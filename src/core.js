@@ -7,15 +7,34 @@
     $.fn.chili = function( options ) 
     {
         var system = {
-            version: "next", // 2010-01-06
-            queue: {}
+            version: "next", // development started on 2010-01-06
+            queue: {},
+            replaceSpace: "&#160;", // IE and FF convert &#160; to "&nbsp;", Safari and Opera do not
+            replaceNewLine: "&#160;<br />",
+            replaceTab: repeat( "&#160;", $.chili.options.tabSpaces )
         };
-        var book = $.extend( {}, Chili, options || {}, system );
+        $.extend( $.chili, $.chili.options, options || {}, system );
         this.each(function() 
         {
             askDish( this );
         });
         return this;
+        
+        /**
+         * Returns the given sting padded to itself the given times
+         * 
+         * @param {String} string
+         * @param {Number} times
+         */
+        function repeat( string, times )
+        {
+            var result = '';
+            for (var i = 0; i < times; i++)
+            {
+                result += string;
+            }
+            return result;
+        }
         
         /**
          * Returns the recipe path from the given recipeName
@@ -26,7 +45,7 @@
          */
         function getRecipePath( recipeName ) 
         {
-        	var result = book.recipeFolder + recipeName + '.js';
+        	var result = $.chili.recipeFolder + recipeName + '.js';
             return result;
         }
         
@@ -306,7 +325,7 @@
                 checkSpices( recipe );
             }
             if (! blockName in recipe) return filter( ingredients );
-            var replaceSpace = book.replaceSpace;
+            var replaceSpace = $.chili.replaceSpace;
             var steps = prepareBlock( recipe, blockName );
             var flags = recipe._case 
                 ? "g" 
@@ -352,7 +371,7 @@
         function escapeSpaces( text ) 
         {
             var result = text
-                .replace(/ /g, book.replaceSpace)
+                .replace(/ /g, $.chili.replaceSpace)
             ;
             return result;
         }
@@ -368,7 +387,7 @@
         function filter( text ) 
         {
             var result = escapeHtmlSpecialChars( text );
-            if ( book.replaceSpace ) 
+            if ( $.chili.replaceSpace ) 
             {
                 result = escapeSpaces( result );
             }
@@ -416,7 +435,7 @@
          */
         function applyStep( subject, recipe, blockName, stepName ) 
         {
-            var replaceSpace = book.replaceSpace;
+            var replaceSpace = $.chili.replaceSpace;
             var step = prepareStep( recipe, blockName, stepName );
             var steps = [step];
             var flags = recipe._case 
@@ -499,7 +518,7 @@
             else 
             {
                 var path = getRecipePath( recipeName );
-                recipe = book.recipes[ path ];
+                recipe = $.chili.recipes[ path ];
             }
             return recipe;
         }
@@ -516,11 +535,11 @@
          */
         function downloadRecipe( path, cbFunction, cbData )
         {
-            book.queue[ path ] = [];
+            $.chili.queue[ path ] = [];
             $.getJSON( path, function( recipeLoaded ) 
     		{
-                book.recipes[ path ] = recipeLoaded;
-                var q = book.queue[ path ];
+                $.chili.recipes[ path ] = recipeLoaded;
+                var q = $.chili.queue[ path ];
                 for( var i = 0, iTop = q.length; i < iTop; i++ )
                 {
                     var el = q[ i ];
@@ -598,15 +617,15 @@
                 return result;
             }
             var path = getRecipePath( detected['recipeName'] );
-            if ( book.recipeLoading ) 
+            if ( $.chili.recipeLoading ) 
             {
                 // dynamic setups come here too
-                if (! book.queue[ path ]) 
+                if (! $.chili.queue[ path ]) 
                 {
                     downloadRecipe(path, replaceElement);
                 }
                 var cue = 'chili_' + unique();
-                book.queue[ path ].push( {
+                $.chili.queue[ path ].push( {
                     selector: '#' + cue, 
                     subject:  subject, 
                     module:   module, 
@@ -713,11 +732,11 @@
         function checkSpices( recipe ) 
         {
             var name = recipe._name;
-            if ( ! book.queue[ name ] ) 
+            if ( ! $.chili.queue[ name ] ) 
             {
                 var stylesheet = makeStylesheet(recipe);
                 loadStylesheetInline(stylesheet);
-                book.queue[ name ] = true;
+                $.chili.queue[ name ] = true;
             }
         }
         
@@ -729,18 +748,18 @@
          */
         function askDish( dom_element ) 
         {
-            var recipeName = book.codeLanguage( dom_element );
+            var recipeName = $.chili.codeLanguage( dom_element );
             if ( '' == recipeName )
                 return;
             var path = getRecipePath( recipeName );
-            if ( book.recipeLoading ) 
+            if ( $.chili.recipeLoading ) 
             {
                 // dynamic setups come here
-                if ( ! book.queue[ path ] ) 
+                if ( ! $.chili.queue[ path ] ) 
                 {
                     downloadRecipe(path, makeDish, [path]);
                 }
-                book.queue[ path ].push( dom_element );
+                $.chili.queue[ path ].push( dom_element );
             }
             else 
             {
@@ -758,13 +777,13 @@
         function replaceElement()
         {
             var replacement = applyModule( this.subject, this.module, this.context );
-            if ( book.replaceTab ) 
+            if ( $.chili.replaceTab ) 
             {
-                replacement = replacement.replace( /\t/g, book.replaceTab );
+                replacement = replacement.replace( /\t/g, $.chili.replaceTab );
             }
-            if ( book.replaceNewLine ) 
+            if ( $.chili.replaceNewLine ) 
             {
-                replacement = replacement.replace( /\n/g, book.replaceNewLine );
+                replacement = replacement.replace( /\n/g, $.chili.replaceNewLine );
             }
             var dom_element = $( this.selector )[0];
             dom_element.innerHTML = replacement;
@@ -800,7 +819,7 @@
          */
         function makeDish( recipePath ) 
         {
-            var recipe = book.recipes[ recipePath ];
+            var recipe = $.chili.recipes[ recipePath ];
             if (! recipe) 
                 return;
             var ingredients = $( this ).text();

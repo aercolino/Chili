@@ -106,8 +106,8 @@
             function makeDialog( selected, event )
             {
             	var container_tag = $.browser.msie
-            		? ('<textarea style="' + Chili.selectionStyle + '">')
-    				: ('<pre style="' + Chili.selectionStyle + '">');
+            		? ('<textarea style="' + $.chili.options.selectionStyle + '">')
+    				: ('<pre style="' + $.chili.options.selectionStyle + '">');
             		
         		var result = $(container_tag)
                     .appendTo( 'body' )

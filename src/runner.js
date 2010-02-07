@@ -1,8 +1,8 @@
 
 	$(function() 
     {
-        if (Chili.automatic) 
+        if ($.chili.options.automatic) 
         {
-            $(Chili.automaticSelector).chili();
+            $($.chili.options.automaticSelector).chili();
         }
     });
