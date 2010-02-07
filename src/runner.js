@@ -1,4 +1,4 @@
-
+    
 	$(function() 
     {
         if ($.chili.options.automatic) 
