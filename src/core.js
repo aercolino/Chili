@@ -44,7 +44,7 @@
          */
         function getRecipePath( recipeName ) 
         {
-        	var result = $.chili.recipeFolder + recipeName + '.js';
+        	var result = $.chili.recipeFolder + 'jquery.chili.recipes.' + recipeName + '.js';
             return result;
         }
         
@@ -57,7 +57,7 @@
          */
         function getRecipeName( recipePath )
         {
-        	var matches = recipePath.match(/([^\/]+)\.js$/i);
+        	var matches = recipePath.match(/\bjquery\.chili\.recipes\.([\w-]+)\.js$/i);
         	var result = matches[1];
         	return result;
         }
@@ -516,8 +516,7 @@
             }
             else 
             {
-                var path = getRecipePath( recipeName );
-                recipe = $.chili.recipes[ path ];
+                recipe = $.chili.recipes[ recipeName ];
             }
             return recipe;
         }
@@ -537,7 +536,8 @@
             $.chili.queue[ path ] = [];
             $.getJSON( path, function( recipeLoaded ) 
     		{
-                $.chili.recipes[ path ] = recipeLoaded;
+                var recipeName = getRecipeName( path );
+                $.chili.recipes[ recipeName ] = recipeLoaded;
                 var q = $.chili.queue[ path ];
                 for( var i = 0, iTop = q.length; i < iTop; i++ )
                 {
@@ -818,14 +818,14 @@
          */
         function makeDish( recipePath ) 
         {
-            var recipe = $.chili.recipes[ recipePath ];
+            var recipeName = getRecipeName(recipePath);
+            var recipe = $.chili.recipes[ recipeName ];
             if (! recipe) 
                 return;
             var ingredients = $( this ).text();
             if (! ingredients) 
                 return;
             ingredients = fixNewLines( ingredients, this );
-            var recipeName = getRecipeName(recipePath);
             replaceElement.apply({
                 selector: this, 
                 subject:  ingredients, 

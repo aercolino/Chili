@@ -13,7 +13,7 @@ $.chili.options.recipeLoading = false;
 
 
 
-$.chili.recipes[ "php.js" ] = 
+$.chili.recipes[ "php" ] = 
 /* ----------------------------------------------------------------------------
  * this recipe uses a little trick for highlighting php code
  *   1: replace each php snippet with a placeholder
@@ -144,7 +144,7 @@ $.chili.recipes[ "php.js" ] =
 
 
 
-$.chili.recipes[ "html.js" ] = 
+$.chili.recipes[ "html" ] = 
 {
 	  _name: 'html'
 	, _case: false
@@ -217,7 +217,7 @@ $.chili.recipes[ "html.js" ] =
 
 
 
-$.chili.recipes[ "js.js" ] = 
+$.chili.recipes[ "js" ] = 
 {
 	  _name: 'js'
 	, _case: true
@@ -285,7 +285,7 @@ $.chili.recipes[ "js.js" ] =
 
 
 
-$.chili.recipes[ "css.js" ] = 
+$.chili.recipes[ "css" ] = 
 {
 	  _name: 'css'
 	, _case: true

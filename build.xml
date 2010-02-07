@@ -35,12 +35,17 @@
             <fileset file="src/_end.js" />
         </concat>
         
-        <!-- concat destfile="${dist}/recipes.js">
-            <fileset dir="src/recipes" includes="*.js" />
-        </concat -->
+        <!-- 
+        <concat destfile="${dist}/jquery.chili.recipes.js">
+            <fileset file="src/recipes/jquery.chili.recipes.php.js" />
+            <fileset file="src/recipes/jquery.chili.recipes.html.js" />
+            <fileset file="src/recipes/jquery.chili.recipes.css.js" />
+            <fileset file="src/recipes/jquery.chili.recipes.js.js" />
+        </concat>
+        -->
         <copy 
-            file="src/recipes.js" 
-            tofile="${dist}/recipes.js" />
+            file="src/jquery.chili.recipes.js" 
+            tofile="${dist}/jquery.chili.recipes.js" />
         
         <mkdir dir="${dist}/recipes" />
         <copy todir="${dist}/recipes">
