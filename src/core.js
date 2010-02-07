@@ -8,7 +8,6 @@
     {
         var system = {
             version: "next", // development started on 2010-01-06
-            queue: {},
             replaceSpace: "&#160;", // IE and FF convert &#160; to "&nbsp;", Safari and Opera do not
             replaceNewLine: "&#160;<br />",
             replaceTab: repeat( "&#160;", $.chili.options.tabSpaces )

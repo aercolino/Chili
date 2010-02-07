@@ -39,6 +39,7 @@ $.extend({
             result = result.join('\n');
             return result;
         },
+        queue: {},
         recipes: {} //repository
 	}
 });
