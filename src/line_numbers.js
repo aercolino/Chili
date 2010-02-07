@@ -28,7 +28,7 @@
          * @param {String} groupId
          * @param {String} start
          */
-        function setLineNumbersStart( groupStart, groupId, start )
+        function setLineNumbersStart( all, groupStart, groupId, start )
         {
             if ( groupStart ) 
             {
