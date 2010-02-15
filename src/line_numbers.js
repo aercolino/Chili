@@ -70,25 +70,17 @@
          */
         function addLineNumbers( dom_element ) 
         {
-            var result = $( dom_element ).html();
-            var expr = /(.*?)<br>/ig;
-            result = result.replace(expr, function( all, line ) 
-            {
-                return '<li>' + line + '</li>';
-            });
-            expr = /(<span [^>]+>)(.*?)(<\/span>)/ig;
-            result = result.replace(expr, function( all, openSpan, insideSpan, closeSpan ) 
-            {
-                var expr = /<\/li><li>/ig;
-                insideSpan = insideSpan.replace(expr, function( all ) 
-                {
-                    var result = closeSpan + all + openSpan;
-                    return result;
-                });
-                result = openSpan + insideSpan + closeSpan;
-                return result;
-            });
-            result = '<ol>' + result + '</ol>';
+            var html = $( dom_element ).html();
+            var listItems = html.replace(/(.*?)<br>/ig, '<li>$1</li>');
+            listItems = listItems.replace(/(<span [^>]+>)(.*?)(<\/span>)/ig, 
+                    function( all, openSpan, insideSpan, closeSpan ) 
+                    {
+                        insideSpan = insideSpan.replace(/<\/li><li>/ig, closeSpan + '$&' + openSpan);
+                        var result = openSpan + insideSpan + closeSpan;
+                        return result;
+                    }
+            );
+            var result = '<ol>' + listItems + '</ol>';
             dom_element.innerHTML = result;
         }
     }
