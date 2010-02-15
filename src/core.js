@@ -804,10 +804,10 @@
             //reverse fix for safari: msie, mozilla and opera render the initial \n
             if ( $(dom_element).parent().is('pre') ) 
             {
-                if ( ! $.browser.safari ) 
-                {
+//                if ( ! $.browser.safari ) 
+//                {
                     ingredients = ingredients.replace(/^\n/g, '');
-                }
+//                }
             }
             return ingredients;
         }
