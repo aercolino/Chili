@@ -522,10 +522,10 @@
         }
         
         /**
-         * Downloads a recipe by means of a JSON ajax call and, on success, 
-         * applies the cbFunction callback, passing it all cbData array elements
-         * as arguments, to any element waiting for being highlighted on the 
-         * queue of the recipe identified by path
+         * Downloads a recipe by means of an ajax call and, on success, applies 
+         * the cbFunction callback, passing it all cbData array elements as 
+         * arguments, to any element waiting for being highlighted on the queue 
+         * of the recipe identified by path
          *
          * @param {String} path
          * @param {Function} cbFunction
@@ -534,19 +534,17 @@
         function downloadRecipe( path, cbFunction, cbData )
         {
             $.chili.queue[ path ] = [];
-            $.getJSON( path, function( recipeLoaded ) 
-    		{
+            $.getScript( path, function( recipeLoaded ) 
+            {
                 var recipeName = getRecipeName( path );
-                $.chili.recipes[ recipeName ] = recipeLoaded;
                 var q = $.chili.queue[ path ];
                 for( var i = 0, iTop = q.length; i < iTop; i++ )
                 {
                     var el = q[ i ];
-                    if ('undefined' == typeof el.nodeType) 
+                    if ('undefined' != typeof el.selector) 
                     {
                         el = $(el.selector)[0];
                     }
-                    var recipeName = recipeLoaded._name;
                     $(el).trigger( 'chili.before_coloring', [recipeName] );
                     cbFunction.apply(q[ i ], cbData);
                     $(el).trigger( 'chili.after_coloring', [recipeName] );

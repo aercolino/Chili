@@ -1,27 +1,11 @@
-/*
-===============================================================================
-Chili is the jQuery code highlighter plugin
-...............................................................................
-LICENSE: http://www.opensource.org/licenses/mit-license.php
-WEBSITE: http://noteslog.com/chili/
-
-											   Copyright 2008 / Andrea Ercolino
-===============================================================================
-*/
-
-/* ----------------------------------------------------------------------------
- * this recipe uses a little trick for highlighting php code
+/* this recipe uses a little trick for highlighting php code
  *   1: replace each php snippet with a placeholder
  *   2: highlight html without php and php snippets apart
  *   3: replace each placeholder with its highlighted php snippet
  * 
- * the trick is not perfect only if the html without php is broken
- * however, in such a case many highlighters get fooled but Chili does not
- * 
- * ---
- * this recipe has been adapted for working with Safari
- * in fact, Safari cannot match more than 101236 characters with a lazy star
- * --------------------------------------------------------------------------*/
+ * the trick is not perfect
+ */
+jQuery.chili.recipes['php_f'] =
 {
 	  _name: "php"
 	, _case: true
@@ -139,4 +123,4 @@ WEBSITE: http://noteslog.com/chili/
 			, _style: "color: #e17100;"
 		}
 	}
-}
+};

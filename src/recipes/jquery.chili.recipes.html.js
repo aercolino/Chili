@@ -1,14 +1,4 @@
-/*
-===============================================================================
-Chili is the jQuery code highlighter plugin
-...............................................................................
-LICENSE: http://www.opensource.org/licenses/mit-license.php
-WEBSITE: http://noteslog.com/chili/
-
-                                               Copyright 2008 / Andrea Ercolino
-===============================================================================
-*/
-
+jQuery.chili.recipes.html =
 {
 	  _name: 'html'
 	, _case: false
@@ -77,4 +67,4 @@ WEBSITE: http://noteslog.com/chili/
 			, _style: { attr_name:  "color: green;", attr_value: "color: maroon;" }
 		}
 	}
-}
+};

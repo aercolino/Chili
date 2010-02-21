@@ -1,32 +1,15 @@
-/*
-===============================================================================
-Chili is the jQuery code highlighter plugin
-...............................................................................
-LICENSE: http://www.opensource.org/licenses/mit-license.php
-WEBSITE: http://noteslog.com/chili/
-
-											   Copyright 2008 / Andrea Ercolino
-===============================================================================
-*/
-
-$.chili.options.recipeLoading = false;
+jQuery.chili.options.recipeLoading = false;
 
 
 
-$.chili.recipes[ "php" ] = 
-/* ----------------------------------------------------------------------------
- * this recipe uses a little trick for highlighting php code
+/* this recipe uses a little trick for highlighting php code
  *   1: replace each php snippet with a placeholder
  *   2: highlight html without php and php snippets apart
  *   3: replace each placeholder with its highlighted php snippet
  * 
- * the trick is not perfect only if the html without php is broken
- * however, in such a case many highlighters get fooled but Chili does not
- * 
- * ---
- * this recipe has been adapted for working with Safari
- * in fact, Safari cannot match more than 101236 characters with a lazy star
- * --------------------------------------------------------------------------*/
+ * the trick is not perfect
+ */
+jQuery.chili.recipes.php = 
 {
 	  _name: "php"
 	, _case: true
@@ -144,7 +127,7 @@ $.chili.recipes[ "php" ] =
 
 
 
-$.chili.recipes[ "html" ] = 
+jQuery.chili.recipes.html = 
 {
 	  _name: 'html'
 	, _case: false
@@ -217,7 +200,7 @@ $.chili.recipes[ "html" ] =
 
 
 
-$.chili.recipes[ "js" ] = 
+jQuery.chili.recipes.javascript = 
 {
 	  _name: 'js'
 	, _case: true
@@ -285,7 +268,7 @@ $.chili.recipes[ "js" ] =
 
 
 
-$.chili.recipes[ "css" ] = 
+jQuery.chili.recipes.css = 
 {
 	  _name: 'css'
 	, _case: true
