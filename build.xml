@@ -22,7 +22,7 @@
         <mkdir dir="${dist}" />
         
         <copy 
-            file="jquery/jquery-1.3.2.js" 
+            file="jquery/jquery-1.4.2.js" 
             tofile="${dist}/jquery.js" />
         
         <concat destfile="${CHILI}">
