@@ -22,10 +22,8 @@ WEBSITE: http://noteslog.com/chili/
 <script type="text/javascript" src="../jquery.chili.js"></script>
 
 
-<script type="text/javascript" src="../jquery.chili.recipes.js"></script> <!-- Chili settings for a static setup -->
-
-
 <script id="setup" type="text/javascript">
+$.chili.options.recipeFolder = "../recipes/";
 $.chili.options.automatic = false;
 $( function() {
 	$( '#highlight' )
