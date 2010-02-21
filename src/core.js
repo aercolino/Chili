@@ -749,7 +749,7 @@
             if ( '' == recipeName )
                 return;
             var path = getRecipePath( recipeName );
-            if ( $.chili.recipeLoading ) 
+            if ( $.chili.recipeLoading && ! $.chili.recipes[ recipeName ] ) 
             {
                 // dynamic setups come here
                 if ( ! $.chili.queue[ path ] ) 
