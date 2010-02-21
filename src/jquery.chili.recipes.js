@@ -153,7 +153,7 @@ jQuery.chili.recipes.html =
 			  _match: /(<script\s+[^>]*>)([\w\W]*?)(<\/script\s*>)/
 			, _replace: function( all, open, content, close ) { 
 				  return this.x( open, '//tag_start' ) 
-					  + this.x( content, 'js' ) 
+					  + this.x( content, 'javascript' ) 
 					  + this.x( close, '//tag_end' );
 			} 
 		}
