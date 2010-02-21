@@ -27,7 +27,7 @@ $( function() {
 	if( !script_text ) script_text = '';
 	$( '#show_setup' ).html( ''
 		+'<h4>jQuery version is ' + $.fn.jquery + ' (latest)</h4>'
-		+'<pre><code class="js">'
+		+'<pre><code class="javascript">'
 			+script_text
 			.replace( '&', '&amp;' )
 			.replace( '<', '&lt;' )
