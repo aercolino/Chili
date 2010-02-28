@@ -6,11 +6,34 @@
      */
     $.fn.chili = function( options ) 
     {
+        var nbsp = '&#160;';
         var system = {
             version: "next", // development started on 2010-01-06
-            replaceSpace: "&#160;", // IE and FF convert &#160; to "&nbsp;", Safari and Opera do not
-            replaceNewLine: "&#160;<br />",
-            replaceTab: repeat( "&#160;", $.chili.options.tabSpaces )
+            
+            /**
+             * we need writingEOL to preserve "\r" EOL when introducing
+             * content into the innerHTML property of a DOM element in IE
+             * (any other browser preserve its "\n" EOL as is)
+             * 
+             * "&#160;<br />" seems to be the only working replacement
+             * 
+             * note: when "<br />" is written, "<br>" is read
+             * 
+             * the leading "&#160;" also helps fixing a bug in Opera that
+             * prevents empty list items from showing up in ordered lists
+             */
+            writingEOL: nbsp + "<br />", 
+            
+            /**
+             * we need readingEOL to find lines when adding numbers
+             * 
+             * it must be the very end of line of writingEOL as it is read from 
+             * the text of the element writingEOL was written into
+             */
+            readingEOL: "<br>", 
+            
+            writingSpace: nbsp, 
+            writingTab: repeat( nbsp, $.chili.options.tabSpaces )
         };
         $.extend( $.chili, $.chili.options, options || {}, system );
         this.each(function() 
@@ -324,7 +347,7 @@
                 checkSpices( recipe );
             }
             if (! blockName in recipe) return filter( ingredients );
-            var replaceSpace = $.chili.replaceSpace;
+            var writingSpace = $.chili.writingSpace;
             var steps = prepareBlock( recipe, blockName );
             var flags = recipe._case 
                 ? "g" 
@@ -361,7 +384,7 @@
         
         /**
          * Returns the given text, with all spaces replaced by the 
-         * replaceSpace string
+         * writingSpace string
          * 
          * @param {String} text
          * 
@@ -370,14 +393,14 @@
         function escapeSpaces( text ) 
         {
             var result = text
-                .replace(/ /g, $.chili.replaceSpace)
+                .replace(/ /g, $.chili.writingSpace)
             ;
             return result;
         }
         
         /**
          * Returns the given text, escaped for HTML and with spaces replaced 
-         * by the replaceSpace string
+         * by the writingSpace string
          * 
          * @param {String} text
          * 
@@ -386,7 +409,7 @@
         function filter( text ) 
         {
             var result = escapeHtmlSpecialChars( text );
-            if ( $.chili.replaceSpace ) 
+            if ( $.chili.writingSpace ) 
             {
                 result = escapeSpaces( result );
             }
@@ -434,7 +457,7 @@
          */
         function applyStep( subject, recipe, blockName, stepName ) 
         {
-            var replaceSpace = $.chili.replaceSpace;
+            var writingSpace = $.chili.writingSpace;
             var step = prepareStep( recipe, blockName, stepName );
             var steps = [step];
             var flags = recipe._case 
@@ -774,40 +797,48 @@
         function replaceElement()
         {
             var replacement = applyModule( this.subject, this.module, this.context );
-            if ( $.chili.replaceTab ) 
-            {
-                replacement = replacement.replace( /\t/g, $.chili.replaceTab );
-            }
-            if ( $.chili.replaceNewLine ) 
-            {
-                replacement = replacement.replace( /\n/g, $.chili.replaceNewLine );
-            }
+            replacement = fixWhiteSpaceBeforeWriting( replacement );
             var dom_element = $( this.selector )[0];
             dom_element.innerHTML = replacement;
         }
         
         /**
-         * Returns the given ingredients after making new lines uniform across 
+         * Returns the given text after making new lines uniform across 
          * all browsers
          *
-         * @param {String} ingredients
+         * @param {String} text
          * 
-         * @return Element dom_element
+         * @return String
          */
-        function fixNewLines( ingredients, dom_element )
+        function fixWhiteSpaceAfterReading( text )
         {
-            //fix for msie: \r (13) is used instead of \n (10)
-            //fix for opera: \r\n is used instead of \n
-            ingredients = ingredients.replace(/\r\n?/g, '\n');
-            //reverse fix for safari: msie, mozilla and opera render the initial \n
-            if ( $(dom_element).parent().is('pre') ) 
+            text = text.replace(/\r\n?/g, '\n');
+            if ( $.chili.options.suppressInitialEmptyLine ) 
             {
-//                if ( ! $.browser.safari ) 
-//                {
-                    ingredients = ingredients.replace(/^\n/g, '');
-//                }
+                text = text.replace(/^\n/, '');
             }
-            return ingredients;
+            return text;
+        }
+        
+        /**
+         * Returns the given text after making new lines uniform across 
+         * all browsers
+         *
+         * @param {String} text
+         * 
+         * @return String
+         */
+        function fixWhiteSpaceBeforeWriting( text )
+        {
+            if ($.chili.writingTab) 
+            {
+                text = text.replace(/\t/g, $.chili.writingTab);
+            }
+            if ($.chili.writingEOL) 
+            {
+                text = text.replace(/\n/g, $.chili.writingEOL);
+            }
+            return text;
         }
         
         /**
@@ -823,7 +854,8 @@
             var ingredients = $( this ).text();
             if (! ingredients) 
                 return;
-            ingredients = fixNewLines( ingredients, this );
+//alert($.chili.revealChars(this.firstChild.nodeValue.substring(0, 20)));
+            ingredients = fixWhiteSpaceAfterReading(ingredients);
             replaceElement.apply({
                 selector: this, 
                 subject:  ingredients, 
@@ -840,7 +872,7 @@
          * 
          * @param {String} text
          * 
-         * @return int
+         * @return Integer
          */
         function unique( text ) 
         {

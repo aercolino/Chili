@@ -2,6 +2,7 @@
     $.extend({
     	chili: {
     		options: {  
+                suppressInitialEmptyLine: true,
                 tabSpaces:          4,
     	        automatic:          true,
     	        automaticSelector:  "code",

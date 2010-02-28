@@ -7,7 +7,7 @@
      */
     function checkLineNumbers( dom_element )
     {
-        var $that = $(dom_element).parent();
+        var $that = $(dom_element);
         var classes = $that.attr( 'class' );
         var ln = /ln-(\d+)-([\w][\w\-]*)|ln-(\d+)|ln-/.exec( classes );
         if ( ln ) 
@@ -34,8 +34,7 @@
             {
                 start = parseInt( groupStart, 10 );
                 var $pieces = $( '.ln-' + groupStart + '-' + groupId );
-                var $that = $(this).parent();
-                var pos = $pieces.index( $that[0] );
+                var pos = $pieces.index( this );
                 $pieces
                     .slice( 0, pos )
                     .each( 
@@ -71,7 +70,8 @@
         function addLineNumbers( dom_element ) 
         {
             var html = $( dom_element ).html();
-            var listItems = html.replace(/(.*?)<br>/ig, '<li>$1</li>');
+            var expr = new RegExp('(.*?)' + $.chili.readingEOL, 'ig');
+            var listItems = html.replace(expr, '<li>$1</li>');
             listItems = listItems.replace(/(<span [^>]+>)(.*?)(<\/span>)/ig, 
                     function( all, openSpan, insideSpan, closeSpan ) 
                     {
