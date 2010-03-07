@@ -27,7 +27,6 @@ WEBSITE: http://noteslog.com/chili/
 
 <script id="setup" type="text/javascript">
 $.chili.options.automatic = true;
-$.chili.options.lineNumbers = false;
 </script>
 
 <script type="text/javascript" src="examples.js"></script>
@@ -55,9 +54,11 @@ This page has the following setup.
 
 
 <div class="section">
-<h3>PRE without an ln class</h3>
-<p>A PRE with no ln class honors the global setting "lineNumbers".</p>
-<pre><code class="php">
+<h3>CODE with class="chili-lang-php"</h3>
+<p>
+    A CODE without a line numbers class honors the lineNumbers option.
+</p>
+<pre><code class="chili-lang-php">
 /**#@+
  *  @access private
  */
@@ -111,9 +112,11 @@ define(&#39;GESHI_ERROR_INVALID_LINE_NUMBER_TYPE&#39;, 5);
 
 
 <div class="section">
-<h3>PRE with class="ln-"</h3>
-<p>A PRE with this class will have line numbers, starting from 1.</p>
-<pre class="ln-"><code class="php">
+<h3>CODE with class="chili-lang-php chili-ln-172"</h3>
+<p>
+    A CODE with a chili-ln-&lt;number&gt; class will have line numbers, starting from the given number.
+</p>
+<pre><code class="chili-lang-php chili-ln-172">
 /**#@+
  *  @access private
  */
@@ -167,65 +170,15 @@ define(&#39;GESHI_ERROR_INVALID_LINE_NUMBER_TYPE&#39;, 5);
 
 
 <div class="section">
-<h3>PRE with class="ln-172"</h3>
-<p>A PRE with this class will have line numbers, starting from the specified offset.</p>
-<pre class="ln-172"><code class="php">
-/**#@+
- *  @access private
- */
-// When strict mode applies for a language
-/** Strict mode never applies (this is the most common) */
-define(&#39;GESHI_NEVER&#39;, 0);
-/** Strict mode *might* apply, and can be enabled or
-    disabled by {@link GeSHi::enable_strict_mode()} */
-define(&#39;GESHI_MAYBE&#39;, 1);
-/** Strict mode always applies */
-define(&#39;GESHI_ALWAYS&#39;, 2);
-
-// Advanced regexp handling constants, used in language files
-/** The key of the regex array defining what to search for */
-define(&#39;GESHI_SEARCH&#39;, 0);
-/** The key of the regex array defining what bracket group in a
-    matched search to use as a replacement */
-define(&#39;GESHI_REPLACE&#39;, 1);
-/** The key of the regex array defining any modifiers to the regular expression */
-define(&#39;GESHI_MODIFIERS&#39;, 2);
-/** The key of the regex array defining what bracket group in a
-    matched search to put before the replacement */
-define(&#39;GESHI_BEFORE&#39;, 3);
-/** The key of the regex array defining what bracket group in a
-    matched search to put after the replacement */
-define(&#39;GESHI_AFTER&#39;, 4);
-/** The key of the regex array defining a custom keyword to use
-    for this regexp&#39;s html tag class */
-define(&#39;GESHI_CLASS&#39;, 5);
-
-/** Used in language files to mark comments */
-define(&#39;GESHI_COMMENTS&#39;, 0);
-
-// Error detection - use these to analyse faults
-/** No sourcecode to highlight was specified
- * @deprecated
- */
-define(&#39;GESHI_ERROR_NO_INPUT&#39;, 1);
-/** The language specified does not exist */
-define(&#39;GESHI_ERROR_NO_SUCH_LANG&#39;, 2);
-/** GeSHi could not open a file for reading (generally a language file) */
-define(&#39;GESHI_ERROR_FILE_NOT_READABLE&#39;, 3);
-/** The header type passed to {@link GeSHi::set_header_type()} was invalid */
-define(&#39;GESHI_ERROR_INVALID_HEADER_TYPE&#39;, 4);
-/** The line number type passed to {@link GeSHi::enable_line_numbers()} was invalid */
-define(&#39;GESHI_ERROR_INVALID_LINE_NUMBER_TYPE&#39;, 5);
-/**#@-*/
-</code></pre>
-</div>
-
-
-
-<div class="section">
-<h3>PRE with class="ln-172-access-private"</h3>
-<p>The first PRE with this class will have line numbers, starting from the specified offset.</p>
-<pre class="ln-172-access-private"><code class="php">
+<h3>CODE with class="chili-lang-php chili-ln-172-split"</h3>
+<p>
+    A CODE with a chili-ln-&lt;number&gt;-&lt;group&gt; class will have line numbers.<br />
+    The start is 1 more the last line number of the previous block with the same line numbers class.
+</p>
+<p>
+    This is the 1st block, so that the start is 172.
+<p/>
+<pre><code class="chili-lang-php chili-ln-172-split">
 /**#@+
  *  @access private
  */
@@ -244,10 +197,11 @@ define(&#39;GESHI_ALWAYS&#39;, 2);
 
 
 <div class="section">
-<h3>PRE with class="ln-172-access-private"</h3>
-<p>Any other PRE with this class will have line numbers too, but following the last line of the previous PRE.</p>
-<p>("access-private" is a convenient identifier for these PREs, but any word string is OK.)</p>
-<pre class="ln-172-access-private"><code class="php">
+<h3>CODE with class="chili-lang-php chili-ln-172-split"</h3>
+<p>A CODE with a chili-ln-&lt;number&gt;-&lt;group&gt; class will have line numbers.<br />
+The start is 1 more the last line number of the previous block with the same line numbers class.</p>
+<p>This is the 2nd block, and the last line of the previous block is 183, so that the start is 184.<p/>
+<pre><code class="chili-lang-php chili-ln-172-split">
 // Advanced regexp handling constants, used in language files
 /** The key of the regex array defining what to search for */
 define(&#39;GESHI_SEARCH&#39;, 0);
@@ -275,9 +229,11 @@ define(&#39;GESHI_COMMENTS&#39;, 0);
 
 
 <div class="section">
-<h3>PRE with class="ln-172-access-private"</h3>
-<p>This is an excellent method for automatic line numbers spanning multiple segments.</p>
-<pre class="ln-172-access-private"><code class="php">
+<h3>CODE with class="chili-lang-php chili-ln-172-split"</h3>
+<p>A CODE with a chili-ln-&lt;number&gt;-&lt;group&gt; class will have line numbers.<br />
+The start is 1 more the last line number of the previous block with the same line numbers class.</p>
+<p>This is the 3rd block, and the last line of the previous block is 204, so that the start is 205.<p/>
+<pre><code class="chili-lang-php chili-ln-172-split">
 // Error detection - use these to analyse faults
 /** No sourcecode to highlight was specified
  * @deprecated
@@ -295,9 +251,5 @@ define(&#39;GESHI_ERROR_INVALID_LINE_NUMBER_TYPE&#39;, 5);
 </code></pre>
 </div>
 
-
-
-<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
-<script type="text/javascript">_uacct = "UA-754930-3";urchinTracker();</script>
 </body>
 </html>

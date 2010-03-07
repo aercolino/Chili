@@ -7,9 +7,7 @@
      */
     function checkLineNumbers( dom_element )
     {
-        var $that = $(dom_element);
-        var classes = $that.attr( 'class' );
-        var ln = /ln-(\d+)-([\w][\w\-]*)|ln-(\d+)|ln-/.exec( classes );
+        var ln = $.chili.codeLineNumbers(dom_element);
         if ( ln ) 
         {
             addLineNumbers( dom_element );
@@ -28,12 +26,12 @@
          * @param {String} groupId
          * @param {String} start
          */
-        function setLineNumbersStart( all, groupStart, groupId, start )
+        function setLineNumbersStart( all, groupStart, groupId )
         {
-            if ( groupStart ) 
+            var start = parseInt( groupStart, 10 );
+            if ( groupId ) 
             {
-                start = parseInt( groupStart, 10 );
-                var $pieces = $( '.ln-' + groupStart + '-' + groupId );
+                var $pieces = $( '.' + all );
                 var pos = $pieces.index( this );
                 $pieces
                     .slice( 0, pos )
@@ -45,16 +43,8 @@
                     )
                 ;
             }
-            else if ( start ) 
-            {
-                start = parseInt( start, 10 );
-            }
-            else 
-            {
-                start = 1;
-            }
-            $(this).find( 'ol' )[0].start = start;
-            // the following should refresh the window
+            $(this).find( 'ol' ).attr('start', start);
+            // refresh the window
             $('body')
                 .width( $('body').width() - 1 )
                 .width( $('body').width() + 1 )
