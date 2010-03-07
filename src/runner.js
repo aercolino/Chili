@@ -1,8 +1,10 @@
     
 	$(function() 
     {
-        if ($.chili.options.automatic) 
+	    $.extend( $.chili, $.chili.options, $.chili.system );
+        
+        if ($.chili.automatic.active) 
         {
-            $($.chili.options.automaticSelector).chili();
+            $($.chili.automatic.selector, $.chili.automatic.context).chili();
         }
     });

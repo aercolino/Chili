@@ -1,4 +1,4 @@
-jQuery.chili.options.recipeLoading = false;
+jQuery.chili.options.dynamic.active = false;
 
 
 

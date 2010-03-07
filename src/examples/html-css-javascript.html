@@ -1,22 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3c.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- http://noteslog.com/chili/ - Copyright 2010 / Andrea Ercolino -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 
-<title>TESTING CHILI 2.2 - HTML, CSS, JavaScript</title>
-
-<script type="text/javascript">
-/*
-===============================================================================
-Chili is the jQuery code highlighter plugin
-...............................................................................
-LICENSE: http://www.opensource.org/licenses/mit-license.php
-WEBSITE: http://noteslog.com/chili/
-
-											   Copyright 2008 / Andrea Ercolino
-===============================================================================
-*/
-</script>
+<title>TESTING CHILI 3.0 - HTML, CSS, JavaScript</title>
 
 <script type="text/javascript" src="../jquery.js"></script>
 <script type="text/javascript" src="../jquery.chili.js"></script>
@@ -26,7 +14,7 @@ WEBSITE: http://noteslog.com/chili/
 
 
 <script id="setup" type="text/javascript">
-$.chili.options.automatic = false;
+$.chili.options.automatic.active = false;
 $( function() {
 	$( '#highlight' )
 	.one( 'click', function() {

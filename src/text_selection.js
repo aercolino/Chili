@@ -5,8 +5,8 @@
      */
     function fixTextSelection( dom_element )
     {
-        //opera and safari select PRE text correctly 
-        if ($.browser.msie || $.browser.mozilla) 
+        //chrome, opera, and safari select PRE text correctly 
+        if ($.chili.selection.active && ($.browser.msie || $.browser.mozilla)) 
         {
             var element = null;
             $(dom_element)
@@ -105,21 +105,24 @@
          */
         function makeDialog( selected, event )
         {
-        	var container_tag = $.browser.msie
-        		? ('<textarea style="' + $.chili.options.selectionStyle + '">')
-				: ('<pre style="' + $.chili.options.selectionStyle + '">');
+            var boxOptions = $.chili.selection.box;
+        	var boxTag = $.browser.msie
+        		? ('<textarea style="' + boxOptions.style + '">')
+				: ('<pre style="' + boxOptions.style + '">');
         		
-    		var result = $(container_tag)
+    		var boxElement = $(boxTag)
                 .appendTo( 'body' )
                 .text( selected )
                 .attr( 'id', 'chili_selection' )
                 .click( function() { $(this).remove(); } )
             ;
-            var top  = event.pageY - Math.round( result.height() / 2 ) + "px";
-            var left = event.pageX - Math.round( result.width() / 2 ) + "px";
-            result.css( { top: top, left: left } );
+            var top  = boxOptions.top(event.pageX, event.pageY, 
+                    boxElement.width(), boxElement.height());
+            var left = boxOptions.left(event.pageX, event.pageY, 
+                    boxElement.width(), boxElement.height());
+            boxElement.css( { top: top, left: left } );
                 
-        	return result;
+        	return boxElement;
         }
         
         /**

@@ -1,12 +1,70 @@
+
+    $.extend($.chili, {
+        /**
+         * Returns the language piece of data for the given dom_element
+         * 
+         * @param {Element} dom_element
+         * 
+         * @return String
+         */
+        codeLanguage: function( dom_element ) {
+            var classes = $(dom_element).attr('class');
+            var matches = classes.match(/\bchili-lang-(\w+)/);
+            var result = matches ? matches[1] : '';
+            return result;
+        },
+        
+        /**
+         * Returns the line numbers data for the given dom_element
+         * 
+         * @param {Element} dom_element
+         * 
+         * @return Array
+         */
+        codeLineNumbers: function( dom_element ) {
+            var classes = $(dom_element).attr('class');
+            var matches = classes.match(/\bchili-ln-(\d+)-([\w][\w\-]*)|\bchili-ln-(\d+)/);
+            var result = ! matches 
+                ? null
+                : matches[3] 
+                    ? [ matches[0], matches[3], '' ] 
+                    : [ matches[0], matches[1], matches[2] ];
+            return result;
+        },
+        
+        /**
+         * Returns the codes of any character of the given text
+         * (Used for developing Chili)
+         * 
+         * @param {String} text
+         * 
+         * @return String
+         */
+        revealChars: function ( text ) 
+        {
+            var result = [];
+            for (var i=0, iTop=text.length; i<iTop; i++)
+            {
+                result.push(text[i] + ' <- ' + text.charCodeAt(i));
+            }
+            result = result.join('\n');
+            return result;
+        },
+        
+        queue: {},
+        
+        recipes: {}
+    });
     
+    
+
     /**
-     * Highlights currently selected elements according to the given options
+     * Highlights currently selected elements accordingly to the given options
      * 
      * @param {Object} options
      */
     $.fn.chili = function( options ) 
     {
-        var nbsp = '&#160;';
         var system = {
             version: "next", // development started on 2010-01-06
             
@@ -22,7 +80,7 @@
              * the leading "&#160;" also helps fixing a bug in Opera that
              * prevents empty list items from showing up in ordered lists
              */
-            writingEOL: nbsp + "<br />", 
+            writingEOL: '&#160;<br />', 
             
             /**
              * we need readingEOL to find lines when adding numbers
@@ -30,16 +88,18 @@
              * it must be the very end of line of writingEOL as it is read from 
              * the text of the element writingEOL was written into
              */
-            readingEOL: "<br>", 
+            readingEOL: '<br>', 
             
-            writingSpace: nbsp, 
-            writingTab: repeat( nbsp, $.chili.options.tabSpaces )
+            writingSpace: '&#160;', 
+            writingTab: repeat( '&#160;', $.chili.whiteSpace.tabWidth )
         };
-        $.extend( $.chili, $.chili.options, options || {}, system );
+        var globals = $.extend({}, $.chili);
+        $.extend( $.chili, system, options || {} );
         this.each(function() 
         {
             askDish( this );
         });
+        $.chili = globals;
         return this;
         
         /**
@@ -67,7 +127,7 @@
          */
         function getRecipePath( recipeName ) 
         {
-        	var result = $.chili.recipeFolder + 'jquery.chili.recipes.' + recipeName + '.js';
+        	var result = $.chili.dynamic.origin + 'jquery.chili.recipes.' + recipeName + '.js';
             return result;
         }
         
@@ -637,7 +697,7 @@
                 return result;
             }
             var path = getRecipePath( detected['recipeName'] );
-            if ( $.chili.recipeLoading ) 
+            if ( $.chili.dynamic.active ) 
             {
                 // dynamic setups come here too
                 if (! $.chili.queue[ path ]) 
@@ -772,7 +832,7 @@
             if ( '' == recipeName )
                 return;
             var path = getRecipePath( recipeName );
-            if ( $.chili.recipeLoading && ! $.chili.recipes[ recipeName ] ) 
+            if ( $.chili.dynamic.active && ! $.chili.recipes[ recipeName ] ) 
             {
                 // dynamic setups come here
                 if ( ! $.chili.queue[ path ] ) 
@@ -813,7 +873,7 @@
         function fixWhiteSpaceAfterReading( text )
         {
             text = text.replace(/\r\n?/g, '\n');
-            if ( $.chili.options.suppressInitialEmptyLine ) 
+            if ( $.chili.whiteSpace.no1stLine ) 
             {
                 text = text.replace(/^\n/, '');
             }

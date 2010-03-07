@@ -13,7 +13,7 @@
             addLineNumbers( dom_element );
             setLineNumbersStart.apply( dom_element, ln );
         }
-        else if ( $.chili.options.lineNumbers ) 
+        else if ( $.chili.decoration.lineNumbers ) 
         {
             addLineNumbers(dom_element);
         }
