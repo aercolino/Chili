@@ -1,63 +1,4 @@
 
-    $.extend($.chili, {
-        /**
-         * Returns the language piece of data for the given dom_element
-         * 
-         * @param {Element} dom_element
-         * 
-         * @return String
-         */
-        codeLanguage: function( dom_element ) {
-            var classes = $(dom_element).attr('class');
-            var matches = classes.match(/\bchili-lang-(\w+)/);
-            var result = matches ? matches[1] : '';
-            return result;
-        },
-        
-        /**
-         * Returns the line numbers data for the given dom_element
-         * 
-         * @param {Element} dom_element
-         * 
-         * @return Array
-         */
-        codeLineNumbers: function( dom_element ) {
-            var classes = $(dom_element).attr('class');
-            var matches = classes.match(/\bchili-ln-(\d+)-([\w][\w\-]*)|\bchili-ln-(\d+)/);
-            var result = ! matches 
-                ? null
-                : matches[3] 
-                    ? [ matches[0], matches[3], '' ] 
-                    : [ matches[0], matches[1], matches[2] ];
-            return result;
-        },
-        
-        /**
-         * Returns the codes of any character of the given text
-         * (Used for developing Chili)
-         * 
-         * @param {String} text
-         * 
-         * @return String
-         */
-        revealChars: function ( text ) 
-        {
-            var result = [];
-            for (var i=0, iTop=text.length; i<iTop; i++)
-            {
-                result.push(text[i] + ' <- ' + text.charCodeAt(i));
-            }
-            result = result.join('\n');
-            return result;
-        },
-        
-        queue: {},
-        
-        recipes: {}
-    });
-    
-    
-
     /**
      * Highlights currently selected elements accordingly to the given options
      * 
@@ -66,35 +7,11 @@
     $.fn.chili = function( options ) 
     {
         var system = {
-            version: "next", // development started on 2010-01-06
-            
-            /**
-             * we need writingEOL to preserve "\r" EOL when introducing
-             * content into the innerHTML property of a DOM element in IE
-             * (any other browser preserve its "\n" EOL as is)
-             * 
-             * "&#160;<br />" seems to be the only working replacement
-             * 
-             * note: when "<br />" is written, "<br>" is read
-             * 
-             * the leading "&#160;" also helps fixing a bug in Opera that
-             * prevents empty list items from showing up in ordered lists
-             */
-            writingEOL: '&#160;<br />', 
-            
-            /**
-             * we need readingEOL to find lines when adding numbers
-             * 
-             * it must be the very end of line of writingEOL as it is read from 
-             * the text of the element writingEOL was written into
-             */
-            readingEOL: '<br>', 
-            
             writingSpace: '&#160;', 
             writingTab: repeat( '&#160;', $.chili.whiteSpace.tabWidth )
         };
         var globals = $.extend({}, $.chili);
-        $.extend( $.chili, system, options || {} );
+        $.chili = $.extend( $.chili, options || {} );
         this.each(function() 
         {
             askDish( this );
@@ -407,7 +324,7 @@
                 checkSpices( recipe );
             }
             if (! blockName in recipe) return filter( ingredients );
-            var writingSpace = $.chili.writingSpace;
+            var writingSpace = system.writingSpace;
             var steps = prepareBlock( recipe, blockName );
             var flags = recipe._case 
                 ? "g" 
@@ -453,7 +370,7 @@
         function escapeSpaces( text ) 
         {
             var result = text
-                .replace(/ /g, $.chili.writingSpace)
+                .replace(/ /g, system.writingSpace)
             ;
             return result;
         }
@@ -469,7 +386,7 @@
         function filter( text ) 
         {
             var result = escapeHtmlSpecialChars( text );
-            if ( $.chili.writingSpace ) 
+            if ( system.writingSpace ) 
             {
                 result = escapeSpaces( result );
             }
@@ -517,7 +434,7 @@
          */
         function applyStep( subject, recipe, blockName, stepName ) 
         {
-            var writingSpace = $.chili.writingSpace;
+            var writingSpace = system.writingSpace;
             var step = prepareStep( recipe, blockName, stepName );
             var steps = [step];
             var flags = recipe._case 
@@ -718,31 +635,6 @@
         }
         
         /**
-         * Loads the given CSS code as a new style element of head
-         * 
-         * @param {string} sourceCode
-         */
-        function loadStylesheetInline( sourceCode ) 
-        { 
-            if ( document.createElement ) 
-            { 
-                var style_element = document.createElement( "style" ); 
-                style_element.type = "text/css"; 
-                if ( style_element.styleSheet ) 
-                {
-                    style_element.styleSheet.cssText = sourceCode; // IE
-                }  
-                else 
-                { 
-                    var t = document.createTextNode( sourceCode ); 
-                    style_element.appendChild( t ); 
-                } 
-                var head = document.getElementsByTagName( "head" )[0];
-                head.appendChild( style_element ); 
-            } 
-        }
-        
-        /**
          * Returns a CSS class definition with the given className and the given
          * classStyle
          *
@@ -815,7 +707,7 @@
             if ( ! $.chili.queue[ name ] ) 
             {
                 var stylesheet = makeStylesheet(recipe);
-                loadStylesheetInline(stylesheet);
+                $.chili.loadStylesheetInline(stylesheet);
                 $.chili.queue[ name ] = true;
             }
         }
@@ -890,15 +782,10 @@
          */
         function fixWhiteSpaceBeforeWriting( text )
         {
-            if ($.chili.writingTab) 
-            {
-                text = text.replace(/\t/g, $.chili.writingTab);
-            }
-            if ($.chili.writingEOL) 
-            {
-                text = text.replace(/\n/g, $.chili.writingEOL);
-            }
-            return text;
+            var result = text;
+            result = result.replace(/\t/g, system.writingTab);
+            result = makeUnorderedList(result);
+            return result;
         }
         
         /**
@@ -924,6 +811,89 @@
             });
             fixTextSelection(this);
             checkLineNumbers(this);
+        }
+        
+        /**
+         * Converts lines inside the given dom_element to list items into an
+         * ordered list element
+         * 
+         * @param {Element} dom_element
+         */
+        function makeUnorderedList( text )
+        {
+            var listItems = text.replace(/(.*)\n/g, '<li>$1 </li>'); //leave a space to account for empty lines
+            listItems = listItems.replace(/(<span [^>]+>)(.*?)(<\/span>)/ig, 
+                    function( all, openSpan, insideSpan, closeSpan ) 
+                    {
+                        insideSpan = insideSpan.replace(/<\/li><li>/ig, closeSpan + '$&' + openSpan);
+                        var result = openSpan + insideSpan + closeSpan;
+                        return result;
+                    }
+            );
+            var result = '<ol class="chili-ln-off">' + listItems + '</ol>';
+            return result;
+        }
+        
+        /**
+         * Sets the start of the ol tag of the current DOM element
+         * 
+         * @param {String} groupStart
+         * @param {String} groupId
+         * @param {String} start
+         */
+        function setLineNumbersStart( all, groupStart, groupId )
+        {
+            var start = parseInt( groupStart, 10 );
+            if ( groupId ) 
+            {
+                var $pieces = $( '.' + all );
+                var pos = $pieces.index( this );
+                $pieces
+                    .slice( 0, pos )
+                    .each( 
+                        function() 
+                        {
+                            start += $( this ).find( 'li' ).length;
+                        } 
+                    )
+                ;
+            }
+            $(this).find( 'ol' ).attr('start', start);
+            // refresh the window
+            $('body')
+                .width( $('body').width() - 1 )
+                .width( $('body').width() + 1 )
+            ;
+        }
+        
+        /**
+         * Make line numbers appear into the given dom_element
+         * 
+         * @param {Element} dom_element
+         */
+        function addLineNumbers( dom_element ) 
+        {
+            $(dom_element).children('ol').removeClass('chili-ln-off');
+        }
+        
+        /**
+         * If needed, adds line numbers with a proper start to the given 
+         * dom_element
+         * 
+         * @param {Element} dom_element
+         */
+        function checkLineNumbers( dom_element )
+        {
+            var ln = $.chili.codeLineNumbers(dom_element);
+            if (ln) 
+            {
+                addLineNumbers(dom_element);
+                setLineNumbersStart.apply(dom_element, ln);
+            }
+            else if ($.chili.decoration.lineNumbers) 
+            {
+                addLineNumbers(dom_element);
+            }
         }
         
         /**

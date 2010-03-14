@@ -1,7 +1,8 @@
     
 	$(function() 
     {
-	    $.extend( $.chili, $.chili.options, $.chili.system );
+	    $.chili.loadStylesheetInline('.chili-ln-off {list-style-type: none;}');
+	    $.extend($.chili, $.chili.options);
         
         if ($.chili.automatic.active) 
         {
