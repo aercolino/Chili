@@ -108,17 +108,7 @@
         function escapeSpaces( text ) 
         {
             var writingSpace = '&#160;';
-            var result = [];
-            scan(text, function () 
-            {
-                var value = this.value;
-                if (this.type == 'text')
-                {
-                    value = value.replace(/ /g, writingSpace);
-                }
-                result.push(value);
-            });
-            result = result.join('');
+            var result = text.replace(/ /g, writingSpace);
             return result;
         }
         
@@ -132,18 +122,8 @@
          */
         function escapeTabs( text ) 
         {
-            var writingTab = repeat( '&#160;', $.chili.whiteSpace.tabWidth );
-            var result = [];
-            scan(text, function () 
-            {
-                var value = this.value;
-                if (this.type == 'text')
-                {
-                    value = value.replace(/\t/g, writingTab);
-                }
-                result.push(value);
-            });
-            result = result.join('');
+            var writingTab = repeat('&#160;', $.chili.whiteSpace.tabWidth);
+            var result = text.replace(/\t/g, writingTab);
             return result;
         }
         
@@ -175,13 +155,18 @@
          */
         function fixWhiteSpaceBeforeWriting( html )
         {
-            //TODO hacer todo en una sola pasada
-            
-            var result = html;
-            result = escapeTabs(result);
-            result = escapeSpaces(result);
-            result = makeTagsSpanOneLine(result);
-            result = makeUnorderedList(result);
+            var result = [];
+            scan(html, function () 
+            {
+                var value = this.value;
+                if (this.type == 'text')
+                {
+                    value = escapeSpaces( value );
+                    value = escapeTabs( value );
+                }
+                result.push(value);
+            });
+            result = result.join('');
             return result;
         }
         

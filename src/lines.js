@@ -1,38 +1,40 @@
         
         /**
+         * Wraps a given line into well formed open and close tags, based on the
+         * given open stack
          * 
+         * @param {String} line
+         * @param {Array} open
+         * 
+         * @return Object
          */
-        function makeTagsSpanOneLine( html )
+        function well_form( line, open )
         {
-            var open  = [];
             var close = [];
-            var expr = /(.*)\n/g;
-            var func = function ( all, line ) 
+            var open_start = open.join('');
+            scan(line, function()
             {
-                var open_start = open.join('');
-                scan(line, function()
+                if (this.type == 'open')
                 {
-                    if (this.type == 'open')
-                    {
-                        open.push(this.value);
-                    }
-                    else if (this.type == 'close')
-                    {
-                        open.pop();
-                    }
-                });
-                for (var i = 0, iTop = open.length; i < iTop; i++)
-                {
-                    var tag_open  = open[i];
-                    var tag_close = tag_open.replace(/^<(\w+)[^>]*>$/, '</$1>');
-                    close.unshift(tag_close);
+                    open.push(this.value);
                 }
-                var close_end = close.join('');
-                var result = open_start + line + close_end + '\n';
-                return result;
+                else if (this.type == 'close')
+                {
+                    open.pop();
+                }
+            });
+            for (var i = 0, iTop = open.length; i < iTop; i++)
+            {
+                var tag_open  = open[i];
+                var tag_close = tag_open.replace(/^<(\w+)[^>]*>$/, '</$1>');
+                close.unshift(tag_close);
+            }
+            var close_end = close.join('');
+            line = open_start + line + close_end;
+            return {
+                line:  line,
+                open:  open
             };
-            var result = html.replace(expr, func);
-            return result;
         }
         
         /**
@@ -40,12 +42,23 @@
          * ordered list element
          * 
          * @param {Element} dom_element
+         * 
+         * @return String
          */
-        function makeUnorderedList( html )
+        function makeOrderedList( html )
         {
+            var open  = [];
             var expr = /(.*)\n/g;
-            var result = html.replace(expr, '<li>$1 </li>'); //leave a space to account for empty lines
-            result = '<ol class="chili-ln-off">' + result + '</ol>';
+            var func = function ( all, line ) 
+            {
+                var well_formed = well_form(line, open);
+                open = well_formed.open;
+                //leave a space to account for empty lines
+                line = '<li>' + well_formed.line + ' </li>'; 
+                return line;
+            };
+            var result = html.replace(expr, func);
+            result = '<ol>' + result + '</ol>';
             return result;
         }
         
@@ -88,7 +101,9 @@
          */
         function addLineNumbers( dom_element ) 
         {
-            $(dom_element).children('ol').removeClass('chili-ln-off');
+            var html = $(dom_element).html();
+            html = makeOrderedList( html );
+            dom_element.innerHTML = html;
         }
         
         /**
