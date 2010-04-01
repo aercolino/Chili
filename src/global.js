@@ -80,6 +80,12 @@
         
         queue: {},
         
-        recipes: {}
+        recipes: {},
+        
+        filters: {
+            off: function() {
+                return this.text;
+            }
+        }
     });
     

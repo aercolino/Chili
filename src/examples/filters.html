@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3c.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- http://noteslog.com/chili/ - Copyright 2010 / Andrea Ercolino -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+
+<title>TESTING CHILI 3.0 - jQuery 1.2.6</title>
+
+<script type="text/javascript" src="../jquery.js"></script>
+<script type="text/javascript" src="../jquery.chili.js"></script>
+
+
+<script id="setup" type="text/javascript">
+$.chili.options.dynamic.origin = "../recipes/";
+$.chili.options.automatic.active = false;
+$.chili.options.selection.active = false;
+$( function() {
+	$( '#highlight' )
+	.one( 'click', function() {
+		var time1 = new Date();
+		var $chili = $( '#jq' ).chili({
+            filters: {
+                background: function( color )
+                {
+                    var result = ''
+                        + '<span style="background-color: ' + color + '">'
+                        + this.html
+                        + '</span>';
+                    return result;
+                }
+            }
+        });
+		var time2 = new Date();
+		var delta = time2 - time1;
+		var spans = $chili.find( 'span' ).length;
+		var rate = Math.round( spans / delta * 100 ) / 100;
+		$( '#highlight' ).html( 
+			'highlight done in ' + delta + ' milliseconds'
+			+ ' with ' + spans + ' spans'
+			+ ' at a rate of ' + rate * 1000 + ' span/sec'
+		);
+	} )
+	.show()
+	;
+} );
+</script>
+
+<script type="text/javascript" src="examples.js"></script>
+<link type="text/css" rel="stylesheet" href="examples.css" />
+
+</head>
+<body>
+
+<h2 id="title"></h2>
+
+<h3 id="highlight" style="color:red; display:none;">
+<a href="#">highlight</a> now
+</h3>
+
+<p>
+This page has the following setup.
+</p>
+<div id="show_setup"></div>
+
+
+<hr/>
+
+
+<div class="section">
+<h3>JavaScript</h3>
+<p><a href="http://noteslog.com/chili/" target="_blank">Chili</a> highlights <a href="http://jquery.com/" target="_blank">jQuery</a></p>
+<pre><code class="chili-lang-javascript" id='jq'>
+/**
+ * Shows a dialog containing the text selected by the user
+ */
+function displaySelectedTextDialog( event ) 
+{
+    if (! (element &amp;&amp; element == this)) 
+    {
+        return;
+    }
+    element = null;
+    
+    {:off()[var selectedText = getSelectedText();]off:}
+    {:background('#FFC')[if ( '' == selectedText ) 
+    { 
+        return;
+    }]background:}
+    selectedText = cleanText(selectedText);
+    
+    var $container = makeDialog(selectedText, event);
+    selectTextAgain($container);
+}
+</code></pre>
+</div>
+
+</body>
+</html>

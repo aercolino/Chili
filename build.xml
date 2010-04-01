@@ -31,6 +31,13 @@
             <fileset file="src/runner.js" />
             <fileset file="src/global.js" />
             <fileset file="src/core.js" />
+            <fileset file="src/element.js" />
+            <fileset file="src/recipes.js" />
+            <fileset file="src/coloring.js" />
+            <fileset file="src/stylesheets.js" />
+            <fileset file="src/html.js" />
+            <fileset file="src/lines.js" />
+            <fileset file="src/filters.js" />
             <fileset file="src/text_selection.js" />
             <fileset file="src/_end.js" />
         </concat>
