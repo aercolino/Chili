@@ -102,7 +102,9 @@
         function addLineNumbers( dom_element ) 
         {
             var html = $(dom_element).html();
+            html = fixWhiteSpaceAfterReading(html);
             html = makeOrderedList( html );
+            html = fixWhiteSpaceBeforeWriting(html);
             dom_element.innerHTML = html;
         }
         

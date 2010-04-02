@@ -69,7 +69,6 @@
             var ingredients = $( this ).text();
             if (! ingredients) 
                 return;
-//alert($.chili.revealChars(this.firstChild.nodeValue.substring(0, 20)));
             ingredients = fixWhiteSpaceAfterReading(ingredients);
             replaceElement.apply({
                 selector: this, 
@@ -87,26 +86,13 @@
          */
         function replaceElement()
         {
-            var time1 = new Date();
-            var time2 = new Date();
-            console.log('1:' + (time2 - time1));
             filtersPrepare(this);
             var replacement = applyModule( this.subject, this.module, this.context );
             replacement = filtersProcess(this, replacement);
-            time1 = time2;
-            time2 = new Date();
-            console.log('2:' + (time2 - time1));
             
             replacement = fixWhiteSpaceBeforeWriting( replacement );
-            time1 = time2;
-            time2 = new Date();
-            console.log('3:' + (time2 - time1));
             
             var dom_element = $( this.selector )[0];
             dom_element.innerHTML = replacement;
-            time1 = time2;
-            time2 = new Date();
-            console.log('4:' + (time2 - time1));
-            
         }
         

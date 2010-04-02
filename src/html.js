@@ -107,7 +107,7 @@
          */
         function escapeSpaces( text ) 
         {
-            var writingSpace = '&#160;';
+            var writingSpace = $.chili.whiteSpace.writingSpace;
             var result = text.replace(/ /g, writingSpace);
             return result;
         }
@@ -122,9 +122,65 @@
          */
         function escapeTabs( text ) 
         {
-            var writingTab = repeat('&#160;', $.chili.whiteSpace.tabWidth);
+            var writingTab = $.chili.whiteSpace.writingTab;
             var result = text.replace(/\t/g, writingTab);
             return result;
+        }
+        
+        /**
+         * Returns the given text, with all '\n' replaced by the browser new 
+         * line string
+         * 
+         * @param {String} text
+         * 
+         * @return String
+         */
+        function lineFeedsToNewLines( text ) 
+        {
+            var writingNewLine = $.chili.whiteSpace.writingNewLine;
+            var result = text.replace(/\n/g, writingNewLine);
+            return result;
+        }
+        
+        /**
+         * Returns the given text, with all the browser new line strings 
+         * replaced by '\n' 
+         * 
+         * @param {String} text
+         * 
+         * @return String
+         */
+        function newLinesToLineFeeds( text ) 
+        {
+            var result = text;
+            result = result.replace(/&nbsp;<BR>/ig, '\n');
+            result = result.replace(/\r\n?/g, '\n');
+            return result;
+        }
+        
+        /**
+         * 
+         * @param html
+         * @return
+         */
+        function setWhiteSpaceConstants( html )
+        {
+            $.chili.whiteSpace.writingSpace = '&#160;';
+            $.chili.whiteSpace.writingTab = repeat('&#160;', $.chili.whiteSpace.tabWidth);
+            $.chili.whiteSpace.writingNewLine = '\n';
+            if (/\r\n?/.test(html))
+            {
+                if ($.browser.msie)
+                {
+                    $.chili.whiteSpace.writingNewLine = '&#160;<br>';
+                }
+                else
+                {
+                    $.chili.whiteSpace.writingNewLine = /\r\n/.test(html) 
+                        ? '\r\n' 
+                        : '\r';
+                }
+            }
         }
         
         /**
@@ -135,14 +191,15 @@
          * 
          * @return String
          */
-        function fixWhiteSpaceAfterReading( text )
+        function fixWhiteSpaceAfterReading( html )
         {
-            text = text.replace(/\r\n?/g, '\n');
+            setWhiteSpaceConstants(html);
+            var result = newLinesToLineFeeds(html);
             if ( $.chili.whiteSpace.no1stLine ) 
             {
-                text = text.replace(/^\n/, '');
+                result = result.replace(/^\n/, '');
             }
-            return text;
+            return result;
         }
         
         /**
@@ -163,6 +220,7 @@
                 {
                     value = escapeSpaces( value );
                     value = escapeTabs( value );
+                    value = lineFeedsToNewLines( value );
                 }
                 result.push(value);
             });
