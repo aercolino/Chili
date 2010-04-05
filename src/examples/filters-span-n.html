@@ -14,6 +14,7 @@
 $.chili.options.dynamic.origin = "../recipes/";
 $.chili.options.automatic.active = false;
 $.chili.options.selection.active = false;
+$.chili.options.decoration.lineNumbers = true;
 $( function() {
 	$( '#highlight' )
 	.one( 'click', function() {
@@ -82,7 +83,7 @@ function displaySelectedTextDialog( event )
     element = null;
     
     {:off()[var selectedText = getSelectedText();]off:}
-    {:background('#FFC')[if ( '' == selectedText ) 
+{:background('#FFC')[    if ( '' == selectedText ) 
     { 
         return;
     }]background:}

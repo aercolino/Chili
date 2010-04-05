@@ -53,8 +53,9 @@
         {
             var well_formed = well_form(line, open);
             open = well_formed.open;
-            //leave a space to account for empty lines
-            line = '<li>' + well_formed.line + ' </li>'; 
+            line = well_formed.line 
+                ? '<li>' + well_formed.line + '</li>' 
+                : '<li> </li>'; //leave a space in empty lines
             return line;
         };
         var result = html.replace(expr, func);
