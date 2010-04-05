@@ -5,7 +5,7 @@
          * @param {String} recipe
          * @param {String} blockName
          * 
-         * @return Array<Object>
+         * @return Array
          */
         function prepareBlock( recipe, blockName ) 
         {
@@ -172,7 +172,7 @@
                 { 
                     var result = applyModule( subject, module, stepMatches.step );
                     return result;
-                } 
+                }
             };
             var result = stepMatches.step.replacement.apply(that, stepMatches.matches);
             return result;
@@ -244,29 +244,22 @@
         }
         
         /**
-         * Returns the given ingredients, after applying the given blockName of 
-         * the given recipe to it
-         * 
-         * @param {String} ingredients
+         * Returns the given subject, after replacing all the matches of the
+         * given steps, of the given recipe
+         *  
+         * @param {String} subject
          * @param {Object} recipe
-         * @param {String} blockName
+         * @param {Array}  steps
          * 
          * @return String
          */
-        function cook( ingredients, recipe, blockName ) 
+        function applySteps( subject, recipe, steps )
         {
-            if (! blockName) 
-            {
-                blockName = '_main';
-                checkSpices( recipe );
-            }
-            if (! blockName in recipe) return escapeHtmlSpecialChars( ingredients );
-            var steps = prepareBlock( recipe, blockName );
             var flags = recipe._case 
                 ? "g" 
                 : "gi";
-            var kh = knowHow( steps, flags );
-            var perfect = ingredients.replace( kh, 
+            var expr = knowHow( steps, flags );
+            var result = subject.replace( expr, 
                 function() 
                 {
                     var args = Array.prototype.slice.call(arguments);
@@ -274,7 +267,42 @@
                     return result;
                 } 
             );
-            return perfect;
+            return result;
+        }
+        
+        /**
+         * Returns the given ingredients, after applying the given steName of
+         * the given blockName of the given recipe to it
+         * 
+         * @param {String} ingredients
+         * @param {Object} recipe
+         * @param {String} blockName
+         * @param {String} stepName
+         * 
+         * @return String
+         */
+        function cook( ingredients, recipe, blockName, stepName ) 
+        {
+            if (stepName) 
+            {
+                var step  = prepareStep(recipe, blockName, stepName);
+                var steps = [step];
+            }
+            else
+            {
+                if (! blockName) 
+                {
+                    blockName = '_main';
+                    checkSpices( recipe );
+                }
+                if (! blockName in recipe)
+                {
+                    return escapeHtmlSpecialChars( ingredients );
+                }
+                var steps = prepareBlock(recipe, blockName);
+            }
+            var result = applySteps(ingredients, recipe, steps);
+            return result;
         }
         
         

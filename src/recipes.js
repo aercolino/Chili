@@ -1,63 +1,5 @@
         
         /**
-         * Returns the result of applying the given recipe to the given subject
-         * 
-         * @param {String} subject
-         * @param {Object} recipe
-         * 
-         * @return String
-         */
-        function applyRecipe( subject, recipe ) 
-        {
-            var result = cook( subject, recipe ); 
-            return result;
-        }
-
-        /**
-         * Returns the result of applying the given blockName of the given 
-         * recipe to the given subject
-         * 
-         * @param {String} subject
-         * @param {Object} recipe
-         * @param {String} blockName
-         * 
-         * @return String
-         */
-        function applyBlock( subject, recipe, blockName ) 
-        {
-            var result = cook( subject, recipe, blockName ); 
-            return result;
-        }
-
-        /**
-         * Returns the result of applying the given stepName of the given 
-         * blockName of the given recipe to the given subject
-         * 
-         * @param {String} subject
-         * @param {Object} recipe
-         * @param {String} blockName
-         * @param {String} stepName
-         * 
-         * @return String
-         */
-        function applyStep( subject, recipe, blockName, stepName ) 
-        {
-            var step = prepareStep( recipe, blockName, stepName );
-            var steps = [step];
-            var flags = recipe._case 
-                ? "g" 
-                : "gi";
-            var perfect = subject.replace( knowHow( steps, flags ), 
-                function() 
-                {
-                    var args = Array.prototype.slice.call(arguments);
-                    return chef(steps, args);
-                } 
-            );
-            return perfect;
-        }
-        
-        /**
          * Returns the requested action according to the empty configuration of 
          * the given values
          * 
@@ -100,6 +42,7 @@
                 , blockName:  blockName
                 , stepName:   stepName
                 , recipe:     recipe
+                , module:     module
                 , context:    context
             };
             return result;
@@ -160,6 +103,79 @@
         }
         
         /**
+         * Returns the result of applying the given detected recipe to the given
+         * subject
+         * 
+         * @param {String} subject
+         * @param {Object} detected
+         * 
+         * @return String
+         */
+        function applyRecipe( subject, detected )
+        {
+            var recipe = detected.recipe;
+            result = cook(subject, recipe);
+            return result;
+        }
+        
+        /**
+         * Returns the result of applying the given detected block to the given
+         * subject
+         * 
+         * @param {String} subject
+         * @param {Object} detected
+         * 
+         * @return String
+         */
+        function applyBlock( subject, detected )
+        {
+            var blockName = detected.blockName;
+            var recipe    = detected.recipe;
+            if (! (blockName in recipe)) 
+            {
+                result = escapeHtmlSpecialChars(subject);
+            }
+            else
+            {
+                result = cook(subject, recipe, blockName);
+            }
+            return result;
+        }
+        
+        /**
+         * Returns the result of applying the given detected step to the given
+         * subject
+         * 
+         * @param {String} subject
+         * @param {Object} detected
+         * 
+         * @return String
+         */
+        function applyStep( subject, detected )
+        {
+            var recipeName = detected.recipeName;
+            var blockName  = detected.blockName;
+            var stepName   = detected.stepName;
+            var recipe     = detected.recipe;
+            var context    = detected.context;
+            if ('' == blockName) 
+            {
+                blockName = context.blockName;
+            }
+            if (false
+                || ! (blockName in recipe)
+                || ! (stepName  in recipe[blockName]))
+            {
+                result = escapeHtmlSpecialChars(subject);
+            }
+            else
+            {
+                result = cook(subject, recipe, blockName, stepName);
+            }
+            return result;
+        }
+        
+        /**
          * Returns the result of applying the given detected action to the given
          * subject
          * 
@@ -170,35 +186,52 @@
          */
         function applyAction( subject, detected )
         {
-            var action     = detected['action'];
-            var recipeName = detected['recipeName'];
-            var blockName  = detected['blockName'];
-            var stepName   = detected['stepName'];
-            var recipe     = detected['recipe'];
-            var context    = detected['context'];
-            var result = escapeHtmlSpecialChars( subject );
+            var result = '';
+            var action = detected.action;
             switch (action)
             {
                 case 'applyRecipe':
-                    return applyRecipe( subject, recipe );
+                    result = applyRecipe(subject, detected);
                 break;
                 case 'applyBlock':
-                    if (! (blockName in recipe))            return result;
-                    return applyBlock( subject, recipe, blockName );
+                    result = applyBlock(subject, detected);
                 break;
                 case 'applyStep':
-                    if ('' == blockName) 
-                    {
-                        blockName = context.blockName;
-                    }
-                    if (! (blockName in recipe))            return result;
-                    if (! (stepName  in recipe[blockName])) return result;
-                    return applyStep( subject, recipe, blockName, stepName );
+                    result = applyStep(subject, detected);
                 break;
                 default:
                     //nothing to do
                 break;
             }
+            return result;
+        }
+        
+        /**
+         * Returns the result of applying the given detected action to the given
+         * subject
+         * 
+         * @param {String} subject
+         * @param {Object} detected
+         * 
+         * @return String
+         */
+        function applyDeferred( subject, detected )
+        {
+            // dynamic setups come here too
+            var path = getRecipePath(detected.recipeName);
+            if (! $.chili.queue[ path ]) 
+            {
+                downloadRecipe(path, replaceElement);
+            }
+            var cue = 'chili_' + unique();
+            $.chili.queue[ path ].push( {
+                selector: '#' + cue, 
+                subject:  subject, 
+                module:   detected.module, 
+                context:  detected.context
+            } );
+            result = '<span id="' + cue + '">' + result + '</span>';
+            return result;
         }
 
         /**
@@ -213,31 +246,23 @@
          */
         function applyModule( subject, module, context ) 
         {
-            var result = escapeHtmlSpecialChars( subject );
-            var detected = detectAction( module, context );
-            if (typeof detected == 'undefined') return result;
-            if (detected['recipe'])
+            var result = '';
+            var detected = detectAction(module, context);
+            if (typeof detected == 'undefined')
+            {
+                result = escapeHtmlSpecialChars(subject);
+            }
+            else if (detected.recipe)
             {
                 result = applyAction(subject, detected);
-                return result;
             }
-            var path = getRecipePath( detected['recipeName'] );
-            if ( $.chili.dynamic.active ) 
+            else if ( $.chili.dynamic.active ) 
             {
-                // dynamic setups come here too
-                if (! $.chili.queue[ path ]) 
-                {
-                    downloadRecipe(path, replaceElement);
-                }
-                var cue = 'chili_' + unique();
-                $.chili.queue[ path ].push( {
-                    selector: '#' + cue, 
-                    subject:  subject, 
-                    module:   module, 
-                    context:  context
-                } );
-                result = '<span id="' + cue + '">' + result + '</span>';
-                return result;
+                result = applyDeferred(subject, detected);
+            }
+            else
+            {
+                result = escapeHtmlSpecialChars(subject);
             }
             return result;
         }
