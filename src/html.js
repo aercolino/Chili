@@ -162,9 +162,9 @@
     }
     
     /**
+     * Sets white space constants into $.chili
      * 
-     * @param html
-     * @return
+     * @param {String} html
      */
     function setWhiteSpaceConstants( html )
     {
