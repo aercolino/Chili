@@ -52,16 +52,21 @@
         }
         
         /**
+         * Scans the given subject and calls the given callback, passing along 
+         * the given args, for each piece of text or html tag it finds
          * 
+         * @param {String} subject
+         * @param {Function} callback
+         * @param {Array} args
          */
-        function scan( html, callback, args )
+        function scan( subject, callback, args )
         {
             args = args || [];
-            var expr = /([\w\W]*?)(?:(<[a-z]+[^>]*\/>)|(<[a-z]+[^>]*>)|(<\/[a-z]+[^>]*>))|([\w\W]+)/ig;
-            var func = function(all, prolog, tag_empty, tag_open, tag_close, epilog, offset) 
+            var expr = /([\w\W]*?)(?:(<\w+[^>]*\/>)|(<\w+[^>]*>)|(<\/\w+[^>]*>))|([\w\W]+)/ig;
+            var func = function(all, prolog, tag_empty, tag_open, tag_close, epilog) 
             {
-                var realOffset = offset;
-                var token = null;
+                var realOffset = matches.index;
+                var token;
                 if (epilog)
                 {
                     token = tokenMake('text',  epilog, realOffset);
@@ -72,29 +77,27 @@
                     token = tokenMake('text',  prolog, realOffset);
                     callback.apply(token, args);
                     
-                    var type  = '';
-                    var value = '';
+                    realOffset += prolog.length;
                     if (tag_empty)
                     {
-                        type  = 'empty';
-                        value = tag_empty;
+                        token = tokenMake('empty', tag_empty, realOffset);
                     }
                     else if(tag_open)
                     {
-                        type  = 'open';
-                        value = tag_open;
+                        token = tokenMake('open', tag_open, realOffset);
                     }
                     else if(tag_close)
                     {
-                        type  = 'close';
-                        value = tag_close;
+                        token = tokenMake('close', tag_close, realOffset);
                     }
-                    realOffset += prolog.length;
-                    token = tokenMake(type, value, realOffset);
                     callback.apply(token, args);
                 }
             };
-            html.replace(expr, func);
+            var matches;
+            while ((matches = expr.exec(subject)) != null && matches[0] != '')
+            {
+                func.apply({}, matches);
+            }
         }
         
         /**

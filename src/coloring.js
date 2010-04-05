@@ -149,10 +149,8 @@
                 matchesIndex += step.length;
             }
             var matches  = allMatches.slice(matchesIndex, matchesIndex + step.length);
-            var offset   = allMatches[ allMatches.length - 2 ];
-            var original = allMatches[ allMatches.length - 1 ];
-            matches.push( offset );
-            matches.push( original );
+            matches.push( allMatches.index );
+            matches.push( allMatches.input );
             return {step: step, matches: matches};
         }
         
@@ -226,7 +224,7 @@
             var anyMatch = replaceArgs[ 0 ];
             if (! anyMatch) return result;
             
-            var epilog = replaceArgs[ replaceArgs.length - 3 ];
+            var epilog = replaceArgs[ replaceArgs.length - 1 ];
             if (epilog) {
                 result = escapeHtmlSpecialChars( epilog );
                 return result;
@@ -259,14 +257,14 @@
                 ? "g" 
                 : "gi";
             var expr = knowHow( steps, flags );
-            var result = subject.replace( expr, 
-                function() 
-                {
-                    var args = Array.prototype.slice.call(arguments);
-                    var result = chef(steps, args);
-                    return result;
-                } 
-            );
+            var result = [];
+            var matches;
+            while ((matches = expr.exec(subject)) != null && matches[0] != '')
+            {
+                var element = chef(steps, matches);
+                result.push(element);
+            }
+            result = result.join('');
             return result;
         }
         
